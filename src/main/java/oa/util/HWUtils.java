@@ -1,16 +1,14 @@
 package oa.util;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
-
+import com.common.util.SystemHWUtil;
+import com.common.util.WebServletUtil;
+import com.io.hw.file.util.FileUtils;
+import com.string.widget.util.RandomUtils;
+import com.string.widget.util.ValueWidget;
 import net.sf.jxls.transformer.XLSTransformer;
-
+import oa.bean.stub.ReadAndWriteResult;
 import org.apache.commons.compress.archivers.dump.InvalidFormatException;
+import org.apache.commons.io.output.FileWriterWithEncoding;
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
@@ -22,12 +20,20 @@ import org.codehaus.jackson.map.ser.FilterProvider;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 
-import com.string.widget.util.RandomUtils;
-import com.string.widget.util.ValueWidget;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 public class HWUtils {
-	private static ObjectMapper mapper =null;
 	protected static Logger logger=Logger.getLogger(HWUtils.class);
+	private static ObjectMapper mapper = null;
+
 	public static ObjectMapper getObjectMapper(){
 		if(mapper==null){
 			mapper = new ObjectMapper();
@@ -120,8 +126,8 @@ public class HWUtils {
 		out.flush();
 	}
 	/**
-	 * 
-	 * @param templatePath2
+	 *
+	 * @param path
 	 * @return
 	 * @author lianrao
 	 * @throws IOException
@@ -136,4 +142,76 @@ public class HWUtils {
 		Workbook workbook = WorkbookFactory.create(inputStream);
 		return workbook;
 	}
+
+	/***
+	 * 读取文件
+	 *
+	 * @param request
+	 * @param path
+	 * @param charset
+	 * @return
+	 */
+	public static ReadAndWriteResult stub(HttpServletRequest request, String path, String charset) {
+		String content = null;
+		ReadAndWriteResult readAndWriteResult = new ReadAndWriteResult();
+		try {
+			String realPath2 = WebServletUtil.getRealPath(request, path);
+			File file = new File(realPath2);
+			if (!file.exists()) {
+				return fileNotExistReadAndWriteResult(readAndWriteResult, realPath2);
+			}
+			java.io.InputStream input = new FileInputStream(realPath2);
+			if (null == input) {
+				return fileNotExistReadAndWriteResult(readAndWriteResult, realPath2);
+			}
+			content = FileUtils.getFullContent2(input, charset, true);
+			readAndWriteResult.setContent(content);
+			readAndWriteResult.setSuccess(true);
+		} catch (java.io.FileNotFoundException ex) {
+			ex.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return readAndWriteResult;
+	}
+
+	private static ReadAndWriteResult fileNotExistReadAndWriteResult(ReadAndWriteResult readAndWriteResult, String realPath2) {
+		readAndWriteResult.setSuccess(false);
+		readAndWriteResult.setErrorMessage("文件" + realPath2 + "不存在");
+		readAndWriteResult.setContent(SystemHWUtil.EMPTY);
+		return readAndWriteResult;
+	}
+
+	public static ReadAndWriteResult saveStub(HttpServletRequest request, String path, String content, String charset) {
+		ReadAndWriteResult readAndWriteResult = new ReadAndWriteResult();
+		if (ValueWidget.isNullOrEmpty(content)) {
+			readAndWriteResult.setErrorMessage("内容为空");
+			return readAndWriteResult;
+		}
+		try {
+			String realPath2 = WebServletUtil.getRealPath(request, path);
+			File file = new File(realPath2);
+			if (file.exists()) {
+				FileWriterWithEncoding fileW = new FileWriterWithEncoding(file, charset);
+				fileW.write(content);
+				fileW.close();
+				readAndWriteResult.setSuccess(true);
+				readAndWriteResult.setContent(content);
+			} else {
+				logger.error("文件" + realPath2 + "不存在");
+				return fileNotExistReadAndWriteResult(readAndWriteResult, realPath2);
+			}
+
+		} catch (java.io.FileNotFoundException ex) {
+			ex.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return readAndWriteResult;
+	}
+
+	public static ReadAndWriteResult stub(HttpServletRequest request, String path) {
+		return HWUtils.stub(request, path, SystemHWUtil.CURR_ENCODING);
+	}
+
 }

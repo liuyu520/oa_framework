@@ -1,22 +1,17 @@
 package oa.web.controller.common;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.common.dict.Constant2;
+import com.common.util.SystemHWUtil;
+import com.io.hw.json.HWJacksonUtils;
+import com.string.widget.util.ValueWidget;
+import oa.util.HWUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.common.dict.Constant2;
-import com.common.util.SystemHWUtil;
-import com.common.util.WebServletUtil;
-import com.io.hw.file.util.FileUtils;
-import com.io.hw.json.HWJacksonUtils;
-import com.string.widget.util.ValueWidget;
+import javax.servlet.http.HttpServletRequest;
 
 /***
  * 用于stub
@@ -26,7 +21,12 @@ import com.string.widget.util.ValueWidget;
 @Controller
 @RequestMapping("/stub")
 public class StubController {
-    public static final String stub_folder = "stub/";
+    public static final String stub_folder_no_Slash = "stub";
+    /***
+     * stub/
+     */
+    public static final String stub_folder = stub_folder_no_Slash + "/";
+    
     public static final String stub_file_Suffix = ".json";
     
     protected Logger logger = Logger.getLogger(this.getClass());
@@ -65,7 +65,7 @@ public class StubController {
         if (ValueWidget.isNullOrEmpty(charset)) {
             charset = SystemHWUtil.CURR_ENCODING;
         }
-        String content = stub(request, actionPath, charset);
+        String content = HWUtils.stub(request, actionPath, charset);
         logger.info(SystemHWUtil.CRLF + content);
         return HWJacksonUtils.getJsonP(content, callback);
     }
@@ -94,30 +94,17 @@ public class StubController {
                 + stub_file_Suffix, callback, charset);
     }
 
-    private String stub(HttpServletRequest request, String path) {
-        return stub(request, path, SystemHWUtil.CURR_ENCODING);
-    }
-
-    /***
-     * 读取文件
-     *
-     * @param request
-     * @param path
-     * @param charset
-     * @return
-     */
-    private String stub(HttpServletRequest request, String path, String charset) {
-        String content = null;
-        try {
-            String realPath2 = WebServletUtil.getRealPath(request, path);
-            java.io.InputStream input = new FileInputStream(realPath2);
-            content = FileUtils.getFullContent2(input, charset, true);
-        } catch (java.io.FileNotFoundException ex) {
-            ex.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return content;
+    @ResponseBody
+    @RequestMapping(value = "/{version}/{module}/{group}/{namespace}/{action}", produces = SystemHWUtil.RESPONSE_CONTENTTYPE_JSON_UTF)
+    public String stubAction(HttpServletRequest request,
+                             @PathVariable String version,
+                             @PathVariable String module,
+                             @PathVariable String group,
+                             @PathVariable String namespace, @PathVariable String action,
+                             String callback
+            , String charset) {
+        return stubAction(request, stub_folder + version + Constant2.Slash + module + Constant2.Slash + group + Constant2.Slash + namespace + Constant2.Slash + action
+                + stub_file_Suffix, callback, charset);
     }
 
 }
