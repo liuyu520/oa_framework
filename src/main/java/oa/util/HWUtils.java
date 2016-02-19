@@ -341,20 +341,25 @@ public class HWUtils {
 		return HWUtils.stub(request, path, SystemHWUtil.CURR_ENCODING);
 	}
 
+	public static List<String> listStubServletPath(String rootPath) {
+		return listStubServletPath(rootPath, null);
+	}
 	/***
 	 * 列出所有的stub 接口
 	 *
 	 * @param rootPath
 	 * @return
 	 */
-	public static List<String> listStubServletPath(String rootPath) {
+	public static List<String> listStubServletPath(String rootPath, String keyWord) {
 		List<File> files = FileUtils.getListFiles(rootPath, "json");
 		List<String> pathList = new ArrayList<String>();
 		for (int i = 0; i < files.size(); i++) {
 			String interface2 = files.get(i).getAbsolutePath().replace(rootPath, "");
 			interface2 = interface2.replace("\\", "/").replaceAll(Constant2.stub_file_Suffix+"$", "");
 //			System.out.println(interface2);
-			pathList.add(interface2);
+			if (null == keyWord || interface2.contains(keyWord)) {
+				pathList.add(interface2);
+			}
 		}
 		return pathList;
 	}

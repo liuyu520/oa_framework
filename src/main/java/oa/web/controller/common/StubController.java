@@ -112,13 +112,28 @@ public class StubController {
     }
 
     @RequestMapping("/list")
-    public String list(HttpServletRequest request, Model model, String targetView) {
-        String realPath2 = WebServletUtil.getRealPath(request, Constant2.stub_folder);
-        List<String> stubPathList = HWUtils.listStubServletPath(realPath2);
+    public String list(HttpServletRequest request, Model model, String targetView, String keyWord) {
+        List<String> stubPathList = getStubPathList(request, keyWord);
         model.addAttribute("stubPathList", stubPathList);
         if (!ValueWidget.isNullOrEmpty(targetView)) {
             return targetView;
         }
         return "list";
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/listJson", produces = SystemHWUtil.RESPONSE_CONTENTTYPE_JSON_UTF)
+    public String listJson(HttpServletRequest request, Model model, String keyWord) {
+        List<String> stubPathList = getStubPathList(request, keyWord);
+        return HWJacksonUtils.getJsonP(stubPathList);
+    }
+
+    private List<String> getStubPathList(HttpServletRequest request) {
+        return getStubPathList(request, null);
+    }
+
+    private List<String> getStubPathList(HttpServletRequest request, String keyWord) {
+        String realPath2 = WebServletUtil.getRealPath(request, Constant2.stub_folder);
+        return HWUtils.listStubServletPath(realPath2, keyWord);
     }
 }
