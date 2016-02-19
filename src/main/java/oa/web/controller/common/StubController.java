@@ -141,10 +141,11 @@ public class StubController {
                 /*+ stub_file_Suffix*/, callback, charset);
     }
 
-    @RequestMapping("/list")
+    @RequestMapping("/")
     public String list(HttpServletRequest request, Model model, String targetView, String keyWord) {
         List<String> stubPathList = getStubPathList(request, keyWord);
         model.addAttribute("stubPathList", stubPathList);
+        model.addAttribute("keyWord", keyWord);
         if (!ValueWidget.isNullOrEmpty(targetView)) {
             return targetView;
         }
