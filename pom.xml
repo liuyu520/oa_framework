@@ -115,7 +115,7 @@
         <dependency>
             <groupId>com.kunlunsoft</groupId>
             <artifactId>common_ssh</artifactId>
-            <version>0.0.3.3-SNAPSHOT</version>
+            <version>0.0.1-SNAPSHOT</version>
             <type>jar</type>
             <exclusions>
                 <exclusion>
@@ -176,6 +176,16 @@
             <artifactId>jxls-reader</artifactId>
             <version>1.0.5</version>
         </dependency>
+        <dependency>
+			<groupId>commons-dbcp</groupId>
+			<artifactId>commons-dbcp</artifactId>
+			<version>1.4</version>
+		</dependency>
+		<dependency>
+			<groupId>org.antlr</groupId>
+			<artifactId>antlr</artifactId>
+			<version>3.2</version>
+		</dependency>
     </dependencies>
     <distributionManagement>
         <repository>

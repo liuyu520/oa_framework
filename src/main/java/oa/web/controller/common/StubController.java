@@ -4,6 +4,7 @@ import com.common.dict.Constant2;
 import com.common.util.SystemHWUtil;
 import com.io.hw.json.HWJacksonUtils;
 import com.string.widget.util.ValueWidget;
+import oa.bean.stub.ReadAndWriteResult;
 import oa.util.HWUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
@@ -65,7 +66,11 @@ public class StubController {
         if (ValueWidget.isNullOrEmpty(charset)) {
             charset = SystemHWUtil.CURR_ENCODING;
         }
-        String content = HWUtils.stub(request, actionPath, charset);
+        ReadAndWriteResult readAndWriteResult = HWUtils.stub(request, actionPath, charset);
+        String content = readAndWriteResult.getContent();
+        if (!readAndWriteResult.isSuccess()) {
+            logger.error(readAndWriteResult.getErrorMessage());
+        }
         logger.info(SystemHWUtil.CRLF + content);
         return HWJacksonUtils.getJsonP(content, callback);
     }
