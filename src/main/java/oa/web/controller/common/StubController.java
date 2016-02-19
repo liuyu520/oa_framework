@@ -26,7 +26,7 @@ public class StubController {
     /***
      * stub/
      */
-    public static final String stub_folder = stub_folder_no_Slash + "/";
+    public static final String stub_folder = stub_folder_no_Slash + Constant2.Slash;
     
     public static final String stub_file_Suffix = ".json";
     

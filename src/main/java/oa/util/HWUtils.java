@@ -1,5 +1,6 @@
 package oa.util;
 
+import com.common.dict.Constant2;
 import com.common.util.SystemHWUtil;
 import com.common.util.WebServletUtil;
 import com.io.hw.file.util.FileUtils;
@@ -208,7 +209,17 @@ public class HWUtils {
 		return readAndWriteResult;
 	}
 
-	public static ReadAndWriteResult saveStub(HttpServletRequest request, String path, String content, String charset) {
+	/***
+	 * 更新stub json文件<br />
+	 * 若文件不存在,则不更新
+	 *
+	 * @param request
+	 * @param path
+	 * @param content
+	 * @param charset
+	 * @return
+	 */
+	public static ReadAndWriteResult updateStub(HttpServletRequest request, String path, String content, String charset) {
 		ReadAndWriteResult readAndWriteResult = new ReadAndWriteResult();
 		if (ValueWidget.isNullOrEmpty(content)) {
 			readAndWriteResult.setErrorMessage("内容为空");
@@ -221,7 +232,7 @@ public class HWUtils {
 			if (file.exists()) {
 				setServletUrl(request, path, readAndWriteResult);
 				writeStubFile(content, charset, readAndWriteResult, file);
-				readAndWriteResult.setTips("保存成功");
+				readAndWriteResult.setTips("更新成功");
 			} else {
 				logger.error("文件" + realPath2 + "不存在");
 				return fileNotExistReadAndWriteResult(readAndWriteResult, realPath2);
@@ -245,7 +256,7 @@ public class HWUtils {
 
 	/***
 	 * 新增一个新的接口
-	 *
+	 * 若文件已经存在则报错
 	 * @param request
 	 * @param path
 	 * @param content
@@ -286,7 +297,7 @@ public class HWUtils {
 
 	private static void setServletUrl(HttpServletRequest request, String path, ReadAndWriteResult readAndWriteResult) {
 		String serverUrl = getServletUrl(request);//http://10.1.253.44:81/tv_mobile
-		readAndWriteResult.setUrl(serverUrl + "/" + path.replaceAll(".json$", SystemHWUtil.EMPTY));
+		readAndWriteResult.setUrl(serverUrl + Constant2.Slash + path.replaceAll(".json$", SystemHWUtil.EMPTY));
 	}
 
 	/***
