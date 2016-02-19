@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 /***
@@ -155,6 +156,23 @@ public class StubController {
     public String listJson(HttpServletRequest request, Model model, String keyWord) {
         List<String> stubPathList = getStubPathList(request, keyWord);
         return HWJacksonUtils.getJsonP(stubPathList);
+    }
+
+    /***
+     * stub接口 修改之前的内容
+     *
+     * @param request
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/old_content", produces = SystemHWUtil.RESPONSE_CONTENTTYPE_PLAIN_UTF)
+    public String oldContent(HttpServletRequest request) {
+        HttpSession session = request.getSession(true);
+        String content = (String) session.getAttribute(HWUtils.SESSION_KEY_STUB_OLD_CONTENT);
+        if (null == content) {
+            content = "(暂无)";
+        }
+        return content;
     }
 
     private List<String> getStubPathList(HttpServletRequest request) {
