@@ -111,6 +111,35 @@ public class StubController {
                 /*+ stub_file_Suffix*/, callback, charset);
     }
 
+    @ResponseBody
+    @RequestMapping(value = "/{version}/{branch}/{module}/{group}/{namespace}/{action}", produces = SystemHWUtil.RESPONSE_CONTENTTYPE_JSON_UTF)
+    public String stubAction(HttpServletRequest request,
+                             @PathVariable String version,
+                             @PathVariable String branch,
+                             @PathVariable String module,
+                             @PathVariable String group,
+                             @PathVariable String namespace, @PathVariable String action,
+                             String callback
+            , String charset) {
+        return stubAction(request, Constant2.stub_folder + version + Constant2.Slash + branch + Constant2.Slash + module + Constant2.Slash + group + Constant2.Slash + namespace + Constant2.Slash + action
+                /*+ stub_file_Suffix*/, callback, charset);
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/{version}/{branch}/{branch2}/{module}/{group}/{namespace}/{action}", produces = SystemHWUtil.RESPONSE_CONTENTTYPE_JSON_UTF)
+    public String stubAction(HttpServletRequest request,
+                             @PathVariable String version,
+                             @PathVariable String branch,
+                             @PathVariable String branch2,
+                             @PathVariable String module,
+                             @PathVariable String group,
+                             @PathVariable String namespace, @PathVariable String action,
+                             String callback
+            , String charset) {
+        return stubAction(request, Constant2.stub_folder + version + Constant2.Slash + branch + Constant2.Slash + branch2 + Constant2.Slash + module + Constant2.Slash + group + Constant2.Slash + namespace + Constant2.Slash + action
+                /*+ stub_file_Suffix*/, callback, charset);
+    }
+
     @RequestMapping("/list")
     public String list(HttpServletRequest request, Model model, String targetView, String keyWord) {
         List<String> stubPathList = getStubPathList(request, keyWord);

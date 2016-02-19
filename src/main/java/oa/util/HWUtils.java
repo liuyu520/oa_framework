@@ -24,6 +24,7 @@ import org.springframework.core.io.Resource;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -34,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 
 public class HWUtils {
+	public static final String SESSION_KEY_STUB_OLD_CONTENT = "stub_old_content";
 	protected static Logger logger=Logger.getLogger(HWUtils.class);
 	private static ObjectMapper mapper = null;
 
@@ -252,6 +254,8 @@ public class HWUtils {
 				}
 				setServletUrl(request, path, readAndWriteResult);
 				writeStubFile(content, charset, readAndWriteResult, file);
+				HttpSession session = request.getSession(true);
+				session.setAttribute(SESSION_KEY_STUB_OLD_CONTENT, contentOld);
 				readAndWriteResult.setTips("更新成功");
 			} else {
 				logger.error("文件" + realPath2 + "不存在");
