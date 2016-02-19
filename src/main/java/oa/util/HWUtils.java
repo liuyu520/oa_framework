@@ -156,6 +156,7 @@ public class HWUtils {
 		ReadAndWriteResult readAndWriteResult = new ReadAndWriteResult();
 		try {
 			String realPath2 = WebServletUtil.getRealPath(request, path);
+			readAndWriteResult.setAbsolutePath(realPath2);
 			File file = new File(realPath2);
 			if (!file.exists()) {
 				return fileNotExistReadAndWriteResult(readAndWriteResult, realPath2);
@@ -182,6 +183,13 @@ public class HWUtils {
 		return readAndWriteResult;
 	}
 
+	private static ReadAndWriteResult fileHasExistReadAndWriteResult(ReadAndWriteResult readAndWriteResult, String realPath2) {
+		readAndWriteResult.setSuccess(false);
+		readAndWriteResult.setErrorMessage("文件" + realPath2 + "已经存在");
+		readAndWriteResult.setContent(SystemHWUtil.EMPTY);
+		return readAndWriteResult;
+	}
+
 	public static ReadAndWriteResult saveStub(HttpServletRequest request, String path, String content, String charset) {
 		ReadAndWriteResult readAndWriteResult = new ReadAndWriteResult();
 		if (ValueWidget.isNullOrEmpty(content)) {
@@ -190,13 +198,10 @@ public class HWUtils {
 		}
 		try {
 			String realPath2 = WebServletUtil.getRealPath(request, path);
+			readAndWriteResult.setAbsolutePath(realPath2);
 			File file = new File(realPath2);
 			if (file.exists()) {
-				FileWriterWithEncoding fileW = new FileWriterWithEncoding(file, charset);
-				fileW.write(content);
-				fileW.close();
-				readAndWriteResult.setSuccess(true);
-				readAndWriteResult.setContent(content);
+				writeStubFile(content, charset, readAndWriteResult, file);
 			} else {
 				logger.error("文件" + realPath2 + "不存在");
 				return fileNotExistReadAndWriteResult(readAndWriteResult, realPath2);
@@ -210,6 +215,47 @@ public class HWUtils {
 		return readAndWriteResult;
 	}
 
+	private static void writeStubFile(String content, String charset, ReadAndWriteResult readAndWriteResult, File file) throws IOException {
+		FileWriterWithEncoding fileW = new FileWriterWithEncoding(file, charset);
+		fileW.write(content);
+		fileW.close();
+		readAndWriteResult.setSuccess(true);
+		readAndWriteResult.setContent(content);
+	}
+
+	/***
+	 * 新增一个新的接口
+	 *
+	 * @param request
+	 * @param path
+	 * @param content
+	 * @param charset
+	 * @return
+	 */
+	public static ReadAndWriteResult addStub(HttpServletRequest request, String path, String content, String charset) {
+		ReadAndWriteResult readAndWriteResult = new ReadAndWriteResult();
+		if (ValueWidget.isNullOrEmpty(content)) {
+			readAndWriteResult.setErrorMessage("内容为空");
+			return readAndWriteResult;
+		}
+		try {
+			String realPath2 = WebServletUtil.getRealPath(request, path);
+			readAndWriteResult.setAbsolutePath(realPath2);
+			File file = new File(realPath2);
+			if (file.exists()) {
+				logger.error("文件" + realPath2 + "已经存在");
+				return fileHasExistReadAndWriteResult(readAndWriteResult, realPath2);
+			} else {
+				writeStubFile(content, charset, readAndWriteResult, file);
+			}
+
+		} catch (java.io.FileNotFoundException ex) {
+			ex.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return readAndWriteResult;
+	}
 	public static ReadAndWriteResult stub(HttpServletRequest request, String path) {
 		return HWUtils.stub(request, path, SystemHWUtil.CURR_ENCODING);
 	}
