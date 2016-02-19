@@ -156,7 +156,7 @@ public class HWUtils {
 		ReadAndWriteResult readAndWriteResult = new ReadAndWriteResult();
 		try {
 			String realPath2 = WebServletUtil.getRealPath(request, path);
-			readAndWriteResult.setAbsolutePath(realPath2);
+			readAndWriteResult.setAbsolutePath(escapePath(realPath2));
 			File file = new File(realPath2);
 			if (!file.exists()) {
 				return fileNotExistReadAndWriteResult(readAndWriteResult, realPath2);
@@ -168,7 +168,7 @@ public class HWUtils {
 			content = FileUtils.getFullContent2(input, charset, true);
 			setServletUrl(request, path, readAndWriteResult);
 			readAndWriteResult.setContent(content);
-			readAndWriteResult.setSuccess(true);
+			readAndWriteResult.setResult(true);
 		} catch (java.io.FileNotFoundException ex) {
 			ex.printStackTrace();
 		} catch (IOException e) {
@@ -185,10 +185,14 @@ public class HWUtils {
 	 * @return
 	 */
 	private static ReadAndWriteResult fileNotExistReadAndWriteResult(ReadAndWriteResult readAndWriteResult, String realPath2) {
-		readAndWriteResult.setSuccess(false);
-		readAndWriteResult.setErrorMessage("文件" + realPath2 + "不存在");
+		readAndWriteResult.setResult(false);
+		readAndWriteResult.setErrorMessage("文件" + escapePath(realPath2) + "不存在");
 		readAndWriteResult.setContent(SystemHWUtil.EMPTY);
 		return readAndWriteResult;
+	}
+
+	private static String escapePath(String realPath2) {
+		return realPath2.replace("\\", "\\\\");
 	}
 
 	/***
@@ -198,8 +202,8 @@ public class HWUtils {
 	 * @return
 	 */
 	private static ReadAndWriteResult fileHasExistReadAndWriteResult(ReadAndWriteResult readAndWriteResult, String realPath2) {
-		readAndWriteResult.setSuccess(false);
-		readAndWriteResult.setErrorMessage("文件" + realPath2 + "已经存在");
+		readAndWriteResult.setResult(false);
+		readAndWriteResult.setErrorMessage("文件" + escapePath(realPath2) + "已经存在");
 		readAndWriteResult.setContent(SystemHWUtil.EMPTY);
 		return readAndWriteResult;
 	}
@@ -212,7 +216,7 @@ public class HWUtils {
 		}
 		try {
 			String realPath2 = WebServletUtil.getRealPath(request, path);
-			readAndWriteResult.setAbsolutePath(realPath2);
+			readAndWriteResult.setAbsolutePath(escapePath(realPath2));
 			File file = new File(realPath2);
 			if (file.exists()) {
 				setServletUrl(request, path, readAndWriteResult);
@@ -235,7 +239,7 @@ public class HWUtils {
 		FileWriterWithEncoding fileW = new FileWriterWithEncoding(file, charset);
 		fileW.write(content);
 		fileW.close();
-		readAndWriteResult.setSuccess(true);
+		readAndWriteResult.setResult(true);
 		readAndWriteResult.setContent(content);
 	}
 
@@ -261,7 +265,7 @@ public class HWUtils {
 			if (!parentFile.exists()) {
 				parentFile.mkdirs();
 			}
-			readAndWriteResult.setAbsolutePath(realPath2);
+			readAndWriteResult.setAbsolutePath(escapePath(realPath2));
 			File file = new File(realPath2);
 			if (file.exists()) {
 				logger.error("文件" + realPath2 + "已经存在");

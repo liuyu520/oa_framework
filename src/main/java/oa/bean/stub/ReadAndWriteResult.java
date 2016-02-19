@@ -5,7 +5,7 @@ package oa.bean.stub;
  * 用于stub 测试
  */
 public class ReadAndWriteResult {
-    private boolean success;
+    private boolean result;
     private String content;
     private String errorMessage;
     /***
@@ -21,12 +21,12 @@ public class ReadAndWriteResult {
      */
     private String url;
 
-    public boolean isSuccess() {
-        return success;
+    public boolean isResult() {
+        return result;
     }
 
-    public void setSuccess(boolean success) {
-        this.success = success;
+    public void setResult(boolean result) {
+        this.result = result;
     }
 
     public String getContent() {

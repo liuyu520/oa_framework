@@ -68,7 +68,7 @@ public class StubController {
         }
         ReadAndWriteResult readAndWriteResult = HWUtils.stub(request, actionPath, charset);
         String content = readAndWriteResult.getContent();
-        if (!readAndWriteResult.isSuccess()) {
+        if (!readAndWriteResult.isResult()) {
             logger.error(readAndWriteResult.getErrorMessage());
         }
         logger.info(SystemHWUtil.CRLF + content);
