@@ -2,34 +2,31 @@ package oa.web.controller.common;
 
 import com.common.dict.Constant2;
 import com.common.util.SystemHWUtil;
+import com.common.util.WebServletUtil;
 import com.io.hw.json.HWJacksonUtils;
 import com.string.widget.util.ValueWidget;
 import oa.bean.stub.ReadAndWriteResult;
 import oa.util.HWUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /***
  * 用于stub
  *
  * @author huangweii 2015年5月29日<br>
- * 路径中不能含有英文句点
+ * 路径中不能含有英文句点<br>
+ * stub 与WEB-INF 是同级目录
  */
 @Controller
 @RequestMapping("/stub")
 public class StubController {
-    public static final String stub_folder_no_Slash = "stub";
-    /***
-     * stub/
-     */
-    public static final String stub_folder = stub_folder_no_Slash + Constant2.Slash;
-    
-    public static final String stub_file_Suffix = ".json";
     
     protected Logger logger = Logger.getLogger(this.getClass());
 
@@ -43,7 +40,7 @@ public class StubController {
     @RequestMapping(value = "/{action}", produces = SystemHWUtil.RESPONSE_CONTENTTYPE_JSON_UTF)
     public String corsJsonSimple(HttpServletRequest request,
                                  @PathVariable String action, String callback, String charset) {
-        return stubAction(request, stub_folder + action + stub_file_Suffix, callback, charset);
+        return stubAction(request, Constant2.stub_folder + action /*+ stub_file_Suffix*/, callback, charset);
     }
 
     /***
@@ -59,7 +56,7 @@ public class StubController {
                                  @PathVariable String namespace, @PathVariable String action,
                                  String callback
             , String charset) {
-        return stubAction(request, stub_folder + namespace + Constant2.Slash + action
+        return stubAction(request, Constant2.stub_folder + namespace + Constant2.Slash + action
                 , callback, charset);
     }
 
@@ -68,10 +65,11 @@ public class StubController {
             charset = SystemHWUtil.CURR_ENCODING;
         }
         ReadAndWriteResult readAndWriteResult = HWUtils.stub(request, actionPath, charset);
-        String content = readAndWriteResult.getContent();
+
         if (!readAndWriteResult.isResult()) {
             logger.error(readAndWriteResult.getErrorMessage());
         }
+        String content = readAndWriteResult.getContent();
         logger.info(SystemHWUtil.CRLF + content);
         return HWJacksonUtils.getJsonP(content, callback);
     }
@@ -84,7 +82,7 @@ public class StubController {
                              @PathVariable String namespace, @PathVariable String action,
                              String callback
             , String charset) {
-        return stubAction(request, stub_folder + group + Constant2.Slash + namespace + Constant2.Slash + action
+        return stubAction(request, Constant2.stub_folder + group + Constant2.Slash + namespace + Constant2.Slash + action
                 /*+ stub_file_Suffix*/, callback, charset);
     }
 
@@ -96,7 +94,7 @@ public class StubController {
                              @PathVariable String namespace, @PathVariable String action,
                              String callback
             , String charset) {
-        return stubAction(request, stub_folder + version + Constant2.Slash + group + Constant2.Slash + namespace + Constant2.Slash + action
+        return stubAction(request, Constant2.stub_folder + version + Constant2.Slash + group + Constant2.Slash + namespace + Constant2.Slash + action
                 /*+ stub_file_Suffix*/, callback, charset);
     }
 
@@ -109,8 +107,18 @@ public class StubController {
                              @PathVariable String namespace, @PathVariable String action,
                              String callback
             , String charset) {
-        return stubAction(request, stub_folder + version + Constant2.Slash + module + Constant2.Slash + group + Constant2.Slash + namespace + Constant2.Slash + action
+        return stubAction(request, Constant2.stub_folder + version + Constant2.Slash + module + Constant2.Slash + group + Constant2.Slash + namespace + Constant2.Slash + action
                 /*+ stub_file_Suffix*/, callback, charset);
     }
 
+    @RequestMapping("/list")
+    public String list(HttpServletRequest request, Model model, String targetView) {
+        String realPath2 = WebServletUtil.getRealPath(request, Constant2.stub_folder);
+        List<String> stubPathList = HWUtils.listStubServletPath(realPath2);
+        model.addAttribute("stubPathList", stubPathList);
+        if (!ValueWidget.isNullOrEmpty(targetView)) {
+            return targetView;
+        }
+        return "list";
+    }
 }

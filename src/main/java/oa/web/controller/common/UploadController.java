@@ -546,11 +546,12 @@ public class UploadController extends BaseController {
 			HttpServletRequest request, HttpServletResponse response,
 			String id_argument) throws FileUploadException {
 		System.out.println(file);// org.springframework.web.multipart.commons.CommonsMultipartFile@5895fca6
-		System.out.println(file.getOriginalFilename());// 若没有上传文件,则为空字符串
+
 		System.out.println(file.getSize());// 若没有上传文件,则为0
 		if (file == null || file.getSize() == 0) {
 			return getJavascript(Constant2.ERROR_UPLOAD_FILE_NO_SELECTED_FILE);
 		}
+		System.out.println(file.getOriginalFilename());// 若没有上传文件,则为空字符串
 //		response.setCharacterEncoding("UTF-8");
 		UploadResult uploadResult2 = beforeUpload(request,false);
 		if (!uploadResult2.isSuccess()) {
@@ -808,8 +809,9 @@ public class UploadController extends BaseController {
 
 		// 遍历目录取的文件信息
 		List<Hashtable> fileList = new ArrayList<Hashtable>();
-		if (currentPathFile.listFiles() != null) {
-			for (File file : currentPathFile.listFiles()) {
+		File[] files = currentPathFile.listFiles();
+		if (files != null) {
+			for (File file : files) {
 				Hashtable<String, Object> hash = new Hashtable<String, Object>();
 				String fileName = file.getName();
 				if (file.isDirectory()) {
@@ -883,7 +885,7 @@ public class UploadController extends BaseController {
 		return null;
 	}
 
-	public class NameComparator implements Comparator {
+	public static class NameComparator implements Comparator {
 		public int compare(Object a, Object b) {
 			Hashtable hashA = (Hashtable) a;
 			Hashtable hashB = (Hashtable) b;
@@ -900,7 +902,7 @@ public class UploadController extends BaseController {
 		}
 	}
 
-	public class SizeComparator implements Comparator {
+	public static class SizeComparator implements Comparator {
 		public int compare(Object a, Object b) {
 			Hashtable hashA = (Hashtable) a;
 			Hashtable hashB = (Hashtable) b;
@@ -924,7 +926,7 @@ public class UploadController extends BaseController {
 		}
 	}
 
-	public class TypeComparator implements Comparator {
+	public static class TypeComparator implements Comparator {
 		public int compare(Object a, Object b) {
 			Hashtable hashA = (Hashtable) a;
 			Hashtable hashB = (Hashtable) b;

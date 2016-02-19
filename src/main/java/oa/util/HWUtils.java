@@ -8,7 +8,6 @@ import com.string.widget.util.RandomUtils;
 import com.string.widget.util.ValueWidget;
 import net.sf.jxls.transformer.XLSTransformer;
 import oa.bean.stub.ReadAndWriteResult;
-import oa.web.controller.common.StubController;
 import org.apache.commons.compress.archivers.dump.InvalidFormatException;
 import org.apache.commons.io.output.FileWriterWithEncoding;
 import org.apache.log4j.Logger;
@@ -162,15 +161,15 @@ public class HWUtils {
 			String realPath2 = WebServletUtil.getRealPath(request, path);
 			readAndWriteResult.setAbsolutePath(escapePath(realPath2));
 			String pathTmp = null;
-			if (realPath2.endsWith(StubController.stub_file_Suffix)) {
+			if (realPath2.endsWith(Constant2.stub_file_Suffix)) {
 				pathTmp = realPath2;
 			} else {
-				pathTmp = realPath2 + StubController.stub_file_Suffix;
+				pathTmp = realPath2 + Constant2.stub_file_Suffix;
 			}
 			File file = new File(pathTmp);
 			if (!file.exists()) {
 				//兼容appList.do.json 文件名
-				file = new File(realPath2 + ".do" + StubController.stub_file_Suffix);
+				file = new File(realPath2 + ".do" + Constant2.stub_file_Suffix);
 			}
 			realPath2 = file.getAbsolutePath();
 			if (!file.exists()) {
@@ -244,6 +243,13 @@ public class HWUtils {
 			readAndWriteResult.setAbsolutePath(escapePath(realPath2));
 			File file = new File(realPath2);
 			if (file.exists()) {
+				String contentOld = FileUtils.getFullContent2(file, charset, true/*isCloseStream*/);
+				if (content.equals(contentOld)) {
+					readAndWriteResult.setResult(false);
+					readAndWriteResult.setErrorMessage("无变化");
+					readAndWriteResult.setContent(contentOld);
+					return readAndWriteResult;
+				}
 				setServletUrl(request, path, readAndWriteResult);
 				writeStubFile(content, charset, readAndWriteResult, file);
 				readAndWriteResult.setTips("更新成功");
@@ -260,6 +266,15 @@ public class HWUtils {
 		return readAndWriteResult;
 	}
 
+	/***
+	 * 写入文件
+	 *
+	 * @param content
+	 * @param charset
+	 * @param readAndWriteResult
+	 * @param file
+	 * @throws IOException
+	 */
 	private static void writeStubFile(String content, String charset, ReadAndWriteResult readAndWriteResult, File file) throws IOException {
 		FileWriterWithEncoding fileW = new FileWriterWithEncoding(file, charset);
 		fileW.write(content);
@@ -277,7 +292,7 @@ public class HWUtils {
 	 * @param charset
 	 * @return
 	 */
-	public static ReadAndWriteResult addStub(HttpServletRequest request, String path, String content, String charset) {
+	public static ReadAndWriteResult saveStub(HttpServletRequest request, String path, String content, String charset) {
 		ReadAndWriteResult readAndWriteResult = new ReadAndWriteResult();
 		if (ValueWidget.isNullOrEmpty(content)) {
 			readAndWriteResult.setErrorMessage("内容为空");
@@ -337,7 +352,7 @@ public class HWUtils {
 		List<String> pathList = new ArrayList<String>();
 		for (int i = 0; i < files.size(); i++) {
 			String interface2 = files.get(i).getAbsolutePath().replace(rootPath, "");
-			interface2 = interface2.replace("\\", "/").replaceAll(".json$", "");
+			interface2 = interface2.replace("\\", "/").replaceAll(Constant2.stub_file_Suffix+"$", "");
 //			System.out.println(interface2);
 			pathList.add(interface2);
 		}

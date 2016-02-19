@@ -312,6 +312,9 @@ public abstract class GenericController <T>{
 	@RequestMapping(value = "/{id}/delete")
 	public String deleteOne(@PathVariable int id, Model model,HttpServletRequest request,String targetView) {
 		boolean success=deleteCommon(id, model, request);
+		if (!success) {
+			logger.error("delete failed id:" + id);
+		}
 		String resultUrl=getRedirectViewAll() + "?fsdf=" + new Date().getTime();
 		if(!ValueWidget.isNullOrEmpty(targetView)){
 			resultUrl=resultUrl+"&targetView="+targetView;///api_group/list?fsdf=1434898280423&targetView=api_group/list_common

@@ -43,15 +43,8 @@ public abstract class UploadGenericController  extends BaseController{
 			AccessLog accessLog=logUploadFile(request);//记录日志
 			String errorPrefix="upload failed,error:";
 			String fileName = file.getOriginalFilename();// 上传的文件名
-			if(file.getSize()==0){
-				String errorMessage=errorPrefix+"file size is zero";
-				if(!ValueWidget.isNullOrEmpty(accessLog)){
-					accessLog.setOperateResult(errorMessage);
-					logSave(accessLog, request);
-				}
-				
-				return errorMessage;
-			}
+			String errorMessage = filterFileSize(file, request, accessLog, errorPrefix);
+			if (errorMessage != null) return errorMessage;
 			fileName=fileName.replaceAll("[\\s]+",	SystemHWUtil.EMPTY);//IE中识别不了有空格的json
 			
 			
@@ -71,5 +64,19 @@ public abstract class UploadGenericController  extends BaseController{
 		return content;
 
 	}
+
+	private String filterFileSize(@RequestParam(value = "image223", required = false) MultipartFile file, HttpServletRequest request, AccessLog accessLog, String errorPrefix) {
+		if (file.getSize() == 0) {
+			String errorMessage = errorPrefix + "file size is zero";
+			if (!ValueWidget.isNullOrEmpty(accessLog)) {
+				accessLog.setOperateResult(errorMessage);
+				logSave(accessLog, request);
+			}
+
+			return errorMessage;
+		}
+		return null;
+	}
+
 	public abstract UploadCallback getUploadCallback();
 }
