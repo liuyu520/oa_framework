@@ -166,6 +166,7 @@ public class HWUtils {
 				return fileNotExistReadAndWriteResult(readAndWriteResult, realPath2);
 			}
 			content = FileUtils.getFullContent2(input, charset, true);
+			setServletUrl(request, path, readAndWriteResult);
 			readAndWriteResult.setContent(content);
 			readAndWriteResult.setSuccess(true);
 		} catch (java.io.FileNotFoundException ex) {
@@ -176,6 +177,13 @@ public class HWUtils {
 		return readAndWriteResult;
 	}
 
+	/***
+	 * 文件不存在
+	 *
+	 * @param readAndWriteResult
+	 * @param realPath2
+	 * @return
+	 */
 	private static ReadAndWriteResult fileNotExistReadAndWriteResult(ReadAndWriteResult readAndWriteResult, String realPath2) {
 		readAndWriteResult.setSuccess(false);
 		readAndWriteResult.setErrorMessage("文件" + realPath2 + "不存在");
@@ -183,6 +191,12 @@ public class HWUtils {
 		return readAndWriteResult;
 	}
 
+	/***
+	 * 文件已经存在
+	 * @param readAndWriteResult
+	 * @param realPath2
+	 * @return
+	 */
 	private static ReadAndWriteResult fileHasExistReadAndWriteResult(ReadAndWriteResult readAndWriteResult, String realPath2) {
 		readAndWriteResult.setSuccess(false);
 		readAndWriteResult.setErrorMessage("文件" + realPath2 + "已经存在");
@@ -201,7 +215,9 @@ public class HWUtils {
 			readAndWriteResult.setAbsolutePath(realPath2);
 			File file = new File(realPath2);
 			if (file.exists()) {
+				setServletUrl(request, path, readAndWriteResult);
 				writeStubFile(content, charset, readAndWriteResult, file);
+				readAndWriteResult.setTips("保存成功");
 			} else {
 				logger.error("文件" + realPath2 + "不存在");
 				return fileNotExistReadAndWriteResult(readAndWriteResult, realPath2);
@@ -251,7 +267,9 @@ public class HWUtils {
 				logger.error("文件" + realPath2 + "已经存在");
 				return fileHasExistReadAndWriteResult(readAndWriteResult, realPath2);
 			} else {
+				setServletUrl(request, path, readAndWriteResult);
 				writeStubFile(content, charset, readAndWriteResult, file);
+				readAndWriteResult.setTips("添加成功");
 			}
 
 		} catch (java.io.FileNotFoundException ex) {
@@ -261,6 +279,20 @@ public class HWUtils {
 		}
 		return readAndWriteResult;
 	}
+
+	private static void setServletUrl(HttpServletRequest request, String path, ReadAndWriteResult readAndWriteResult) {
+		String serverUrl = getServletUrl(request);//http://10.1.253.44:81/tv_mobile
+		readAndWriteResult.setUrl(serverUrl + "/" + path.replaceAll(".json$", SystemHWUtil.EMPTY));
+	}
+
+	/***
+	 * @param request
+	 * @return : http://10.1.253.44:81/tv_mobile
+	 */
+	public static String getServletUrl(HttpServletRequest request) {
+		return request.getRequestURL().toString().replaceAll("(https?://[^/]+)/.*$", "$1") + request.getContextPath();
+	}
+
 	public static ReadAndWriteResult stub(HttpServletRequest request, String path) {
 		return HWUtils.stub(request, path, SystemHWUtil.CURR_ENCODING);
 	}

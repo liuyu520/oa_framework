@@ -9,9 +9,17 @@ public class ReadAndWriteResult {
     private String content;
     private String errorMessage;
     /***
+     * 操作成功提示信息
+     */
+    private String tips;
+    /***
      * json 文件的绝对路径
      */
     private String absolutePath;
+    /***
+     * 访问地址
+     */
+    private String url;
 
     public boolean isSuccess() {
         return success;
@@ -43,5 +51,21 @@ public class ReadAndWriteResult {
 
     public void setAbsolutePath(String absolutePath) {
         this.absolutePath = absolutePath;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getTips() {
+        return tips;
+    }
+
+    public void setTips(String tips) {
+        this.tips = tips;
     }
 }
