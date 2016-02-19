@@ -239,7 +239,12 @@ public class HWUtils {
 			return readAndWriteResult;
 		}
 		try {
-			String realPath2 = WebServletUtil.getRealPath(request, path);
+			String realPath2 = WebServletUtil.getRealPath(request, path);//父目录可能不存在
+			String parent = SystemHWUtil.getParentDir(realPath2);
+			File parentFile = new File(parent);
+			if (!parentFile.exists()) {
+				parentFile.mkdirs();
+			}
 			readAndWriteResult.setAbsolutePath(realPath2);
 			File file = new File(realPath2);
 			if (file.exists()) {

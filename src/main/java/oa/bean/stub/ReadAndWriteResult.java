@@ -8,6 +8,10 @@ public class ReadAndWriteResult {
     private boolean success;
     private String content;
     private String errorMessage;
+    /***
+     * json 文件的绝对路径
+     */
+    private String absolutePath;
 
     public boolean isSuccess() {
         return success;
@@ -31,5 +35,13 @@ public class ReadAndWriteResult {
 
     public void setErrorMessage(String errorMessage) {
         this.errorMessage = errorMessage;
+    }
+
+    public String getAbsolutePath() {
+        return absolutePath;
+    }
+
+    public void setAbsolutePath(String absolutePath) {
+        this.absolutePath = absolutePath;
     }
 }
