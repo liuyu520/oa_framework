@@ -45,12 +45,11 @@ import java.util.*;
 //@Scope(value = "prototype")
 @RequestMapping("/upload")
 public class UploadController extends BaseController {
-	private static HashMap<String, String> extMap;
-	private static long maxSize;
 	public static final int UPLOAD_RESULT_SUCCESS=0;
 	public static final int UPLOAD_RESULT_FAILED=1;
-	private CompressFailedPicDao compressFailedPicDao;
-	
+	private static HashMap<String, String> extMap;
+	private static long maxSize;
+
 	static {
 		extMap = new HashMap<String, String>();
 		extMap.put("image", "gif,jpg,jpeg,png,bmp,GIF,JPG,JPEG,PNG,BMP");
@@ -62,6 +61,11 @@ public class UploadController extends BaseController {
 				"file",
 				"doc,docx,xls,xlsx,ppt,htm,html,txt,zip,rar,gz,bz2,DOC,DOCX,XLS,XLSX,PPT,HTM,HTML,TXT,ZIP,RAR,GZ,BZ2");
 
+	}
+	
+	private CompressFailedPicDao compressFailedPicDao;
+
+	private static void init(){
 		// 最大文件大小
 		String maxSizeStr=DictionaryParam.get(Constant2.DICTIONARY_GROUP_GLOBAL_SETTING,"pic_max_size");
 		maxSize=Constant2.UPLOAD_SIZE_DEFAULT;
@@ -69,6 +73,14 @@ public class UploadController extends BaseController {
 			maxSize=Long.parseLong(maxSizeStr);
 		}
 	}
+	@ResponseBody
+	@RequestMapping(value = "/init", produces = SystemHWUtil.RESPONSE_CONTENTTYPE_JSON_UTF)
+	public String init(HttpServletRequest request, HttpServletResponse response,HttpSession session)
+			throws IOException {
+		init();
+		return Constant2.RESPONSE_RIGHT_RESULT;
+	}
+	
 	@ResponseBody
 	@RequestMapping(value = "/upload_video", produces = SystemHWUtil.RESPONSE_CONTENTTYPE_JSON_UTF)
 	public String uploadVideo(
@@ -844,6 +856,33 @@ public class UploadController extends BaseController {
 
 	}
 
+	public CompressFailedPicDao getCompressFailedPicDao() {
+		return compressFailedPicDao;
+	}
+
+	@Resource
+	public void setCompressFailedPicDao(CompressFailedPicDao compressFailedPicDao) {
+		this.compressFailedPicDao = compressFailedPicDao;
+	}
+
+	@Override
+	protected void beforeAddInput(Model model) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	protected void errorDeal(Model model) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public String getJspFolder() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	public class NameComparator implements Comparator {
 		public int compare(Object a, Object b) {
 			Hashtable hashA = (Hashtable) a;
@@ -900,30 +939,6 @@ public class UploadController extends BaseController {
 						.compareTo((String) hashB.get("filetype"));
 			}
 		}
-	}
-
-	public CompressFailedPicDao getCompressFailedPicDao() {
-		return compressFailedPicDao;
-	}
-
-	@Resource
-	public void setCompressFailedPicDao(CompressFailedPicDao compressFailedPicDao) {
-		this.compressFailedPicDao = compressFailedPicDao;
-	}
-	@Override
-	protected void beforeAddInput(Model model) {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
-	protected void errorDeal(Model model) {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
-	public String getJspFolder() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 	
 }

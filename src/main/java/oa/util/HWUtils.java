@@ -8,6 +8,7 @@ import com.string.widget.util.RandomUtils;
 import com.string.widget.util.ValueWidget;
 import net.sf.jxls.transformer.XLSTransformer;
 import oa.bean.stub.ReadAndWriteResult;
+import oa.web.controller.common.StubController;
 import org.apache.commons.compress.archivers.dump.InvalidFormatException;
 import org.apache.commons.io.output.FileWriterWithEncoding;
 import org.apache.log4j.Logger;
@@ -28,7 +29,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class HWUtils {
@@ -158,11 +161,22 @@ public class HWUtils {
 		try {
 			String realPath2 = WebServletUtil.getRealPath(request, path);
 			readAndWriteResult.setAbsolutePath(escapePath(realPath2));
-			File file = new File(realPath2);
+			String pathTmp = null;
+			if (realPath2.endsWith(StubController.stub_file_Suffix)) {
+				pathTmp = realPath2;
+			} else {
+				pathTmp = realPath2 + StubController.stub_file_Suffix;
+			}
+			File file = new File(pathTmp);
+			if (!file.exists()) {
+				//兼容appList.do.json 文件名
+				file = new File(realPath2 + ".do" + StubController.stub_file_Suffix);
+			}
+			realPath2 = file.getAbsolutePath();
 			if (!file.exists()) {
 				return fileNotExistReadAndWriteResult(readAndWriteResult, realPath2);
 			}
-			java.io.InputStream input = new FileInputStream(realPath2);
+			java.io.InputStream input = new FileInputStream(file);
 			if (null == input) {
 				return fileNotExistReadAndWriteResult(readAndWriteResult, realPath2);
 			}
@@ -312,4 +326,21 @@ public class HWUtils {
 		return HWUtils.stub(request, path, SystemHWUtil.CURR_ENCODING);
 	}
 
+	/***
+	 * 列出所有的stub 接口
+	 *
+	 * @param rootPath
+	 * @return
+	 */
+	public static List<String> listStubServletPath(String rootPath) {
+		List<File> files = FileUtils.getListFiles(rootPath, "json");
+		List<String> pathList = new ArrayList<String>();
+		for (int i = 0; i < files.size(); i++) {
+			String interface2 = files.get(i).getAbsolutePath().replace(rootPath, "");
+			interface2 = interface2.replace("\\", "/").replaceAll(".json$", "");
+//			System.out.println(interface2);
+			pathList.add(interface2);
+		}
+		return pathList;
+	}
 }

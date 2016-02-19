@@ -17,7 +17,8 @@ import javax.servlet.http.HttpServletRequest;
 /***
  * 用于stub
  *
- * @author huangweii 2015年5月29日
+ * @author huangweii 2015年5月29日<br>
+ * 路径中不能含有英文句点
  */
 @Controller
 @RequestMapping("/stub")
@@ -59,7 +60,7 @@ public class StubController {
                                  String callback
             , String charset) {
         return stubAction(request, stub_folder + namespace + Constant2.Slash + action
-                + stub_file_Suffix, callback, charset);
+                , callback, charset);
     }
 
     private String stubAction(HttpServletRequest request, String actionPath, String callback, String charset) {
@@ -84,7 +85,7 @@ public class StubController {
                              String callback
             , String charset) {
         return stubAction(request, stub_folder + group + Constant2.Slash + namespace + Constant2.Slash + action
-                + stub_file_Suffix, callback, charset);
+                /*+ stub_file_Suffix*/, callback, charset);
     }
 
     @ResponseBody
@@ -96,7 +97,7 @@ public class StubController {
                              String callback
             , String charset) {
         return stubAction(request, stub_folder + version + Constant2.Slash + group + Constant2.Slash + namespace + Constant2.Slash + action
-                + stub_file_Suffix, callback, charset);
+                /*+ stub_file_Suffix*/, callback, charset);
     }
 
     @ResponseBody
@@ -109,7 +110,7 @@ public class StubController {
                              String callback
             , String charset) {
         return stubAction(request, stub_folder + version + Constant2.Slash + module + Constant2.Slash + group + Constant2.Slash + namespace + Constant2.Slash + action
-                + stub_file_Suffix, callback, charset);
+                /*+ stub_file_Suffix*/, callback, charset);
     }
 
 }
