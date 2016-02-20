@@ -65,6 +65,7 @@ public class StubController {
         if (ValueWidget.isNullOrEmpty(charset)) {
             charset = SystemHWUtil.CURR_ENCODING;
         }
+        System.out.println("访问:" + actionPath);
         ReadAndWriteResult readAndWriteResult = HWUtils.stub(request, actionPath, charset);
 
         if (!readAndWriteResult.isResult()) {

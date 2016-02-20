@@ -170,6 +170,9 @@ public class HWUtils {
 			}
 			File file = new File(pathTmp);
 			if (!file.exists()) {
+				String errorMessage = pathTmp + " does not exist";
+				System.out.println(errorMessage);
+				logger.error(errorMessage);
 				//兼容appList.do.json 文件名
 				file = new File(realPath2 + ".do" + Constant2.stub_file_Suffix);
 			}
@@ -202,7 +205,9 @@ public class HWUtils {
 	 */
 	private static ReadAndWriteResult fileNotExistReadAndWriteResult(ReadAndWriteResult readAndWriteResult, String realPath2) {
 		readAndWriteResult.setResult(false);
-		readAndWriteResult.setErrorMessage("文件" + escapePath(realPath2) + "不存在");
+		String errorMessage = "文件" + escapePath(realPath2) + "不存在";
+		readAndWriteResult.setErrorMessage(errorMessage);
+		System.out.println(errorMessage);
 		readAndWriteResult.setContent(SystemHWUtil.EMPTY);
 		return readAndWriteResult;
 	}
@@ -219,7 +224,9 @@ public class HWUtils {
 	 */
 	private static ReadAndWriteResult fileHasExistReadAndWriteResult(ReadAndWriteResult readAndWriteResult, String realPath2) {
 		readAndWriteResult.setResult(false);
-		readAndWriteResult.setErrorMessage("文件" + escapePath(realPath2) + "已经存在");
+		String errorMessage = "文件" + escapePath(realPath2) + "已经存在";
+		readAndWriteResult.setErrorMessage(errorMessage);
+		System.out.println(errorMessage);
 		readAndWriteResult.setContent(SystemHWUtil.EMPTY);
 		return readAndWriteResult;
 	}
@@ -258,7 +265,9 @@ public class HWUtils {
 				session.setAttribute(SESSION_KEY_STUB_OLD_CONTENT, contentOld);
 				readAndWriteResult.setTips("更新成功");
 			} else {
-				logger.error("文件" + realPath2 + "不存在");
+				String errorMessage = "文件" + realPath2 + "不存在";
+				logger.error(errorMessage);
+				System.out.println(errorMessage);
 				return fileNotExistReadAndWriteResult(readAndWriteResult, realPath2);
 			}
 
@@ -271,8 +280,8 @@ public class HWUtils {
 	}
 
 	/***
-	 * 写入文件
-	 *
+	 * 写入文件<br />
+	 *	已关闭输出流
 	 * @param content
 	 * @param charset
 	 * @param readAndWriteResult
@@ -312,7 +321,9 @@ public class HWUtils {
 			readAndWriteResult.setAbsolutePath(escapePath(realPath2));
 			File file = new File(realPath2);
 			if (file.exists()) {
-				logger.error("文件" + realPath2 + "已经存在");
+				String errorMessage = "文件" + realPath2 + "已经存在";
+				logger.error(errorMessage);
+				System.out.println(errorMessage);
 				return fileHasExistReadAndWriteResult(readAndWriteResult, realPath2);
 			} else {
 				setServletUrl(request, path, readAndWriteResult);
@@ -330,6 +341,7 @@ public class HWUtils {
 
 	private static void setServletUrl(HttpServletRequest request, String path, ReadAndWriteResult readAndWriteResult) {
 		String serverUrl = getServletUrl(request);//http://10.1.253.44:81/tv_mobile
+		logger.info("serverUrl:" + serverUrl);
 		readAndWriteResult.setUrl(serverUrl + Constant2.Slash + path.replaceAll(".json$", SystemHWUtil.EMPTY));
 	}
 
