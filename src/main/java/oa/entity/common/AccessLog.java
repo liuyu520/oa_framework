@@ -1,5 +1,7 @@
 package oa.entity.common;
 
+import com.common.util.SystemHWUtil;
+
 import javax.persistence.*;
 
 /***
@@ -45,7 +47,7 @@ public class AccessLog {
 	/***
 	 * 登录用户的数据库ID
 	 */
-	private int userId;
+	private int userId=SystemHWUtil.NEGATIVE_ONE;
 	private String username;
 	/***
 	 * /SSLServer/addUser.security

@@ -46,12 +46,17 @@ public class MemberInterceptor implements HandlerInterceptor {
             } else {
                 message = getErrorMessage();
             }
-
+            log(request);
             response.sendRedirect(contextPath + getReturnUrl() + "?" + Constant2.RESPONSE_KEY_ERROR_MESSAGE + "=" + URLEncoder.encode(message, "UTF-8"));
             return false;
         }
         return true;
     }
+
+    public void log(HttpServletRequest request) {
+    }
+
+    ;
 
     /**
      * 登录失败的回调地址<br />

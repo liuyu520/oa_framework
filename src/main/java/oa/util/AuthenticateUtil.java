@@ -38,9 +38,17 @@ public class AuthenticateUtil {
         return isLogined(user2, loginFlag);
     }
 
-    public static void logout(HttpSession session) {
+    /**
+     * 为了记录日志时,记录用户id和用户名
+     *
+     * @param session
+     * @return
+     */
+    public static GenericUser logout(HttpSession session) {
+        GenericUser user = (GenericUser) session.getAttribute(Constant2.SESSION_KEY_LOGINED_USER);
         session.removeAttribute(Constant2.SESSION_KEY_LOGINED_USER);
         session.removeAttribute(Constant2.SESSION_KEY_LOGINED_FLAG);
+        return user;//用于记录日志时记录用户名
 //		session.invalidate();//TODO 千万不能执行
     }
 }
