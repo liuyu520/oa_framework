@@ -6,11 +6,9 @@ import com.common.util.ReflectHWUtils;
 import com.common.util.WebServletUtil;
 import com.string.widget.util.ValueWidget;
 import com.time.util.TimeHWUtil;
-import oa.dao.common.AccessLogDao;
 import oa.entity.common.AccessLog;
 import oa.web.controller.generic.GenericController;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.net.InetAddress;
@@ -23,7 +21,7 @@ import java.util.Date;
  * @param <T>
  */
 public abstract class BaseController<T> extends GenericController<T>{
-	private AccessLogDao accessLogDao;
+//	private AccessLogDao accessLogDao;
 
 	/***
 	 * 进入页面
@@ -123,17 +121,27 @@ public abstract class BaseController<T> extends GenericController<T>{
 			String queryString=request.getQueryString();
 			accessLog.setQueryString(queryString);//例如"username=whuang&password=root"
 		}
-		
-		accessLogDao.save(accessLog);
+
+		saveLog(accessLog);
 	}
-	public AccessLogDao getAccessLogDao() {
+
+	/**
+	 * 子类需要覆写
+	 *
+	 * @param accessLog
+	 */
+	public void saveLog(AccessLog accessLog) {
+//		accessLogDao.save(accessLog);
+		logger.error("child class need to override");
+	}
+	/*public AccessLogDao getAccessLogDao() {
 		return accessLogDao;
 	}
 
 	@Resource
 	public void setAccessLogDao(AccessLogDao accessLogDao) {
 		this.accessLogDao = accessLogDao;
-	}
+	}*/
 
 	/***
 	 * 获取客户端真是IP地址

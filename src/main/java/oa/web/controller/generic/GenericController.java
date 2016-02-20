@@ -10,7 +10,6 @@ import com.common.web.view.PageView;
 import com.io.hw.json.HWJacksonUtils;
 import com.string.widget.util.ValueWidget;
 import com.time.util.TimeHWUtil;
-import oa.service.DictionaryParam;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.map.ListOrderedMap;
 import org.apache.log4j.Logger;
@@ -707,12 +706,14 @@ public abstract class GenericController <T>{
 	}
 
 	/***
-	 * 设备类型和路径映射map
+	 * 设备类型和路径映射map<br>
+	 * TODO 需要子类重写
 	 * <br>
 	 * @return
 	 */
 	protected  Map<Integer,String> deviceTypePathMap(){
-		return DictionaryParam.getMap("device_type_path");
+//		return DictionaryParam.getMap("device_type_path");
+		return null;
 	}
 	protected void setJsonPaging(Map map,PageView view){
 		List data = view.getRecordList();
