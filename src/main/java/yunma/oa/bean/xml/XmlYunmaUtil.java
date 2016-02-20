@@ -3,7 +3,6 @@ package yunma.oa.bean.xml;
 import com.common.util.SystemHWUtil;
 import com.io.hw.file.util.FileUtils;
 import com.string.widget.util.ValueWidget;
-import org.junit.Test;
 import yunma.oa.util.OAUtil;
 
 import java.io.IOException;
@@ -54,13 +53,6 @@ public class XmlYunmaUtil {
 		return parseBean;//sbing==null?null:sbing.toString();
 	}
 
-//	@Test
-	public void test_parseAttribute(){
-		String xml="   id=\"2 2\"  a   ";
-		ParseBean parseBean=parseAttribute(xml, 0);
-		System.out.println(parseBean);
-	}
-	
 	public static int getTextNode(String xmlContent,int pos){
 		int totalLength=xmlContent.length();
 		int i=pos;
@@ -78,12 +70,6 @@ public class XmlYunmaUtil {
 			}
 		}
 		return -1;
-	}
-	
-//	@Test
-	public void test_getTextNode(){
-		String xmlContent="</fdsf";
-		System.out.println(getTextNode(xmlContent, 0));
 	}
 	
 	private static ParseBean parseAttribute(String xmlContent,int pos){
@@ -110,7 +96,7 @@ public class XmlYunmaUtil {
 			if(ValueWidget.isNullOrEmpty(sbing)){
 				sbing=new StringBuffer();
 			}
-			
+
 			if(c=='"' && continue2==false){//第一个双引号
 				continue2=true;
 			}else{
@@ -121,7 +107,7 @@ public class XmlYunmaUtil {
 					break;
 				}
 			}
-			
+
 			sbing.append(c);
 			i++;
 		}
@@ -132,9 +118,7 @@ public class XmlYunmaUtil {
 		}
 		return parseBean;//sbing==null?null:sbing.toString();
 	}
-
 	
-
 	/***
 	 * 是否到了> <br> test ok
 	 * @param input
@@ -182,30 +166,6 @@ public class XmlYunmaUtil {
 		}
 		return -1;
 	}
-	
-
-//	@Test
-	public void test_isEndOfTag(){
-		String input=" 	a  >";
-		System.out.println(isEndOfTag(input, 0));
-	}
-	
-//	@Test
-	public void test_isbEGINOfTag(){
-		String input=" 		  </  ";
-		System.out.println(isBeginOfTag(input, 0));
-		System.out.println(input.charAt(isBeginOfTag(input, 0)+1));
-	}
-	
-	
-//	@Test
-	public void test_001(){
-		String input="   ab.c  ";
-		ParseBean parseBean=parseElementName(input, 0);
-		System.out.println(parseBean.getResult().length());
-		System.out.println(parseBean.getResult());
-		System.out.println(parseBean.getLengthHasRead());
-	}
 
 	/***
 	 * </html>
@@ -229,12 +189,6 @@ public class XmlYunmaUtil {
 		return -1;
 	}
 	
-//	@Test
-	public void test_isEnd(){
-		String xmlContent="  </tag>  ";
-		System.out.println(isEnd(xmlContent, 0, "</tag>"));
-	}
-	
 	public static Element getElement(String xmlContent,int pos,Element parentElement){
 		xmlContent=ValueWidget.deleteHTMLComment(xmlContent);
 		Element root=null;
@@ -242,7 +196,7 @@ public class XmlYunmaUtil {
 		int  j, k = 0;
 		index = pos;
 		j = 0;
-		Map<String,Object> attributes=new HashMap<String,Object>(); 
+		Map<String,Object> attributes=new HashMap<String,Object>();
 		while (index < totalLength ) {
 			char c=xmlContent.charAt(index);
 			if(OAUtil.isBlank(c)){//忽略空格
@@ -331,7 +285,7 @@ public class XmlYunmaUtil {
 				index=parseBean.getLengthHasRead();
 			}
 			}while(parseBean!=null&&(!ValueWidget.isNullOrEmpty(parseBean.getResult())));
-			
+
 //			ParseBean parseBean=parseElementName(xmlContent, i);
 //			if (xmlContent.charAt(i) == keyWord.charAt(j)) {
 //				++i;
@@ -352,34 +306,6 @@ public class XmlYunmaUtil {
 		return getElement(xmlContent.toString(),pos,parentElement);
 	}
 	
-//	@Test
-	public void test22() throws IOException{
-		StringBuffer content=FileUtils.getFullContent3("D:\\software\\eclipse\\workspace3\\oa_framework\\src\\main\\resources\\ask_for_leave.xml"
-				, "UTF-8");
-//		String content="<flow id=\"1 2\"  > <name id=\"111\" > <html id=\"ggg\"  > "
-//				+ "<body>aaaa </body>  </html>  </name>   <name id=\"222\" >  bbb  </name>  </flow>";
-//		String content="<flow id=\"1 2\">aaa   </flow>";
-		System.out.println(content);
-		Element root=getElement(content,0,null);
-		System.out.println(root);
-		StringBuffer string=new StringBuffer();
-		getTree(root,string);
-		System.out.println("-----------------");
-		System.out.println(string);
-		
-	}
-	@Test
-	public void test233() throws IOException{
-		String content="<flow id=\"1 2\"  > <name id=\"111\" > <html id=\"ggg\"  > "
-				+ "<body>aaaa </body>  </html>  </name>   <name id=\"222\" >  bbb  </name>  </flow>";
-//		String content="<flow id=\"1 2\">aaa   </flow>";
-		System.out.println(content);
-		Element root=getElement(content,0,null);
-		System.out.println(root);
-	}
-	
-	
-	
 	public static  void getTree(Element root,StringBuffer string ){
 		if(null==string){
 			string=new StringBuffer();
@@ -388,9 +314,9 @@ public class XmlYunmaUtil {
 		if(isParent){
 			String div_before="<div id=\"divTree\" class=\"line\""+
 					"		style=\"width: 213px; border-right-style: solid; border-right-width: 1px; border-right-color: rgb(226, 156, 186); border-left-style: solid; border-left-width: 1px; border-left-color: rgb(226, 156, 186); display: block;\">"+SystemHWUtil.CRLF;
-			string.append(div_before);	
+			string.append(div_before);
 		}
-		
+
 		String div_normal="		<div class=\"%s\">"+SystemHWUtil.CRLF+
 "			<div class=\"mleft\">"+SystemHWUtil.CRLF+
 "				<a class=\"normal\" title=\"%s\" href=\"?ids=47_51\">%s</a>%s"+SystemHWUtil.CRLF+
@@ -398,7 +324,7 @@ public class XmlYunmaUtil {
 "		</div>"+SystemHWUtil.CRLF;
 
 //		System.out.println(div_normal);
-		
+
 		String div_mleft="<div class=\"line mleft\" style=\"display: block;\" id=\"divTree47\">"+SystemHWUtil.CRLF;
 //				+ "	%?"+SystemHWUtil.CRLF
 //				+ "</div>"+SystemHWUtil.CRLF;
@@ -430,6 +356,74 @@ public class XmlYunmaUtil {
 		if(isParent){
 			string.append("</div>");
 		}
+	}
+	
+//	@Test
+	public void test_parseAttribute(){
+		String xml="   id=\"2 2\"  a   ";
+		ParseBean parseBean=parseAttribute(xml, 0);
+		System.out.println(parseBean);
+	}
+
+//	@Test
+	public void test_getTextNode(){
+		String xmlContent="</fdsf";
+		System.out.println(getTextNode(xmlContent, 0));
+	}
+	
+//	@Test
+	public void test_isEndOfTag(){
+		String input=" 	a  >";
+		System.out.println(isEndOfTag(input, 0));
+	}
+	
+//	@Test
+	public void test_isbEGINOfTag(){
+		String input=" 		  </  ";
+		System.out.println(isBeginOfTag(input, 0));
+		System.out.println(input.charAt(isBeginOfTag(input, 0)+1));
+	}
+	
+//	@Test
+	public void test_001(){
+		String input="   ab.c  ";
+		ParseBean parseBean=parseElementName(input, 0);
+		System.out.println(parseBean.getResult().length());
+		System.out.println(parseBean.getResult());
+		System.out.println(parseBean.getLengthHasRead());
+	}
+	
+//	@Test
+	public void test_isEnd(){
+		String xmlContent="  </tag>  ";
+		System.out.println(isEnd(xmlContent, 0, "</tag>"));
+	}
+
+//	@Test
+	public void test22() throws IOException{
+		StringBuffer content=FileUtils.getFullContent3("D:\\software\\eclipse\\workspace3\\oa_framework\\src\\main\\resources\\ask_for_leave.xml"
+				, "UTF-8");
+//		String content="<flow id=\"1 2\"  > <name id=\"111\" > <html id=\"ggg\"  > "
+//				+ "<body>aaaa </body>  </html>  </name>   <name id=\"222\" >  bbb  </name>  </flow>";
+//		String content="<flow id=\"1 2\">aaa   </flow>";
+		System.out.println(content);
+		Element root=getElement(content,0,null);
+		System.out.println(root);
+		StringBuffer string=new StringBuffer();
+		getTree(root,string);
+		System.out.println("-----------------");
+		System.out.println(string);
+
+	}
+	
+//	@Test
+	public void test233() throws IOException{
+		String content="<flow id=\"1 2\"  > <name id=\"111\" > <html id=\"ggg\"  > "
+				+ "<body>aaaa </body>  </html>  </name>   <name id=\"222\" >  bbb  </name>  </flow>";
+//		String content="<flow id=\"1 2\">aaa   </flow>";
+		System.out.println(content);
+		Element root=getElement(content,0,null);
+		System.out.println(root);
 	}
 
 //	@Test

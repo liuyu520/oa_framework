@@ -1,10 +1,6 @@
 package oa.entity.common;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 /***
  * 
@@ -72,7 +68,7 @@ public class AccessLog {
 	 */
 	private String operateResult;
 	/***
-	 * Pad或Phone
+	 * Pad,Phone 或PC
 	 */
 	private String deviceType;
 	private String sessionId;
