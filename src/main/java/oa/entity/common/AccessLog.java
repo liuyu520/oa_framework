@@ -74,6 +74,15 @@ public class AccessLog {
 	 */
 	private String deviceType;
 	private String sessionId;
+	
+	public AccessLog() {
+		super();
+	}
+	
+	public AccessLog(int accessType) {
+		super();
+		this.accessType = accessType;
+	}
 	@Id
 	@GeneratedValue
 	public int getId() {

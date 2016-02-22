@@ -539,7 +539,18 @@ public abstract class GenericController <T>{
 			}
 		}
 		this.getDao().add(roleLevel);
+		afterSave(roleLevel, model);
 //		commonAction(model);
+	}
+
+	/***
+	 * 可以被子类覆写
+	 *
+	 * @param roleLevel
+	 * @param model
+	 */
+	protected void afterSave(T roleLevel, Model model) {
+		model.addAttribute(getJspFolder(), roleLevel);
 	}
 	/***
 	 * jsp页面中会使用label
