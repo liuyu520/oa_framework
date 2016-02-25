@@ -63,7 +63,7 @@ public class StubController {
 
     private String stubAction(HttpServletRequest request, String actionPath, String callback, String charset) {
         if (ValueWidget.isNullOrEmpty(charset)) {
-            charset = SystemHWUtil.CURR_ENCODING;
+            charset = SystemHWUtil.CHARSET_UTF;
         }
         System.out.println("访问:" + actionPath);
         ReadAndWriteResult readAndWriteResult = HWUtils.stub(request, actionPath, charset);

@@ -3,7 +3,10 @@ package oa.web.controller.intercept;
 import com.common.dict.Constant2;
 import com.common.util.SystemHWUtil;
 import com.string.widget.util.ValueWidget;
+import oa.entity.common.AccessLog;
 import oa.util.AuthenticateUtil;
+import oa.util.LogUtil;
+import oa.util.SpringFrameUtil;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -25,7 +28,6 @@ public class MemberInterceptor implements HandlerInterceptor {
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response,
                            Object handler, ModelAndView modelAndView) throws Exception {
-//		modelAndView=new ModelAndView(viewName)
     }
 
     @Override
@@ -54,12 +56,25 @@ public class MemberInterceptor implements HandlerInterceptor {
     }
 
     public void log(HttpServletRequest request) {
+        String path = request.getRequestURI();//"/demo_channel_terminal/news/list"
+
+        AccessLog accessLog = LogUtil.logByMethod(request, Constant2.LOGS_ACCESS_TYPE_INTO, null);
+        accessLog.setDescription("access " + path);
+        accessLog.setOperateResult("401");
+        LogUtil.logSave(accessLog, request, SpringFrameUtil.getDao(getDaoBeanName()));
     }
 
-    ;
+    /***
+     * 子类可以覆写
+     *
+     * @return
+     */
+    public String getDaoBeanName() {
+        return "accessLogDao";
+    }
 
     /**
-     * 登录失败的回调地址<br />
+     * 未登录的回调地址<br />
      * 子类可以覆写
      *
      * @return
@@ -75,4 +90,5 @@ public class MemberInterceptor implements HandlerInterceptor {
     public void setErrorMessage(String errorMessage) {
         this.errorMessage = errorMessage;
     }
+    
 }
