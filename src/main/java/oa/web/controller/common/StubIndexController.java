@@ -6,6 +6,7 @@ import com.common.util.WebServletUtil;
 import com.io.hw.json.HWJacksonUtils;
 import com.string.widget.util.ValueWidget;
 import oa.util.HWUtils;
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +18,7 @@ import java.util.List;
 
 @Controller
 public class StubIndexController {
+    protected static Logger logger = Logger.getLogger(StubIndexController.class);
     @RequestMapping("/")
     public String list(HttpServletRequest request, Model model, String targetView, String keyWord) {
         List<String> stubPathList = getStubPathList(request, keyWord);
@@ -45,6 +47,7 @@ public class StubIndexController {
     @RequestMapping(value = "/old_content", produces = SystemHWUtil.RESPONSE_CONTENTTYPE_PLAIN_UTF)
     public String oldContent(HttpServletRequest request) {
         HttpSession session = request.getSession(true);
+        logger.debug("/old_content sessionId:" + session.getId());
         String content = (String) session.getAttribute(HWUtils.SESSION_KEY_STUB_OLD_CONTENT);
         if (null == content) {
             content = "(暂无)";

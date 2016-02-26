@@ -262,6 +262,7 @@ public class HWUtils {
 				setServletUrl(request, path, readAndWriteResult);
 				writeStubFile(content, charset, readAndWriteResult, file);
 				HttpSession session = request.getSession(true);
+				logger.debug("update sessionId:" + session.getId());
 				session.setAttribute(SESSION_KEY_STUB_OLD_CONTENT, contentOld);
 				readAndWriteResult.setTips("更新成功");
 			} else {
