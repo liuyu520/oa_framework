@@ -700,13 +700,17 @@ public abstract class GenericController <T>{
 	 */
 	protected void listPaging(T roleLevel,PageView view,ListOrderedMap orderColumnModeMap){
 		if(ValueWidget.isNullOrEmpty(dao)){
+			System.out.println("[listPaging]dao is null");
+			logger.error("dao is null");
 			return;
 		}
 		PageUtil.paging(roleLevel,true,view, getDao(),null,orderColumnModeMap);
 	}
 	protected GenericDao getDao() {
 		if(this.dao==null){
-			System.out.println("请先执行init(request)");
+			String errorMessage = "请先执行init(request)";
+			System.out.println(errorMessage);
+			logger.error(errorMessage);
 			HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
 			init(request);
 		}
