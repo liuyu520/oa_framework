@@ -1,6 +1,7 @@
 package oa.web.controller.intercept;
 
 import com.common.dict.Constant2;
+import com.common.util.LoginUtil;
 import com.common.util.SystemHWUtil;
 import com.string.widget.util.ValueWidget;
 import oa.entity.common.AccessLog;
@@ -38,6 +39,8 @@ public class MemberInterceptor implements HandlerInterceptor {
         if (!AuthenticateUtil.isLogined(session)) {
             String path = request.getRequestURI();//"/demo_channel_terminal/news/list"
             System.out.println("您无权访问:" + path);
+            //用于登录成功之后回调
+            session.setAttribute(LoginUtil.SESSION_KEY_LOGIN_RETURN_URL, path);
             System.out.println();
             String contextPath = request.getContextPath();
             response.setCharacterEncoding(SystemHWUtil.CHARSET_UTF);
