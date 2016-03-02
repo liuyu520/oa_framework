@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 public class StubIndexController {
@@ -63,5 +65,17 @@ public class StubIndexController {
     private List<String> getStubPathList(HttpServletRequest request, String keyWord) {
         String realPath2 = WebServletUtil.getRealPath(request, Constant2.stub_folder);
         return HWUtils.listStubServletPath(realPath2, keyWord);
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/nginx_dispatch", produces = SystemHWUtil.RESPONSE_CONTENTTYPE_PLAIN_UTF)
+    public String nginxDispatch(HttpServletRequest request, String targetUrl, String stubUrl) {
+        if (ValueWidget.isNullOrEmpty(stubUrl)) {
+            stubUrl = "www.yhskyc.com/";
+        }
+        String nginxDispatchCmd = ValueWidget.getNginxDispatch(targetUrl, stubUrl);
+        Map map = new HashMap();
+        map.put("cmd", nginxDispatchCmd);
+        return HWJacksonUtils.getJsonP(map);
     }
 }
