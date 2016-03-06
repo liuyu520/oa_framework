@@ -21,6 +21,14 @@ import java.util.Map;
 @Controller
 public class StubIndexController {
     protected static Logger logger = Logger.getLogger(StubIndexController.class);
+
+    private static String getNginxScript(String targetUrl, String stubUrl) {
+        if (ValueWidget.isNullOrEmpty(stubUrl)) {
+            stubUrl = "www.yhskyc.com/";
+        }
+        return ValueWidget.getNginxDispatch(targetUrl, stubUrl);
+    }
+
     @RequestMapping("/")
     public String list(HttpServletRequest request, Model model, String targetView, String keyWord) {
         List<String> stubPathList = getStubPathList(request, keyWord);
@@ -57,7 +65,6 @@ public class StubIndexController {
         return content;
     }
 
-
     private List<String> getStubPathList(HttpServletRequest request) {
         return getStubPathList(request, null);
     }
@@ -68,14 +75,18 @@ public class StubIndexController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/nginx_dispatch", produces = SystemHWUtil.RESPONSE_CONTENTTYPE_PLAIN_UTF)
-    public String nginxDispatch(HttpServletRequest request, String targetUrl, String stubUrl) {
-        if (ValueWidget.isNullOrEmpty(stubUrl)) {
-            stubUrl = "www.yhskyc.com/";
-        }
-        String nginxDispatchCmd = ValueWidget.getNginxDispatch(targetUrl, stubUrl);
+    @RequestMapping(value = "/nginx_dispatch_json", produces = SystemHWUtil.RESPONSE_CONTENTTYPE_JSON_UTF)
+    public String nginxDispatchJson(HttpServletRequest request, String targetUrl, String stubUrl) {
+        String nginxDispatchCmd = getNginxScript(targetUrl, stubUrl);
         Map map = new HashMap();
         map.put("cmd", nginxDispatchCmd);
         return HWJacksonUtils.getJsonP(map);
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/nginx_dispatch", produces = SystemHWUtil.RESPONSE_CONTENTTYPE_PLAIN_UTF)
+    public String nginxDispatch(HttpServletRequest request, String targetUrl, String stubUrl) {
+        String nginxDispatchCmd = getNginxScript(targetUrl, stubUrl);
+        return nginxDispatchCmd;
     }
 }
