@@ -1,4 +1,7 @@
 package oa.bean;
+
+import java.io.File;
+
 /***
  * 上传的结果信息
  * @author huangwei
@@ -21,6 +24,12 @@ public class UploadResult {
 	private String dirName;
 	private String savePath;
 	private String saveUrl;
+	private  File savedFile;
+	private String finalFileName;
+	/***
+	 * upload/image/20150329170823_2122015-03-23_01-42-03.jpg
+	 */
+	private String relativePath;
 	
 	public UploadResult() {
 		super();
@@ -75,6 +84,24 @@ public class UploadResult {
 	}
 	public void setSaveUrl(String saveUrl) {
 		this.saveUrl = saveUrl;
+	}
+	public File getSavedFile() {
+		return savedFile;
+	}
+	public void setSavedFile(File savedFile) {
+		this.savedFile = savedFile;
+	}
+	public String getFinalFileName() {
+		return finalFileName;
+	}
+	public void setFinalFileName(String finalFileName) {
+		this.finalFileName = finalFileName;
+	}
+	public String getRelativePath() {
+		return relativePath;
+	}
+	public void setRelativePath(String relativePath) {
+		this.relativePath = relativePath;
 	}
 	
 	
