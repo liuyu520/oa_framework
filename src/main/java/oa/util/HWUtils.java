@@ -380,20 +380,30 @@ public class HWUtils {
 		return pathList;
 	}
 
+	/***
+	 * @param request
+	 * @param relativePath
+	 * @param finalFileName
+	 * @return
+	 */
 	public static String getRelativeUrl(HttpServletRequest request, String relativePath, String finalFileName) {
 		String rootPath = request.getContextPath();
 		if (!rootPath.endsWith("/")) {
 			rootPath = rootPath + "/";
 		}
-		relativePath = getRelativePath(relativePath, finalFileName);
+		if (relativePath.endsWith("/")) {
+			relativePath = getRelativePath(relativePath, finalFileName);
+		}
 		return rootPath + relativePath;
 	}
 
-	private static String getRelativePath(String relativePath, String finalFileName) {
+	public static String getRelativePath(String relativePath, String finalFileName) {
 		if (!relativePath.endsWith("/")) {
 			relativePath = relativePath + "/";
 		}
-		relativePath = relativePath + finalFileName;//upload/image/20150329170823_2122015-03-23_01-42-03.jpg
+		if (relativePath.endsWith("/")) {
+			relativePath = relativePath + finalFileName;//upload/image/20150329170823_2122015-03-23_01-42-03.jpg
+		}
 		return relativePath;
 	}
 
@@ -403,7 +413,7 @@ public class HWUtils {
 		if (!prefixPath.endsWith("/") && (!relativePath.startsWith("/"))) {
 			prefixPath = prefixPath + "/";
 		}
-		fullUrl = prefixPath + getRelativePath(relativePath, finalFileName);
+		fullUrl = prefixPath + relativePath;
 		return fullUrl;
 	}
 
@@ -424,7 +434,7 @@ public class HWUtils {
 				, finalFileName,
 				Constant2.SRC_MAIN_WEBAPP);
 		uploadResult.setSavedFile(savedFile);
-		uploadResult.setRelativePath(relativePath);
+		uploadResult.setRelativePath(HWUtils.getRelativePath(relativePath, finalFileName));
 		uploadResult.setFinalFileName(finalFileName);
 		return uploadResult;
 	}
