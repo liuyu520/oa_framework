@@ -413,7 +413,10 @@ public class HWUtils {
 		if (!prefixPath.endsWith("/") && (!relativePath.startsWith("/"))) {
 			prefixPath = prefixPath + "/";
 		}
-		fullUrl = prefixPath + relativePath;
+        if (relativePath.endsWith("/")) {
+            relativePath = relativePath + finalFileName;//upload/image/20150329170823_2122015-03-23_01-42-03.jpg
+        }
+        fullUrl = prefixPath + relativePath;
 		return fullUrl;
 	}
 
