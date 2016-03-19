@@ -1,5 +1,6 @@
 package oa.web.upload;
 
+import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,5 +17,5 @@ public interface UploadCallback {
 	 * @throws ParseException
 	 * @throws IOException
 	 */
-	public String callback(MultipartFile file, HttpServletRequest request, HttpServletResponse response) throws ParseException, IOException;
+	public String callback(Model model, MultipartFile file, HttpServletRequest request, HttpServletResponse response) throws ParseException, IOException;
 }

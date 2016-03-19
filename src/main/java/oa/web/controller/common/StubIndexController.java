@@ -7,7 +7,6 @@ import com.io.hw.json.HWJacksonUtils;
 import com.string.widget.util.ValueWidget;
 import oa.util.HWUtils;
 import org.apache.log4j.Logger;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -18,7 +17,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Controller
+//@Controller
+//@RequestMapping("/stubIndex")
 public class StubIndexController {
     protected static Logger logger = Logger.getLogger(StubIndexController.class);
 

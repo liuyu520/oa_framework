@@ -1,6 +1,7 @@
 package oa.entity.common;
 
 import com.common.util.SystemHWUtil;
+import com.string.widget.util.ValueWidget;
 
 import javax.persistence.*;
 
@@ -199,6 +200,9 @@ public class AccessLog {
 		return operateResult;
 	}
 	public void setOperateResult(String operateResult) {
+		if(!ValueWidget.isNullOrEmpty(operateResult)){
+			operateResult=SystemHWUtil.splitAndFilterString(operateResult,240,false);
+		}
 		this.operateResult = operateResult;
 	}
 	@Column(name="device_type")
