@@ -19,6 +19,11 @@ import java.util.Map;
 
 //@Controller
 //@RequestMapping("/stubIndex")
+
+/***
+ * @author whuanghkl
+ *         需要子类继承
+ */
 public class StubIndexController {
     protected static Logger logger = Logger.getLogger(StubIndexController.class);
 
