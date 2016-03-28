@@ -342,7 +342,7 @@ public class HWUtils {
 	private static void setServletUrl(HttpServletRequest request, String path, ReadAndWriteResult readAndWriteResult) {
 		String serverUrl = getServletUrl(request);//http://10.1.253.44:81/tv_mobile
 		logger.info("serverUrl:" + serverUrl);
-		readAndWriteResult.setUrl(serverUrl + Constant2.Slash + path.replaceAll(".json$", SystemHWUtil.EMPTY));
+		readAndWriteResult.setUrl(serverUrl + Constant2.Slash + path.replaceAll("\\.json$"/*需要转义，否则就是通配符*/, SystemHWUtil.EMPTY));
 	}
 
 	/***
