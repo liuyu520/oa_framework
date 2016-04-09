@@ -62,7 +62,7 @@ public class StubController {
         if (ValueWidget.isNullOrEmpty(charset)) {
             charset = SystemHWUtil.CHARSET_UTF;
         }
-        actionPath = XSSUtil.cleanXSS(actionPath);
+        actionPath = XSSUtil.deleteXSS(actionPath);
         System.out.println("访问:" + actionPath);
         ReadAndWriteResult readAndWriteResult = HWUtils.stub(request, actionPath, charset);
 
