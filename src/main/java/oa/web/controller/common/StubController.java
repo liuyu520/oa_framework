@@ -4,6 +4,7 @@ import com.common.dict.Constant2;
 import com.common.util.SystemHWUtil;
 import com.io.hw.json.HWJacksonUtils;
 import com.string.widget.util.ValueWidget;
+import com.string.widget.util.XSSUtil;
 import oa.bean.stub.ReadAndWriteResult;
 import oa.util.HWUtils;
 import org.apache.log4j.Logger;
@@ -61,6 +62,7 @@ public class StubController {
         if (ValueWidget.isNullOrEmpty(charset)) {
             charset = SystemHWUtil.CHARSET_UTF;
         }
+        actionPath = XSSUtil.cleanXSS(actionPath);
         System.out.println("访问:" + actionPath);
         ReadAndWriteResult readAndWriteResult = HWUtils.stub(request, actionPath, charset);
 

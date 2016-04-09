@@ -5,6 +5,7 @@ import com.common.util.SystemHWUtil;
 import com.common.util.WebServletUtil;
 import com.io.hw.json.HWJacksonUtils;
 import com.string.widget.util.ValueWidget;
+import com.string.widget.util.XSSUtil;
 import oa.util.HWUtils;
 import org.apache.log4j.Logger;
 import org.springframework.ui.Model;
@@ -82,6 +83,8 @@ public class StubIndexController {
     @ResponseBody
     @RequestMapping(value = "/nginx_dispatch_json", produces = SystemHWUtil.RESPONSE_CONTENTTYPE_JSON_UTF)
     public String nginxDispatchJson(HttpServletRequest request, String targetUrl, String stubUrl) {
+        stubUrl = XSSUtil.deleteXSS(stubUrl);
+        targetUrl = XSSUtil.deleteXSS(targetUrl);
         String nginxDispatchCmd = getNginxScript(targetUrl, stubUrl);
         Map map = new HashMap();
         map.put("cmd", nginxDispatchCmd);
@@ -91,6 +94,8 @@ public class StubIndexController {
     @ResponseBody
     @RequestMapping(value = "/nginx_dispatch", produces = SystemHWUtil.RESPONSE_CONTENTTYPE_PLAIN_UTF)
     public String nginxDispatch(HttpServletRequest request, String targetUrl, String stubUrl) {
+        stubUrl = XSSUtil.deleteXSS(stubUrl);
+        targetUrl = XSSUtil.deleteXSS(targetUrl);
         String nginxDispatchCmd = getNginxScript(targetUrl, stubUrl);
         return nginxDispatchCmd;
     }
