@@ -1,11 +1,14 @@
 package oa.util;
 
 import com.common.util.WebServletUtil;
+import com.io.hw.json.HWJacksonUtils;
+import org.springframework.ui.Model;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.Map;
 
 /**
  * Created by whuanghkl on 3/30/16.<br >
@@ -44,5 +47,18 @@ public class SpringMVCUtil {
         }
         HttpServletRequest request = servletRequestAttributes.getRequest();
         return WebServletUtil.getRequestContentType(request);
+    }
+
+    /***
+     * 把假数据设置到spring MVC 的model中<br >
+     *
+     * @param model
+     * @param json
+     * @return
+     */
+    public static Model stubModel(Model model, String json) {
+        Map map = (Map) HWJacksonUtils.deSerialize(json, Map.class);
+        model.addAllAttributes(map);
+        return model;
     }
 }
