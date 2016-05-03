@@ -3,6 +3,7 @@ package yunma.oa.bean.xml;
 import com.common.util.SystemHWUtil;
 import com.io.hw.file.util.FileUtils;
 import com.string.widget.util.ValueWidget;
+import oa.bean.StubRange;
 import org.junit.Test;
 import yunma.oa.util.OAUtil;
 
@@ -295,8 +296,9 @@ public class XmlYunmaUtil {
 			String attributeStr=parseBean.getResult();
 			if(!ValueWidget.isNullOrEmpty(attributeStr)){
 				String[]strs=attributeStr.split("=");
-				attributes.put(strs[0], strs[1]);
-				index=parseBean.getLengthHasRead();
+                //删除属性值两边的双引号
+                attributes.put(strs[0], SystemHWUtil.delDoubleQuotation(strs[1]));
+                index=parseBean.getLengthHasRead();
 			}
 			}while(parseBean!=null&&(!ValueWidget.isNullOrEmpty(parseBean.getResult())));
 
@@ -371,7 +373,89 @@ public class XmlYunmaUtil {
 			string.append("</div>");
 		}
 	}
-	
+
+    /***
+     * 组装stub
+     *
+     * @param stubRange
+     * @return
+     */
+    public static String assembleStub(StubRange stubRange) {
+        if (ValueWidget.isNullOrEmpty(stubRange.getStubs())) {
+            return SystemHWUtil.EMPTY;
+        } else if (stubRange.getStubs().size() == 1) {
+            return stubRange.getStubs().get(0);
+        } else {
+            List<String> stubs = stubRange.getStubs();
+            StringBuffer stringBuffer = new StringBuffer("<list index=\"" + stubRange.getSelectedIndex() + "\" >");
+            stringBuffer.append(SystemHWUtil.CRLF);
+            for (int i = 0; i < stubs.size(); i++) {
+                stringBuffer.append("   <value>").append(stubs.get(i)).append("</value>").append(SystemHWUtil.CRLF);
+            }
+            stringBuffer.append("</list>");
+            return stringBuffer.toString();
+        }
+    }
+
+    public static void assembleStubAndSave(StubRange stubRange, File file) {
+        String result = assembleStub(stubRange);
+        FileUtils.writeStrToFile(file, result, true);
+    }
+
+    /***
+     * 反序列化
+     *
+     * @param input
+     * @return
+     */
+    public static StubRange deAssembleStub(String input) {
+        Element root = getElement(input, 0, null);
+        if ("list".equals(root.getName())) {
+            List<String> stubs = new ArrayList<String>();
+            List<Element> list = root.getChildren();
+            for (int i = 0; i < list.size(); i++) {
+                if ("value".equals(list.get(i).getName())) {
+                    Element element = list.get(i).getChildren().get(0);
+                    stubs.add(element.getName());
+                }
+            }
+            StubRange stubRange = new StubRange();
+            String indexStr = (String) root.getAttributes().get("index");
+            if (!ValueWidget.isNullOrEmpty(indexStr) && ValueWidget.isNumeric(indexStr)) {
+                stubRange.setSelectedIndex(Integer.parseInt(indexStr));
+            }
+
+            stubRange.setStubs(stubs);
+            return stubRange;
+        }
+        return null;
+    }
+
+    @Test
+    public void test_assembleStub() {
+        StubRange stubRange = new StubRange();
+        List<String> stubs = new ArrayList<String>();
+        stubs.add("aaa");
+        stubs.add("bbb");
+        stubs.add("ccc");
+        stubRange.setStubs(stubs);
+        stubRange.setSelectedIndex(2);
+        String result = assembleStub(stubRange);
+        System.out.println(result);
+    }
+
+    @Test
+    public void test_re() {
+        String input = "<list  index=\"2\" >" +
+                "   <value>ddd</value>" +
+                "   <value>ccc</value>" +
+                "   <value>bbb</value>" +
+                "</list>";
+        StubRange stubRange = deAssembleStub(input);
+        System.out.println(stubRange.getStubs());
+        System.out.println(stubRange.getSelectedIndex());
+    }
+
 //	@Test
 	public void test_parseAttribute(){
 		String xml="   id=\"2 2\"  a   ";
