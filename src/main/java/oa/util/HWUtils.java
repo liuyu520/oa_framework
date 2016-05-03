@@ -8,6 +8,7 @@ import com.string.widget.util.RandomUtils;
 import com.string.widget.util.ValueWidget;
 import com.time.util.TimeHWUtil;
 import net.sf.jxls.transformer.XLSTransformer;
+import oa.bean.StubRange;
 import oa.bean.UploadResult;
 import oa.bean.stub.ReadAndWriteResult;
 import org.apache.commons.compress.archivers.dump.InvalidFormatException;
@@ -22,6 +23,7 @@ import org.codehaus.jackson.map.ObjectWriter;
 import org.codehaus.jackson.map.ser.FilterProvider;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
+import yunma.oa.bean.xml.XmlYunmaUtil;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -184,7 +186,10 @@ public class HWUtils {
 				return fileNotExistReadAndWriteResult(readAndWriteResult, realPath2);
 			}
 			content = FileUtils.getFullContent2(input, charset, true);
-			setServletUrl(request, path, readAndWriteResult);
+            //反序列化
+            StubRange stubRange = XmlYunmaUtil.deAssembleStub(content);
+            content = stubRange.getStubs().get(stubRange.getSelectedIndex());
+            setServletUrl(request, path, readAndWriteResult);
 			readAndWriteResult.setContent(content);
 			readAndWriteResult.setResult(true);
 		} catch (java.io.FileNotFoundException ex) {

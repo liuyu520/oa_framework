@@ -4,7 +4,6 @@ import com.common.util.SystemHWUtil;
 import com.io.hw.file.util.FileUtils;
 import com.string.widget.util.ValueWidget;
 import oa.bean.StubRange;
-import org.junit.Test;
 import yunma.oa.util.OAUtil;
 
 import java.io.File;
@@ -409,29 +408,43 @@ public class XmlYunmaUtil {
      * @return
      */
     public static StubRange deAssembleStub(String input) {
-        Element root = getElement(input, 0, null);
-        if ("list".equals(root.getName())) {
-            List<String> stubs = new ArrayList<String>();
-            List<Element> list = root.getChildren();
-            for (int i = 0; i < list.size(); i++) {
-                if ("value".equals(list.get(i).getName())) {
-                    Element element = list.get(i).getChildren().get(0);
-                    stubs.add(element.getName());
+        if (ValueWidget.isNullOrEmpty(input)) {
+            return null;
+        }
+        input = input.trim();
+        if (input.startsWith("<list>")) {
+            Element root = getElement(input, 0, null);
+            if ("list".equals(root.getName())) {
+                List<String> stubs = new ArrayList<String>();
+                List<Element> list = root.getChildren();
+                for (int i = 0; i < list.size(); i++) {
+                    if ("value".equals(list.get(i).getName())) {
+                        Element element = list.get(i).getChildren().get(0);
+                        stubs.add(element.getName());
+                    }
                 }
-            }
-            StubRange stubRange = new StubRange();
-            String indexStr = (String) root.getAttributes().get("index");
-            if (!ValueWidget.isNullOrEmpty(indexStr) && ValueWidget.isNumeric(indexStr)) {
-                stubRange.setSelectedIndex(Integer.parseInt(indexStr));
-            }
+                StubRange stubRange = new StubRange();
+                String indexStr = (String) root.getAttributes().get("index");
+                if (!ValueWidget.isNullOrEmpty(indexStr) && ValueWidget.isNumeric(indexStr)) {
+                    stubRange.setSelectedIndex(Integer.parseInt(indexStr));
+                }
 
+                stubRange.setStubs(stubs);
+                return stubRange;
+            }
+        } else {
+            List<String> stubs = new ArrayList<String>();
+            stubs.add(input);
+            StubRange stubRange = new StubRange();
+            stubRange.setSelectedIndex(0);
             stubRange.setStubs(stubs);
             return stubRange;
         }
+
         return null;
     }
 
-    @Test
+    //    @Test
     public void test_assembleStub() {
         StubRange stubRange = new StubRange();
         List<String> stubs = new ArrayList<String>();
@@ -444,7 +457,7 @@ public class XmlYunmaUtil {
         System.out.println(result);
     }
 
-    @Test
+    //    @Test
     public void test_re() {
         String input = "<list  index=\"2\" >" +
                 "   <value>ddd</value>" +
@@ -514,7 +527,7 @@ public class XmlYunmaUtil {
 
 	}
 
-    @Test
+    //    @Test
     public void test233() throws IOException{
 		String content="<flow id=\"1 2\"  > <name id=\"111\" > <html id=\"ggg\"  > "
 				+ "<body>aaaa </body>  </html>  </name>   <name id=\"222\" >  bbb  </name>  </flow>";
@@ -526,7 +539,7 @@ public class XmlYunmaUtil {
         System.out.println(list);
     }
 
-    @Test
+    //    @Test
     public void test_stub() {
         String xmlFile = "/Users/whuanghkl/work/project/stub_test/src/main/webapp/stub/a/b/c/d.json";
         try {
