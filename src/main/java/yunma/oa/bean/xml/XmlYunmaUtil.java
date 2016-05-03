@@ -3,8 +3,10 @@ package yunma.oa.bean.xml;
 import com.common.util.SystemHWUtil;
 import com.io.hw.file.util.FileUtils;
 import com.string.widget.util.ValueWidget;
+import org.junit.Test;
 import yunma.oa.util.OAUtil;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -56,15 +58,27 @@ public class XmlYunmaUtil {
 	public static int getTextNode(String xmlContent,int pos){
 		int totalLength=xmlContent.length();
 		int i=pos;
-		while(i<totalLength){
+        boolean isQuote = false;
+        while(i<totalLength){
 			char c=xmlContent.charAt(i);
+            if (c == '"' && xmlContent.charAt(i - 1) != '\\') {
+                if (isQuote) {
+                    isQuote = false;
+                } else {
+                    isQuote = true;
+                }
+            }
 //			if(OAUtil.isBlank(c)||OAUtil.isWordChar(c)){//如果是汉字,有问题
-			if(c!='>'&&c!='<'){
-				i++;
-				continue;
+            if (c != '>' && c != '<' || (i > 1 && (c == '<' || c == '>') && xmlContent.charAt(i - 1) == '"')/*"<div 不算开始标签*/
+                    || (isQuote && (c == '<' || c == '>'))) {
+                i++;
+//				if(i==372){
+//					System.out.println(i);
+//				}
+                continue;
 			}
-			if(c=='<'&&xmlContent.charAt(i+1)!='/'){
-				return -1;
+            if (c == '<' && xmlContent.charAt(i + 1) != '/') {
+                return -1;
 			}else if(c=='<'){
 				return i;
 			}
@@ -415,18 +429,34 @@ public class XmlYunmaUtil {
 		System.out.println(string);
 
 	}
-	
-//	@Test
-	public void test233() throws IOException{
+
+    @Test
+    public void test233() throws IOException{
 		String content="<flow id=\"1 2\"  > <name id=\"111\" > <html id=\"ggg\"  > "
 				+ "<body>aaaa </body>  </html>  </name>   <name id=\"222\" >  bbb  </name>  </flow>";
 //		String content="<flow id=\"1 2\">aaa   </flow>";
 		System.out.println(content);
 		Element root=getElement(content,0,null);
 		System.out.println(root);
-	}
+        List<Element> list = root.getChildren();
+        System.out.println(list);
+    }
 
-//	@Test
+    @Test
+    public void test_stub() {
+        String xmlFile = "/Users/whuanghkl/work/project/stub_test/src/main/webapp/stub/a/b/c/d.json";
+        try {
+            String content = FileUtils.getFullContent2(new File(xmlFile), "UTF-8", true);
+            Element root = getElement(content, 0, null);
+            System.out.println(root);
+            List<Element> list = root.getChildren();
+            System.out.println(list.get(1).getChildren().get(0));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //	@Test
 	public void test_getTree(){
 		String content="<flow id=\"1 2\"  > <name id=\"111\" > <html id=\"ggg\"  > "
 				+ "<body>aaaa </body>  </html>  </name>   <name id=\"222\" >  bbb  </name>  </flow>";
