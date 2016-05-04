@@ -24,6 +24,7 @@ import org.codehaus.jackson.map.ObjectWriter;
 import org.codehaus.jackson.map.ser.FilterProvider;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
+import org.springframework.web.multipart.MultipartFile;
 import yunma.oa.bean.xml.XmlYunmaUtil;
 
 import javax.servlet.ServletOutputStream;
@@ -447,5 +448,45 @@ public class HWUtils {
 		uploadResult.setFinalFileName(finalFileName);
 		return uploadResult;
 	}
+
+    public static Map getUploadResultMap(MultipartFile file, HttpServletRequest request) {
+        String fileName = file.getOriginalFilename();// 上传的文件名
+        fileName = RegexUtil.filterBlank(fileName);//IE中识别不了有空格的json
+
+        UploadResult uploadResult = HWUtils.getSavedToFile(request, fileName, null);
+        File savedFile = uploadResult.getSavedFile();
+        File parentFolder = SystemHWUtil.createParentFolder(savedFile);
+        FileUtils.makeWritable(parentFolder);//使...可写
+        System.out.println("[upload]savedFile:"
+                + savedFile.getAbsolutePath());
+        // 保存
+        try {
+            file.transferTo(savedFile);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        String url2 = HWUtils.getRelativeUrl(request, uploadResult.getRelativePath(), uploadResult.getFinalFileName());
+        String fullUrl = null;//http://localhost:8080/tv_mobile/upload/image/20150329170823_2122015-03-23_01-42-03.jpg
+        /***
+         * request.getRequestURL():http://localhost:8081/SSLServer/addUser.security<br>
+         * request.getServletPath():/addUser.security<br>
+         * prefixPath:http://localhost:8080/tv_mobile/
+         */
+        fullUrl = HWUtils.getFullUrl(request, uploadResult.getRelativePath(), uploadResult.getFinalFileName());
+        Map map = new HashMap();
+
+        map.put("fileName", uploadResult.getFinalFileName());
+        map.put("remoteAbsolutePath", savedFile.getAbsolutePath());
+        map.put("url", url2);
+        map.put("fullUrl", fullUrl);
+        map.put("relativePath", uploadResult.getRelativePath());
+        map.put("imgTag", ValueWidget.escapeHTML(getHtmlImgTag(fullUrl)));
+        return map;
+    }
+
+    public static String getHtmlImgTag(String fullUrl) {
+        return "<img style=\"max-width: 99%\" src=\"" + fullUrl + "\" alt=\"\">";
+    }
 
 }
