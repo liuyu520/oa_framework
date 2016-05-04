@@ -5,6 +5,7 @@ import com.common.util.SystemHWUtil;
 import com.common.util.WebServletUtil;
 import com.io.hw.file.util.FileUtils;
 import com.string.widget.util.RandomUtils;
+import com.string.widget.util.RegexUtil;
 import com.string.widget.util.ValueWidget;
 import com.time.util.TimeHWUtil;
 import net.sf.jxls.transformer.XLSTransformer;
@@ -426,11 +427,11 @@ public class HWUtils {
 	}
 
 	public static UploadResult getSavedToFile(HttpServletRequest request, String fileName, String uploadFolder) {
-		fileName = fileName.replaceAll("[\\s]+", SystemHWUtil.EMPTY);//IE中识别不了有空格的json
-		// 保存到哪儿
+        fileName = RegexUtil.filterBlank(fileName);//IE中识别不了有空格的json
+        // 保存到哪儿
 		String finalFileName = TimeHWUtil.formatDateByPattern(TimeHWUtil
-				.getCurrentTimestamp(), "yyyyMMddHHmmss") + "_"
-				+ new Random().nextInt(1000) + "_" + fileName;
+                .getCurrentTimestamp(), TimeHWUtil.yyyyMMddHHmmss) + "_"
+                + new Random().nextInt(1000) + "_" + fileName;
 		String relativePath = null;
 		if (ValueWidget.isNullOrEmpty(uploadFolder)) {
 			relativePath = Constant2.UPLOAD_FOLDER_NAME + "/image";
