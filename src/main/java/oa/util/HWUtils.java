@@ -431,7 +431,8 @@ public class HWUtils {
         fileName = RegexUtil.filterBlank(fileName);//IE中识别不了有空格的json
         // 保存到哪儿
 		String finalFileName = TimeHWUtil.formatDateByPattern(TimeHWUtil
-                .getCurrentTimestamp(), TimeHWUtil.yyyyMMddHHmmss) + "_"
+                .getCurrentTimestamp(), TimeHWUtil.yyyyMMddHHmmss.replace("-", SystemHWUtil.EMPTY)
+                .replace(":", SystemHWUtil.EMPTY).replace(SystemHWUtil.BLANK, SystemHWUtil.EMPTY)) + "_"
                 + new Random().nextInt(1000) + "_" + fileName;
 		String relativePath = null;
 		if (ValueWidget.isNullOrEmpty(uploadFolder)) {
