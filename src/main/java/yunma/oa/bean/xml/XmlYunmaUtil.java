@@ -412,7 +412,7 @@ public class XmlYunmaUtil {
             return null;
         }
         input = input.trim();
-        if (input.startsWith("<list>")) {
+        if (input.startsWith("<list")) {//因为list可以有属性index
             Element root = getElement(input, 0, null);
             if ("list".equals(root.getName())) {
                 List<String> stubs = new ArrayList<String>();
