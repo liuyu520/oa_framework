@@ -193,7 +193,8 @@ public class HWUtils {
             content = stubRange.getStubs().get(stubRange.getSelectedIndex());
             setServletUrl(request, path, readAndWriteResult);
 			readAndWriteResult.setContent(content);
-			readAndWriteResult.setResult(true);
+            readAndWriteResult.setStubRange(stubRange);
+            readAndWriteResult.setResult(true);
 		} catch (java.io.FileNotFoundException ex) {
 			ex.printStackTrace();
 		} catch (IOException e) {
@@ -247,8 +248,8 @@ public class HWUtils {
 	 * @param charset
 	 * @return
 	 */
-	public static ReadAndWriteResult updateStub(HttpServletRequest request, String path, String content, String charset) {
-		ReadAndWriteResult readAndWriteResult = new ReadAndWriteResult();
+    public static ReadAndWriteResult updateStub(HttpServletRequest request, String path, String content, String charset, int index) {
+        ReadAndWriteResult readAndWriteResult = new ReadAndWriteResult();
 		if (ValueWidget.isNullOrEmpty(content)) {
 			readAndWriteResult.setErrorMessage("内容为空");
 			return readAndWriteResult;
@@ -266,8 +267,8 @@ public class HWUtils {
 					return readAndWriteResult;
 				}
 				setServletUrl(request, path, readAndWriteResult);
-				writeStubFile(content, charset, readAndWriteResult, file);
-				HttpSession session = request.getSession(true);
+                writeStubFile(content, charset, readAndWriteResult, file, index);
+                HttpSession session = request.getSession(true);
 				logger.debug("update sessionId:" + session.getId());
 				session.setAttribute(SESSION_KEY_STUB_OLD_CONTENT, contentOld);
 				readAndWriteResult.setTips("更新成功");
@@ -295,9 +296,10 @@ public class HWUtils {
 	 * @param file
 	 * @throws IOException
 	 */
-	private static void writeStubFile(String content, String charset, ReadAndWriteResult readAndWriteResult, File file) throws IOException {
-		FileWriterWithEncoding fileW = new FileWriterWithEncoding(file, charset);
-		fileW.write(content);
+    private static void writeStubFile(String content, String charset, ReadAndWriteResult readAndWriteResult, File file, int index) throws IOException {
+        FileWriterWithEncoding fileW = new FileWriterWithEncoding(file, charset);
+        StubRange stubRange = XmlYunmaUtil.deAssembleStub(content);
+        fileW.write(content);
 		fileW.close();
 		readAndWriteResult.setResult(true);
 		readAndWriteResult.setContent(content);
@@ -312,8 +314,8 @@ public class HWUtils {
 	 * @param charset
 	 * @return
 	 */
-	public static ReadAndWriteResult saveStub(HttpServletRequest request, String path, String content, String charset) {
-		ReadAndWriteResult readAndWriteResult = new ReadAndWriteResult();
+    public static ReadAndWriteResult saveStub(HttpServletRequest request, String path, String content, String charset, int index) {
+        ReadAndWriteResult readAndWriteResult = new ReadAndWriteResult();
 		if (ValueWidget.isNullOrEmpty(content)) {
 			readAndWriteResult.setErrorMessage("内容为空");
 			return readAndWriteResult;
@@ -334,8 +336,8 @@ public class HWUtils {
 				return fileHasExistReadAndWriteResult(readAndWriteResult, realPath2);
 			} else {
 				setServletUrl(request, path, readAndWriteResult);
-				writeStubFile(content, charset, readAndWriteResult, file);
-				readAndWriteResult.setTips("添加成功");
+                writeStubFile(content, charset, readAndWriteResult, file, index);
+                readAndWriteResult.setTips("添加成功");
 			}
 
 		} catch (java.io.FileNotFoundException ex) {
@@ -445,8 +447,12 @@ public class HWUtils {
 				, finalFileName,
 				Constant2.SRC_MAIN_WEBAPP);
 		uploadResult.setSavedFile(savedFile);
-		uploadResult.setRelativePath(HWUtils.getRelativePath(relativePath, finalFileName));
-		uploadResult.setFinalFileName(finalFileName);
+        String relativeUrl = HWUtils.getRelativePath(relativePath, finalFileName);
+        if (!relativeUrl.startsWith("/")) {//uploadResult中的RelativePath 必须以斜杠开头
+            relativeUrl = "/" + relativeUrl;
+        }
+        uploadResult.setRelativePath(relativeUrl);
+        uploadResult.setFinalFileName(finalFileName);
 		return uploadResult;
 	}
 

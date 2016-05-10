@@ -1,5 +1,7 @@
 package oa.bean.stub;
 
+import oa.bean.StubRange;
+
 /**
  * Created by huangweii on 2016/2/19.<br />
  * 用于stub 测试
@@ -8,6 +10,7 @@ public class ReadAndWriteResult {
     private boolean result;
     private String content;
     private String errorMessage;
+    private StubRange stubRange;
     /***
      * 操作成功提示信息
      */
@@ -67,5 +70,13 @@ public class ReadAndWriteResult {
 
     public void setTips(String tips) {
         this.tips = tips;
+    }
+
+    public StubRange getStubRange() {
+        return stubRange;
+    }
+
+    public void setStubRange(StubRange stubRange) {
+        this.stubRange = stubRange;
     }
 }
