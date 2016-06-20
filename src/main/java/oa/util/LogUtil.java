@@ -6,6 +6,7 @@ import com.common.dict.Constant2;
 import com.common.util.ReflectHWUtils;
 import com.common.util.WebServletUtil;
 import com.io.hw.json.HWJacksonUtils;
+import com.string.widget.util.RegexUtil;
 import com.string.widget.util.ValueWidget;
 import com.time.util.TimeHWUtil;
 import oa.entity.common.AccessLog;
@@ -68,6 +69,7 @@ public class LogUtil {
             String queryString = request.getQueryString();
             if (ValueWidget.isNullOrEmpty(queryString)) {
                 queryString = HWJacksonUtils.getJsonP(WebServletUtil.getParamMap(request.getParameterMap()));
+                queryString = RegexUtil.filterExpression(queryString);
             }
             accessLog.setQueryString(queryString);//例如"username=whuang&password=root"
         }
