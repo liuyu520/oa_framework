@@ -3,6 +3,7 @@ package oa.web.controller.common;
 import com.common.bean.RequestInfoBean;
 import com.common.bean.ResponseResult;
 import com.common.util.SystemHWUtil;
+import com.http.util.HttpSocketUtil;
 import com.io.hw.json.HWJacksonUtils;
 import com.string.widget.util.ValueWidget;
 import com.string.widget.util.XSSUtil;
@@ -18,8 +19,9 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,22 +46,30 @@ public class TestThirdApiController {
      * responseCode: 401
      * }
      * @throws IOException
+     * @throws NoSuchAlgorithmException
+     * @throws KeyManagementException 
      */
     @RequestMapping(value = "/testapi", produces = SystemHWUtil.RESPONSE_CONTENTTYPE_JSON_UTF)
     @ResponseBody
-    public String test(@RequestParam(required = true) String apiPath, String requestMethod) throws IOException {
+    public String test(@RequestParam(required = true) String apiPath, String requestMethod, boolean isSsl) throws IOException, KeyManagementException, NoSuchAlgorithmException {
         apiPath = XSSUtil.deleteXSS(apiPath);
         if (ValueWidget.isNullOrEmpty(apiPath)) {
             logger.error("apiPath is null");
             return null;
         }
         if (!apiPath.startsWith("http")) {//例如:apiPath的值为:i.chanjet.com%2Fuser%2FuserAndAppInfo
-            //自动在前面补充http://
-            apiPath = "http://" + apiPath;
+            if (isSsl) {
+                apiPath = "https://" + apiPath;
+            } else {
+                //自动在前面补充http://
+                apiPath = "http://" + apiPath;
+            }
+
         }
         URL url = new URL(apiPath);
-        URLConnection urlConnection = url.openConnection();
-        HttpURLConnection httpUrlConnection = (HttpURLConnection) urlConnection;
+        HttpURLConnection httpUrlConnection = HttpSocketUtil.getHttpURLConnection(apiPath, isSsl);
+        /*urlConnection = url.openConnection();
+        HttpURLConnection httpUrlConnection = (HttpURLConnection) urlConnection;*/
         httpUrlConnection.setDoInput(true);
         httpUrlConnection.setUseCaches(false);
         if (!ValueWidget.isNullOrEmpty(requestMethod)) {
