@@ -2,6 +2,7 @@ package oa.web.controller.common;
 
 import com.common.bean.RequestInfoBean;
 import com.common.bean.ResponseResult;
+import com.common.dict.Constant2;
 import com.common.util.SystemHWUtil;
 import com.http.util.HttpSocketUtil;
 import com.io.hw.json.HWJacksonUtils;
@@ -76,16 +77,20 @@ public class TestThirdApiController {
             httpUrlConnection.setRequestMethod(requestMethod);
         }
         int responseStatusCode = SystemHWUtil.NEGATIVE_ONE;
+        Map<String, Object> map = new HashMap<String, Object>();
         try {
             httpUrlConnection.connect();
             responseStatusCode = httpUrlConnection.getResponseCode();
         } catch (java.net.UnknownHostException ex) {
             ex.printStackTrace();
+            map.put(Constant2.RESPONSE_KEY_ERROR_MESSAGE, ex.getMessage());
+        } catch (java.net.ConnectException e) {
+            e.printStackTrace();
+            map.put(Constant2.RESPONSE_KEY_ERROR_MESSAGE, e.getMessage() + " ,可能不支持https");
         }
 
         httpUrlConnection.disconnect();
         logger.info("responseStatusCode:" + responseStatusCode);
-        Map<String, Object> map = new HashMap<String, Object>();
         map.put("responseCode", responseStatusCode);
         map.put("apiPath", apiPath);
         map.put("apiPath url encoded", URLEncoder.encode(apiPath, SystemHWUtil.CHARSET_UTF));
