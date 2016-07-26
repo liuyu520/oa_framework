@@ -26,7 +26,7 @@ import java.util.Map;
  *         需要子类继承
  */
 public class StubIndexController {
-    protected static Logger logger = Logger.getLogger(StubIndexController.class);
+    protected static final Logger logger = Logger.getLogger(StubIndexController.class);
 
     private static String getNginxScript(String targetUrl, String stubUrl) {
         if (ValueWidget.isNullOrEmpty(stubUrl)) {

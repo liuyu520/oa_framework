@@ -62,11 +62,11 @@ public class CompressFailedPic {
 	
 	@Column(name="failed_time")
 	public Timestamp getFailedTime() {
-		return failedTime;
-	}
+        return new Timestamp(failedTime.getTime());
+    }
 	public void setFailedTime(Timestamp failedTime) {
-		this.failedTime = failedTime;
-	}
+        this.failedTime = new Timestamp(failedTime.getTime());
+    }
 	
 	
 }

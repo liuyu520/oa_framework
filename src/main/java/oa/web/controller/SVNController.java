@@ -18,8 +18,9 @@ import java.io.PrintWriter;
 @Controller
 @RequestMapping("/svn")
 public class SVNController {
-	protected static Logger logger = Logger.getLogger(SVNController.class);
-	@RequestMapping(value = "/update")
+    protected static final Logger logger = Logger.getLogger(SVNController.class);
+
+    @RequestMapping(value = "/update")
 	public String update(HttpServletResponse response,String folder2update) throws IOException{
 		if(ValueWidget.isNullOrEmpty(folder2update)){
 			folder2update="/var/www/ajl/";

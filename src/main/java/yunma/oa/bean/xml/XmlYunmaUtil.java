@@ -24,10 +24,10 @@ public class XmlYunmaUtil {
 	
 	public static final char TAG_END_CHAR='>';
 	public static final String TAG_END_STRING=">";
-	public static int index;
-	
-	
-	private static ParseBean parseElementName(String xmlContent,int pos){
+    static int index;
+
+
+    private static ParseBean parseElementName(String xmlContent,int pos){
 		int totalLength=xmlContent.length();
 		int i=pos;
 		StringBuffer sbing=null;

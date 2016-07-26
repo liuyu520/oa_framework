@@ -39,8 +39,8 @@ import java.util.*;
 
 public class HWUtils {
 	public static final String SESSION_KEY_STUB_OLD_CONTENT = "stub_old_content";
-	protected static Logger logger=Logger.getLogger(HWUtils.class);
-	private static ObjectMapper mapper = null;
+    protected static final Logger logger = Logger.getLogger(HWUtils.class);
+    private static ObjectMapper mapper = null;
 
 	public static ObjectMapper getObjectMapper(){
 		if(mapper==null){
@@ -298,7 +298,7 @@ public class HWUtils {
 	 */
     private static void writeStubFile(String content, String charset, ReadAndWriteResult readAndWriteResult, File file, int index) throws IOException {
         FileWriterWithEncoding fileW = new FileWriterWithEncoding(file, charset);
-        StubRange stubRange = XmlYunmaUtil.deAssembleStub(content);
+//        StubRange stubRange = XmlYunmaUtil.deAssembleStub(content);
         fileW.write(content);
 		fileW.close();
 		readAndWriteResult.setResult(true);

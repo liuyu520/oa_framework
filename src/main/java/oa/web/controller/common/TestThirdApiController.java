@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.net.URL;
 import java.net.URLEncoder;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
@@ -32,7 +31,7 @@ import java.util.Map;
 @Controller
 @RequestMapping("/testapi")
 public class TestThirdApiController {
-    protected static Logger logger = Logger.getLogger(TestThirdApiController.class);
+    protected static final Logger logger = Logger.getLogger(TestThirdApiController.class);
 
     /***
      * 用于测试协作方接口是否可以访问,比如403 表示拒绝访问<br>
@@ -67,7 +66,7 @@ public class TestThirdApiController {
             }
 
         }
-        URL url = new URL(apiPath);
+//        URL url = new URL(apiPath);
         HttpURLConnection httpUrlConnection = HttpSocketUtil.getHttpURLConnection(apiPath, isSsl);
         /*urlConnection = url.openConnection();
         HttpURLConnection httpUrlConnection = (HttpURLConnection) urlConnection;*/
@@ -119,7 +118,7 @@ public class TestThirdApiController {
         }
         logger.info(HWJacksonUtils.getJsonP(requestInfoBean));
         ResponseResult responseResult = new ResponseResult(requestInfoBean).invoke();
-        Object[] resultArr = responseResult.getResultArr();
+//        Object[] resultArr = responseResult.getResultArr();
         int resCode = responseResult.getResCode();
         String jsonResult = responseResult.getResponseJsonResult();
         Map map = new HashMap();

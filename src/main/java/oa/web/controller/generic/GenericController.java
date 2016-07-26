@@ -38,8 +38,8 @@ import java.util.Map;
 public abstract class GenericController <T>{
 
 	public static final String VIEW_LIST = "/list";
-	protected static Logger logger = Logger.getLogger(GenericController.class);
-	protected final Class<T> clz = SystemHWUtil.getGenricClassType(getClass());
+    protected static final Logger logger = Logger.getLogger(GenericController.class);
+    protected final Class<T> clz = SystemHWUtil.getGenricClassType(getClass());
 	protected GenericDao<T>dao;
 	/***
 	 * 设备类型
