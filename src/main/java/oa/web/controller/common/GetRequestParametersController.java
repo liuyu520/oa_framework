@@ -30,6 +30,7 @@ public class GetRequestParametersController {
         String queryStr = WebServletUtil.getRequestQueryStr(request, null);
         Map parameterMap = request.getParameterMap();
         String queryString = request.getQueryString();
+        String contentType = request.getContentType();
         Map map = new HashMap();
         System.out.println(SystemHWUtil.DIVIDING_LINE);
         map.put("requestBody", requestBody);
@@ -40,6 +41,7 @@ public class GetRequestParametersController {
         map.put("parameterMap", parameterMap);
         map.put("request charEncoding", charEncoding);
         map.put("queryString", queryString);
+        map.put("contentType", contentType);
         if (ValueWidget.isNullOrEmpty(charEncoding)) {
             charEncoding = SystemHWUtil.CHARSET_UTF;
         }
