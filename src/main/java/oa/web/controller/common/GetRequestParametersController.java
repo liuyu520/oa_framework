@@ -7,7 +7,10 @@ import com.string.widget.util.ValueWidget;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.net.URLDecoder;
@@ -21,6 +24,7 @@ import java.util.Map;
 @Controller
 @RequestMapping("/info")
 public class GetRequestParametersController {
+    public static final String applicationKey = "applicationKey_global";
     public static Map getRequestMap(HttpServletRequest request) throws IOException {
         String requestBody = WebServletUtil.getRequestPostStr(request);
         String path = request.getContextPath();
@@ -34,6 +38,7 @@ public class GetRequestParametersController {
         Map map = new HashMap();
         System.out.println(SystemHWUtil.DIVIDING_LINE);
         map.put("requestBody", requestBody);
+        addAtrr2Application(requestBody);
         if (null != queryStr) {
             queryStr = queryStr.replace("\u0000", SystemHWUtil.EMPTY);
         }
@@ -51,6 +56,44 @@ public class GetRequestParametersController {
         return map;
     }
 
+    /***
+     * 设置全局信息
+     * @param content
+     */
+    public static void addAtrr2Application(String content) {
+        ServletContext servletContext = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest().getSession(true).getServletContext();
+        String old = (String) servletContext.getAttribute(applicationKey);
+        if (ValueWidget.isNullOrEmpty(old)) {
+            servletContext.setAttribute(applicationKey, content);
+        } else {
+            servletContext.setAttribute(applicationKey, content + SystemHWUtil.CRLF + SystemHWUtil.CRLF + old);
+        }
+    }
+
+    public static void clearAtrr2Application() {
+        ServletContext servletContext = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest().getSession(true).getServletContext();
+        servletContext.setAttribute(applicationKey, SystemHWUtil.EMPTY);
+    }
+
+    public static String getAtrr2Application() {
+        ServletContext servletContext = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest().getSession(true).getServletContext();
+        String old = (String) servletContext.getAttribute(applicationKey);
+        return old;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/global/cache", produces = SystemHWUtil.RESPONSE_CONTENTTYPE_PLAIN_UTF)
+    public String getGlobalInfo() {
+        return getAtrr2Application();
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/global/clear", produces = SystemHWUtil.RESPONSE_CONTENTTYPE_PLAIN_UTF)
+    public String clearGlobalInfo() {
+        String old = getAtrr2Application();
+        clearAtrr2Application();
+        return old;
+    }
     @ResponseBody
     @RequestMapping(value = "/request0", produces = SystemHWUtil.RESPONSE_CONTENTTYPE_JSON_UTF)
     public String getParameter4(HttpServletRequest request
