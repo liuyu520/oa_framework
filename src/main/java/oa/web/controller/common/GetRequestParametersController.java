@@ -4,6 +4,7 @@ import com.common.util.SystemHWUtil;
 import com.common.util.WebServletUtil;
 import com.io.hw.json.HWJacksonUtils;
 import com.string.widget.util.ValueWidget;
+import com.time.util.TimeHWUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -39,6 +40,7 @@ public class GetRequestParametersController {
         System.out.println(SystemHWUtil.DIVIDING_LINE);
         map.put("requestBody", requestBody);
         addAtrr2Application(requestBody);
+        addAtrr2Application("queryString:" + queryString);
         if (null != queryStr) {
             queryStr = queryStr.replace("\u0000", SystemHWUtil.EMPTY);
         }
@@ -61,6 +63,11 @@ public class GetRequestParametersController {
      * @param content
      */
     public static void addAtrr2Application(String content) {
+        if (ValueWidget.isNullOrEmpty(content)) {
+            return;
+        } else {
+            content = TimeHWUtil.getCurrentDateTime() + "::" + content;
+        }
         ServletContext servletContext = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest().getSession(true).getServletContext();
         String old = (String) servletContext.getAttribute(applicationKey);
         if (ValueWidget.isNullOrEmpty(old)) {
