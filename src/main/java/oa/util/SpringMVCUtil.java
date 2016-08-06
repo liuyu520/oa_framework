@@ -50,6 +50,18 @@ public class SpringMVCUtil {
         return httpSession.getAttribute(sessionKey);
     }
 
+    public static void removeObject(String sessionKey) {
+        ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        if (null == servletRequestAttributes) {
+            return;
+        }
+        HttpServletRequest request = servletRequestAttributes.getRequest();
+        HttpSession httpSession = request.getSession();
+        if (null != httpSession) {
+            httpSession.removeAttribute(sessionKey);
+        }
+    }
+    
     /***
      * 获取请求的Content-Type
      *

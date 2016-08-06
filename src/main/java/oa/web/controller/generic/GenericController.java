@@ -583,16 +583,62 @@ public abstract class GenericController <T>{
 		init(request);
 		return listCommon(model, roleLevel, view, session, request, targetView);
 	}
-	
-	@RequestMapping(value = VIEW_LIST)
-	public String list(Model model,T roleLevel,PageView view,HttpSession session,HttpServletRequest request,String targetView) {
-		init(request);
-		return listCommon(model, roleLevel, view, session, request, targetView);
-		
-	}
 
-	private String listCommon(Model model, T roleLevel, PageView view, HttpSession session, HttpServletRequest request, String targetView) {
-		String sessionKey=getJspFolder();
+    /***
+     * select
+     count(*) as y0_
+     from
+     t_test_to_boy this_
+     where
+     this_.status=?
+     and (
+     (
+     this_.testcase like ?
+     or this_.alias like ?
+     )
+     or this_.alias2 like ?
+     )<br >
+     * @param model
+     * @param roleLevel
+     * @param view
+     * @param session
+     * @param request
+     * @param targetView
+     * @param columnsArr : 字符串,以逗号(,)分隔
+     * @param keyword : 如果columnsArr 为空,则直接忽略参数keyword
+     * @return
+     */
+    @RequestMapping(value = VIEW_LIST)
+    public String list(Model model, T roleLevel, PageView view, HttpSession session, HttpServletRequest request, String targetView, String columnsArr, String keyword) {
+        init(request);
+        if (ValueWidget.isNullOrEmpty(columnsArr)) {
+            return listCommon(model, roleLevel, view, session, request, targetView);
+        } else {
+            String[] columns = columnsArr.split(",");
+            return listCommon(model, roleLevel, view, session, request, targetView, columns, keyword);
+        }
+
+    }
+
+    private String listCommon(Model model, T roleLevel, PageView view, HttpSession session, HttpServletRequest request, String targetView) {
+        return listCommon(model, roleLevel, view, session, request, targetView, (String[]) null, null);
+    }
+
+    /***
+     *
+     * @param model
+     * @param roleLevel
+     * @param view
+     * @param session
+     * @param request
+     * @param targetView
+     * @param columns : 如果columns 为空,则直接忽略参数keyword
+     * @param keyword : 如果columns 为空,则直接忽略参数keyword
+     * @return
+     */
+    private String listCommon(Model model, T roleLevel, PageView view, HttpSession session, HttpServletRequest request, String targetView
+            , String[] columns, String keyword) {
+        String sessionKey=getJspFolder();
 		if(!ValueWidget.isNullOrEmpty(view.getPageFlag())&&view.getPageFlag().equals(Constant2.PAGEFLAG_NOT_QUERY)){
 			System.out.println("不是查询");
 			roleLevel=(T)session.getAttribute(sessionKey);
@@ -616,7 +662,35 @@ public abstract class GenericController <T>{
 		}
 		beforeList(roleLevel);
 		setRecordsPerPageBeforeQuery(view);
-		listPaging(roleLevel, view,getListOrderBy());
+        if (ValueWidget.isNullOrEmpty(columns) || ValueWidget.isNullOrEmpty(keyword)) {//如果columns 为空,则直接忽略最后一个参数keyword
+            listPaging(roleLevel, view, getListOrderBy());
+        } else {//见方法 com/common/dao/generic/UniversalDao.java 218行 getCriteria()
+            Map condition = null;
+            try {
+                condition = ReflectHWUtils.convertObj2Map(roleLevel, columns, true);
+            } catch (NoSuchFieldException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+            /*
+            * select
+        count(*) as y0_
+    from
+        t_test_to_boy this_
+    where
+        this_.status=?
+        and (
+            (
+                this_.testcase like ?
+                or this_.alias like ?
+            )
+            or this_.alias2 like ?
+        )
+            * */
+            PageUtil.paging(condition, columns, keyword, view, getDao(), getListOrderBy());
+        }
+
 		listTODO(model,view,request);
 
 		model.addAttribute("view", view);
