@@ -109,8 +109,8 @@ public abstract class GenericController <T>{
 	private void addCommonAction(Model model, HttpServletRequest request) {
 		init(request);
 		commonAction(model);
-		beforeAddInput(model);
-		model.addAttribute(Constant2.KEY_MODEL_ATTRIBUTE, getJspFolder());//necessary and important
+        beforeAddInput(model, request);
+        model.addAttribute(Constant2.KEY_MODEL_ATTRIBUTE, getJspFolder());//necessary and important
 	}
 
 	@RequestMapping(value = "/add/map",method=RequestMethod.GET)
@@ -126,7 +126,7 @@ public abstract class GenericController <T>{
 	 * 可以覆写
 	 * @param model
 	 */
-	protected abstract void beforeAddInput(Model model);//{
+    protected abstract void beforeAddInput(Model model, HttpServletRequest request);//{
 //		List<T> roles=this.getDao().getAll();
 //		model.addAttribute(roles);//选择上级
 //	}

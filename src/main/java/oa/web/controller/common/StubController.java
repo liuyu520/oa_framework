@@ -59,7 +59,7 @@ public class StubController {
     }
 
     private String stubAction(HttpServletRequest request, String actionPath, String callback, String charset, Integer second) {
-        if (second != null) {
+        if (second != null && second != 0) {
             try {
                 Thread.sleep(second * 1000);
             } catch (InterruptedException e) {
