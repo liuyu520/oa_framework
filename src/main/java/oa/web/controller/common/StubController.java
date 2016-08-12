@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /***
  * 用于stub
@@ -36,9 +37,9 @@ public class StubController {
      */
     @ResponseBody
     @RequestMapping(value = "/{action}", produces = SystemHWUtil.RESPONSE_CONTENTTYPE_JSON_UTF)
-    public String corsJsonSimple(HttpServletRequest request,
-                                 @PathVariable String action, String callback, String charset, Integer second/*模拟接口执行的时间*/) {
-        return stubAction(request, Constant2.stub_folder + action /*+ stub_file_Suffix*/, callback, charset, second);
+    public String corsJsonSimple(HttpServletRequest request, HttpServletResponse response,
+                                 @PathVariable String action, String callback, String charset, Integer second/*模拟接口执行的时间*/, Integer responseCode) {
+        return stubAction(request, response, Constant2.stub_folder + action /*+ stub_file_Suffix*/, callback, charset, second, responseCode);
     }
 
     /***
@@ -50,20 +51,28 @@ public class StubController {
      */
     @ResponseBody
     @RequestMapping(value = "/{namespace}/{action}", produces = SystemHWUtil.RESPONSE_CONTENTTYPE_JSON_UTF)
-    public String corsJsonSimple(HttpServletRequest request,
+    public String corsJsonSimple(HttpServletRequest request, HttpServletResponse response,
                                  @PathVariable String namespace, @PathVariable String action,
                                  String callback
-            , String charset, Integer second/*模拟接口执行的时间*/) {
-        return stubAction(request, Constant2.stub_folder + namespace + Constant2.Slash + action
-                , callback, charset, second);
+            , String charset, Integer second/*模拟接口执行的时间*/, Integer responseCode) {
+        return stubAction(request, response, Constant2.stub_folder + namespace + Constant2.Slash + action
+                , callback, charset, second, responseCode);
     }
 
-    private String stubAction(HttpServletRequest request, String actionPath, String callback, String charset, Integer second) {
+    private String stubAction(HttpServletRequest request, HttpServletResponse response, String actionPath, String callback, String charset, Integer second, Integer responseCode) {
         if (second != null && second != 0) {
             try {
                 Thread.sleep(second * 1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
+            }
+        }
+        if (null != responseCode) {
+            if (responseCode == 500) {
+                throw new NullPointerException("stub test");
+            } else {
+                response.setStatus(responseCode);
+                return null;
             }
         }
         if (ValueWidget.isNullOrEmpty(charset)) {
@@ -84,57 +93,57 @@ public class StubController {
 
     @ResponseBody
     @RequestMapping(value = "/{group}/{namespace}/{action}", produces = SystemHWUtil.RESPONSE_CONTENTTYPE_JSON_UTF)
-    public String stubAction(HttpServletRequest request,
+    public String stubAction(HttpServletRequest request, HttpServletResponse response,
                              @PathVariable String group,
                              @PathVariable String namespace, @PathVariable String action,
                              String callback
-            , String charset, Integer second/*模拟接口执行的时间*/) {
-        return stubAction(request, Constant2.stub_folder + group + Constant2.Slash + namespace + Constant2.Slash + action
-                /*+ stub_file_Suffix*/, callback, charset, second);
+            , String charset, Integer second/*模拟接口执行的时间*/, Integer responseCode) {
+        return stubAction(request, response, Constant2.stub_folder + group + Constant2.Slash + namespace + Constant2.Slash + action
+                /*+ stub_file_Suffix*/, callback, charset, second, responseCode);
     }
 
     @ResponseBody
     @RequestMapping(value = "/{version}/{group}/{namespace}/{action}", produces = SystemHWUtil.RESPONSE_CONTENTTYPE_JSON_UTF)
-    public String stubAction(HttpServletRequest request,
+    public String stubAction(HttpServletRequest request, HttpServletResponse response,
                              @PathVariable String version,
                              @PathVariable String group,
                              @PathVariable String namespace, @PathVariable String action,
                              String callback
-            , String charset, Integer second/*模拟接口执行的时间*/) {
-        return stubAction(request, Constant2.stub_folder + version + Constant2.Slash + group + Constant2.Slash + namespace + Constant2.Slash + action
-                /*+ stub_file_Suffix*/, callback, charset, second);
+            , String charset, Integer second/*模拟接口执行的时间*/, Integer responseCode) {
+        return stubAction(request, response, Constant2.stub_folder + version + Constant2.Slash + group + Constant2.Slash + namespace + Constant2.Slash + action
+                /*+ stub_file_Suffix*/, callback, charset, second, responseCode);
     }
 
     @ResponseBody
     @RequestMapping(value = "/{version}/{module}/{group}/{namespace}/{action}", produces = SystemHWUtil.RESPONSE_CONTENTTYPE_JSON_UTF)
-    public String stubAction(HttpServletRequest request,
+    public String stubAction(HttpServletRequest request, HttpServletResponse response,
                              @PathVariable String version,
                              @PathVariable String module,
                              @PathVariable String group,
                              @PathVariable String namespace, @PathVariable String action,
                              String callback
-            , String charset, Integer second/*模拟接口执行的时间*/) {
-        return stubAction(request, Constant2.stub_folder + version + Constant2.Slash + module + Constant2.Slash + group + Constant2.Slash + namespace + Constant2.Slash + action
-                /*+ stub_file_Suffix*/, callback, charset, second);
+            , String charset, Integer second/*模拟接口执行的时间*/, Integer responseCode) {
+        return stubAction(request, response, Constant2.stub_folder + version + Constant2.Slash + module + Constant2.Slash + group + Constant2.Slash + namespace + Constant2.Slash + action
+                /*+ stub_file_Suffix*/, callback, charset, second, responseCode);
     }
 
     @ResponseBody
     @RequestMapping(value = "/{version}/{branch}/{module}/{group}/{namespace}/{action}", produces = SystemHWUtil.RESPONSE_CONTENTTYPE_JSON_UTF)
-    public String stubAction(HttpServletRequest request,
+    public String stubAction(HttpServletRequest request, HttpServletResponse response,
                              @PathVariable String version,
                              @PathVariable String branch,
                              @PathVariable String module,
                              @PathVariable String group,
                              @PathVariable String namespace, @PathVariable String action,
                              String callback
-            , String charset, Integer second/*模拟接口执行的时间*/) {
-        return stubAction(request, Constant2.stub_folder + version + Constant2.Slash + branch + Constant2.Slash + module + Constant2.Slash + group + Constant2.Slash + namespace + Constant2.Slash + action
-                /*+ stub_file_Suffix*/, callback, charset, second);
+            , String charset, Integer second/*模拟接口执行的时间*/, Integer responseCode) {
+        return stubAction(request, response, Constant2.stub_folder + version + Constant2.Slash + branch + Constant2.Slash + module + Constant2.Slash + group + Constant2.Slash + namespace + Constant2.Slash + action
+                /*+ stub_file_Suffix*/, callback, charset, second, responseCode);
     }
 
     @ResponseBody
     @RequestMapping(value = "/{version}/{branch}/{branch2}/{module}/{group}/{namespace}/{action}", produces = SystemHWUtil.RESPONSE_CONTENTTYPE_JSON_UTF)
-    public String stubAction(HttpServletRequest request,
+    public String stubAction(HttpServletRequest request, HttpServletResponse response,
                              @PathVariable String version,
                              @PathVariable String branch,
                              @PathVariable String branch2,
@@ -142,9 +151,9 @@ public class StubController {
                              @PathVariable String group,
                              @PathVariable String namespace, @PathVariable String action,
                              String callback
-            , String charset, Integer second/*模拟接口执行的时间*/) {
-        return stubAction(request, Constant2.stub_folder + version + Constant2.Slash + branch + Constant2.Slash + branch2 + Constant2.Slash + module + Constant2.Slash + group + Constant2.Slash + namespace + Constant2.Slash + action
-                /*+ stub_file_Suffix*/, callback, charset, second);
+            , String charset, Integer second/*模拟接口执行的时间*/, Integer responseCode) {
+        return stubAction(request, response, Constant2.stub_folder + version + Constant2.Slash + branch + Constant2.Slash + branch2 + Constant2.Slash + module + Constant2.Slash + group + Constant2.Slash + namespace + Constant2.Slash + action
+                /*+ stub_file_Suffix*/, callback, charset, second, responseCode);
     }
 
 
