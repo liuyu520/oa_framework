@@ -429,14 +429,20 @@ public class HWUtils {
 		return fullUrl;
 	}
 
-	public static UploadResult getSavedToFile(HttpServletRequest request, String fileName, String uploadFolder) {
+    public static UploadResult getSavedToFile(HttpServletRequest request, String fileName, String uploadFolder, boolean sameFileName) {
         fileName = RegexUtil.filterBlank(fileName);//IE中识别不了有空格的json
         // 保存到哪儿
-		String finalFileName = TimeHWUtil.formatDateByPattern(TimeHWUtil
+        String prefix = TimeHWUtil.formatDateByPattern(TimeHWUtil
                 .getCurrentTimestamp(), TimeHWUtil.yyyyMMddHHmmss.replace("-", SystemHWUtil.EMPTY)
-                .replace(":", SystemHWUtil.EMPTY).replace(SystemHWUtil.BLANK, SystemHWUtil.EMPTY)) + "_"
-                + new Random().nextInt(1000) + "_" + fileName;
-		String relativePath = null;
+                .replace(":", SystemHWUtil.EMPTY).replace(SystemHWUtil.BLANK, SystemHWUtil.EMPTY)) + "_" + new Random().nextInt(1000) + "_";
+        String finalFileName = null;
+        if (sameFileName) {
+            finalFileName = "upload_";
+        } else {
+            finalFileName = prefix;
+        }
+        finalFileName = finalFileName + fileName;
+        String relativePath = null;
 		if (ValueWidget.isNullOrEmpty(uploadFolder)) {
 			relativePath = Constant2.UPLOAD_FOLDER_NAME + "/image";
 		} else {
@@ -456,16 +462,29 @@ public class HWUtils {
 		return uploadResult;
 	}
 
-    public static Map getUploadResultMap(MultipartFile file, HttpServletRequest request) {
+    /***
+     *
+     * @param file
+     * @param request
+     * @param deleteOldFile : 是否删除原文件
+     * @param sameFileName : 文件名是否动态改变(加上时间戳就会动态改变)
+     * @return
+     */
+    public static Map getUploadResultMap(MultipartFile file, HttpServletRequest request, boolean sameFileName, boolean deleteOldFile) {
         String fileName = file.getOriginalFilename();// 上传的文件名
         fileName = RegexUtil.filterBlank(fileName);//IE中识别不了有空格的json
 
-        UploadResult uploadResult = HWUtils.getSavedToFile(request, fileName, null);
+        UploadResult uploadResult = HWUtils.getSavedToFile(request, fileName, null, sameFileName);
         File savedFile = uploadResult.getSavedFile();
         File parentFolder = SystemHWUtil.createParentFolder(savedFile);
         FileUtils.makeWritable(parentFolder);//使...可写
         System.out.println("[upload]savedFile:"
                 + savedFile.getAbsolutePath());
+        //如果文件已经存在,则先删除
+        if (deleteOldFile && savedFile.exists()) {
+            System.out.println("删除 " + savedFile.getAbsolutePath());
+            savedFile.delete();
+        }
         // 保存
         try {
             file.transferTo(savedFile);
