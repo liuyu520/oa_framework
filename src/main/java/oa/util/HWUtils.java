@@ -429,6 +429,16 @@ public class HWUtils {
 		return fullUrl;
 	}
 
+    /***
+     * sameFileName is false
+     * @param request
+     * @param fileName
+     * @param uploadFolder
+     * @return
+     */
+    public static UploadResult getSavedToFile(HttpServletRequest request, String fileName, String uploadFolder) {
+        return getSavedToFile(request, fileName, uploadFolder, false);
+    }
     public static UploadResult getSavedToFile(HttpServletRequest request, String fileName, String uploadFolder, boolean sameFileName) {
         fileName = RegexUtil.filterBlank(fileName);//IE中识别不了有空格的json
         // 保存到哪儿
@@ -463,6 +473,16 @@ public class HWUtils {
 	}
 
     /***
+     * sameFileName is false <br >
+     *     deleteOldFile is false
+     * @param file
+     * @param request
+     * @return
+     */
+    public static Map getUploadResultMap(MultipartFile file, HttpServletRequest request) {
+        return getUploadResultMap(file, request, false, false);
+    }
+    /***
      *
      * @param file
      * @param request
@@ -472,6 +492,7 @@ public class HWUtils {
      */
     public static Map getUploadResultMap(MultipartFile file, HttpServletRequest request, boolean sameFileName, boolean deleteOldFile) {
         String fileName = file.getOriginalFilename();// 上传的文件名
+        //删除所有的空格
         fileName = RegexUtil.filterBlank(fileName);//IE中识别不了有空格的json
 
         UploadResult uploadResult = HWUtils.getSavedToFile(request, fileName, null, sameFileName);
@@ -488,7 +509,6 @@ public class HWUtils {
         // 保存
         try {
             file.transferTo(savedFile);
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -512,7 +532,7 @@ public class HWUtils {
     }
 
     public static String getHtmlImgTag(String fullUrl) {
-        return "<img style=\"max-width: 99%\" src=\"" + fullUrl + "\" alt=\"\">";
+        return "<img style=\"max-width: 99%\" src=\"" + fullUrl + "\" alt=\"不是图片,无法显示\">";
     }
 
 }
