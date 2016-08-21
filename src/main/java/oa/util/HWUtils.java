@@ -338,7 +338,7 @@ public class HWUtils {
      * @param index : 从0开始
      * @throws IOException
      */
-    public static void writeStubFileOneOption(String content, /*String charset,*/ ReadAndWriteResult readAndWriteResult, File file, int index) throws IOException {
+    public static ReadAndWriteResult writeStubFileOneOption(String content, /*String charset,*/ ReadAndWriteResult readAndWriteResult, File file, int index) throws IOException {
         StubRange stubRange = getStubRange(file);
         String absolutePath = file.getAbsolutePath();
         if (ValueWidget.isNullOrEmpty(readAndWriteResult.getAbsolutePath())) {
@@ -347,7 +347,7 @@ public class HWUtils {
         if (stubRange == null) {
             readAndWriteResult.setResult(false);
             readAndWriteResult.setErrorMessage(absolutePath + " 的内容为空");
-            return;
+            return readAndWriteResult;
         }
 
         if (index < 0) {
@@ -362,11 +362,20 @@ public class HWUtils {
             return;
         }*/
         System.out.println("content:" + content + " , index:" + index);
-        replaceElement(content, index, list);
+        int length = list.size();
+        if (index == length) {//新增一个option
+            list.add(content);
+        } else if (index >= length) {//添加了多个textarea
+            for (int i = 0; i < (index - length + 1); i++) {
+                list.add(content);
+            }
+        } else {//修改已存在的option
+            replaceElement(content, index, list);
+        }
         stubRange.setStubs(list);
         writeStubRange(stubRange, file);
         readAndWriteResult.setResult(true);
-
+        return readAndWriteResult;
     }
 
     /***
@@ -382,10 +391,10 @@ public class HWUtils {
     }
 
     public static StubRange getStubRange(File file) throws IOException {
-        String oldContent = FileUtils.getFullContent2(file, SystemHWUtil.CHARSET_UTF);//必须放在new FileWriterWithEncoding()之前,
+        String oldContent = FileUtils.getFullContent2(file);//必须放在new FileWriterWithEncoding()之前,
         //为什么呢?因为new FileWriterWithEncoding()会把文件先清空.
         StubRange stubRange = XmlYunmaUtil.deAssembleStub(oldContent);
-        if (null == stubRange) {
+        if (null == stubRange || ValueWidget.isNullOrEmpty(stubRange.getStubs())) {
             return null;
         }
         return stubRange;
