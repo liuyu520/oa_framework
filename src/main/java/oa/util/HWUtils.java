@@ -24,6 +24,8 @@ import org.codehaus.jackson.map.ObjectWriter;
 import org.codehaus.jackson.map.ser.FilterProvider;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 import yunma.oa.bean.xml.XmlYunmaUtil;
 
@@ -155,23 +157,11 @@ public class HWUtils {
 		ReadAndWriteResult readAndWriteResult = new ReadAndWriteResult();
 		try {
 			String realPath2 = WebServletUtil.getRealPath(request, path);
-			readAndWriteResult.setAbsolutePath(escapePath(realPath2));
-			String pathTmp = null;
-			if (realPath2.endsWith(Constant2.stub_file_Suffix)) {
-				pathTmp = realPath2;
-			} else {
-				pathTmp = realPath2 + Constant2.stub_file_Suffix;
-			}
-			File file = new File(pathTmp);
-			if (!file.exists()) {
-				String errorMessage = pathTmp + " does not exist";
-				System.out.println(errorMessage);
-				logger.error(errorMessage);
-				//兼容appList.do.json 文件名
-				file = new File(realPath2 + ".do" + Constant2.stub_file_Suffix);
-			}
-			realPath2 = file.getAbsolutePath();
-			if (!file.exists()) {
+
+            File file = getStubFile(realPath2);
+            realPath2 = file.getAbsolutePath();
+            readAndWriteResult.setAbsolutePath(escapePath(realPath2));
+            if (!file.exists()) {
                 String errorMessage = realPath2 + " does not exist";
                 logger.error(errorMessage);
                 System.out.println(errorMessage);
@@ -197,8 +187,26 @@ public class HWUtils {
 		return readAndWriteResult;
 	}
 
-	/***
-	 * 文件不存在
+    public static File getStubFile(String realPath2) {
+        String pathTmp;
+        if (realPath2.endsWith(Constant2.stub_file_Suffix)) {
+            pathTmp = realPath2;
+        } else {
+            pathTmp = realPath2 + Constant2.stub_file_Suffix;
+        }
+        File file = new File(pathTmp);
+        if (!file.exists()) {
+            String errorMessage = pathTmp + " does not exist";
+            System.out.println(errorMessage);
+            logger.error(errorMessage);
+            //兼容appList.do.json 文件名
+            file = new File(realPath2.replaceAll("\\" + Constant2.stub_file_Suffix + "$", SystemHWUtil.EMPTY) + ".do" + Constant2.stub_file_Suffix);
+        }
+        return file;
+    }
+
+    /***
+     * 文件不存在
 	 *
 	 * @param readAndWriteResult
 	 * @param realPath2
@@ -244,9 +252,10 @@ public class HWUtils {
         if (contentNull(content, readAndWriteResult)) return readAndWriteResult;
         try {
             String realPath2 = WebServletUtil.getRealPath(request, path);
-			readAndWriteResult.setAbsolutePath(escapePath(realPath2));
-			File file = new File(realPath2);
-			if (file.exists()) {
+            File file = getStubFile(realPath2);
+            realPath2 = file.getAbsolutePath();
+            readAndWriteResult.setAbsolutePath(escapePath(realPath2));
+            if (file.exists()) {
 				String contentOld = FileUtils.getFullContent2(file, charset, true/*isCloseStream*/);
 				if (content.equals(contentOld)) {
 					readAndWriteResult.setResult(false);
@@ -293,16 +302,35 @@ public class HWUtils {
 		readAndWriteResult.setContent(content);
 	}
 
+    public static void writeStubFileOneOption(String content, /*String charset,*/ ReadAndWriteResult readAndWriteResult, String path, int index) throws IOException {
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        String realPath2 = WebServletUtil.getRealPath(request, path);//父目录可能不存在
+        File file = getStubFile(realPath2);
+        writeStubFileOneOption(content, readAndWriteResult, file, index);
+    }
+
+    /***
+     *  新增一个option
+     * @param content
+     * @param readAndWriteResult
+     * @param path
+     * @throws IOException
+     */
+    public static void addOneOptionStub(String content, /*String charset, */ReadAndWriteResult readAndWriteResult, String path) throws IOException {
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        String realPath2 = WebServletUtil.getRealPath(request, path);//父目录可能不存在
+        File file = getStubFile(realPath2);
+        addOneOptionStub(content,/*charset,*/readAndWriteResult, file);
+    }
     /***
      * 第一个元素从0开始
      * @param content : 不是完整内容,只是一个选项(option)
-     * @param charset
      * @param readAndWriteResult
      * @param file
      * @param index : 从0开始
      * @throws IOException
      */
-    public static void writeStubFileOneOption(String content, String charset, ReadAndWriteResult readAndWriteResult, File file, int index) throws IOException {
+    public static void writeStubFileOneOption(String content, /*String charset,*/ ReadAndWriteResult readAndWriteResult, File file, int index) throws IOException {
         StubRange stubRange = getStubRange(file);
         String absolutePath = file.getAbsolutePath();
         if (ValueWidget.isNullOrEmpty(readAndWriteResult.getAbsolutePath())) {
@@ -325,6 +353,7 @@ public class HWUtils {
             readAndWriteResult.setErrorMessage("无变化");
             return;
         }
+        System.out.println("content:" + content + " , index:" + index);
         replaceElement(content, index, list);
         stubRange.setStubs(list);
         writeStubRange(stubRange, file);
@@ -357,12 +386,11 @@ public class HWUtils {
     /***
      * 对已经存在的stub,增加一个选项(option)
      * @param content
-     * @param charset
      * @param readAndWriteResult
      * @param file
      * @throws IOException
      */
-    public static void addOneOptionStub(String content, String charset, ReadAndWriteResult readAndWriteResult, File file) throws IOException {
+    public static void addOneOptionStub(String content, /*String charset, */ReadAndWriteResult readAndWriteResult, File file) throws IOException {
         StubRange stubRange = getStubRange(file);
         String absolutePath = file.getAbsolutePath();
         if (ValueWidget.isNullOrEmpty(readAndWriteResult.getAbsolutePath())) {
@@ -588,7 +616,7 @@ public class HWUtils {
     public void test_writeStubFileOne() {
         try {
             ReadAndWriteResult readAndWriteResult = new ReadAndWriteResult();
-            writeStubFileOneOption("ccc", SystemHWUtil.CHARSET_UTF,
+            writeStubFileOneOption("ccc", 
                     readAndWriteResult, new File("/Users/whuanghkl/work/project/stub_test/src/main/webapp/stub/ab/test.json")
                     , 0);
 
