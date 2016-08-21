@@ -130,8 +130,8 @@ public class HWUtils {
 	 *
 	 * @param path
 	 * @return
-	 * @author lianrao
-	 * @throws IOException
+     * @author 黄威
+     * @throws IOException
 	 * @throws InvalidFormatException
 	 * @throws org.apache.poi.openxml4j.exceptions.InvalidFormatException 
 	 */
@@ -148,8 +148,8 @@ public class HWUtils {
 	 * 读取文件
 	 *
 	 * @param request
-	 * @param path
-	 * @param charset
+     * @param path : 有无后缀名都可以
+     * @param charset
 	 * @return
 	 */
 	public static ReadAndWriteResult stub(HttpServletRequest request, String path, String charset) {
@@ -169,12 +169,20 @@ public class HWUtils {
             }
 			java.io.InputStream input = new FileInputStream(file);
 			if (null == input) {
-				return fileNotExistReadAndWriteResult(readAndWriteResult, realPath2);
+                logger.error("input is null");
+                return fileNotExistReadAndWriteResult(readAndWriteResult, realPath2);
 			}
-			content = FileUtils.getFullContent2(input, charset, true);
+            content = FileUtils.getFullContent2(input, charset);
             //反序列化
             StubRange stubRange = XmlYunmaUtil.deAssembleStub(content);
-            content = stubRange.getStubs().get(stubRange.getSelectedIndex());
+            int selectedIndex = stubRange.getSelectedIndex();
+            String sessionKey = path.replaceAll("\\" + Constant2.stub_file_Suffix + "$", SystemHWUtil.EMPTY) + "selectedIndex";
+            System.out.println("stub() get key:" + sessionKey);
+            String selectedIndexStr = (String) SpringMVCUtil.resumeObject(sessionKey);
+            if (!ValueWidget.isNullOrEmpty(selectedIndexStr)) {
+                selectedIndex = Integer.parseInt(selectedIndexStr);
+            }
+            content = stubRange.getStubs().get(selectedIndex);
             setServletUrl(request, path, readAndWriteResult);
 			readAndWriteResult.setContent(content);
             readAndWriteResult.setStubRange(stubRange);
@@ -348,11 +356,11 @@ public class HWUtils {
         stubRange.setSelectedIndex(index);
         List<String> list = stubRange.getStubs();
         readAndWriteResult.setContent(content);
-        if (list.get(index).equals(content)) {
+       /* if (list.get(index).equals(content)) {
             readAndWriteResult.setResult(false);
             readAndWriteResult.setErrorMessage("无变化");
             return;
-        }
+        }*/
         System.out.println("content:" + content + " , index:" + index);
         replaceElement(content, index, list);
         stubRange.setStubs(list);
