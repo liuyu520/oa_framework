@@ -241,12 +241,9 @@ public class HWUtils {
 	 */
     public static ReadAndWriteResult updateStub(HttpServletRequest request, String path, String content, String charset, int index) {
         ReadAndWriteResult readAndWriteResult = new ReadAndWriteResult();
-		if (ValueWidget.isNullOrEmpty(content)) {
-			readAndWriteResult.setErrorMessage("内容为空");
-			return readAndWriteResult;
-		}
-		try {
-			String realPath2 = WebServletUtil.getRealPath(request, path);
+        if (contentNull(content, readAndWriteResult)) return readAndWriteResult;
+        try {
+            String realPath2 = WebServletUtil.getRealPath(request, path);
 			readAndWriteResult.setAbsolutePath(escapePath(realPath2));
 			File file = new File(realPath2);
 			if (file.exists()) {
@@ -400,12 +397,9 @@ public class HWUtils {
 	 */
     public static ReadAndWriteResult saveStub(HttpServletRequest request, String path, String content, String charset, int index) {
         ReadAndWriteResult readAndWriteResult = new ReadAndWriteResult();
-		if (ValueWidget.isNullOrEmpty(content)) {
-			readAndWriteResult.setErrorMessage("内容为空");
-			return readAndWriteResult;
-		}
-		try {
-			String realPath2 = WebServletUtil.getRealPath(request, path);//父目录可能不存在
+        if (contentNull(content, readAndWriteResult)) return readAndWriteResult;
+        try {
+            String realPath2 = WebServletUtil.getRealPath(request, path);//父目录可能不存在
 			String parent = SystemHWUtil.getParentDir(realPath2);
 			File parentFile = new File(parent);
 			if (!parentFile.exists()) {
@@ -418,11 +412,10 @@ public class HWUtils {
 				logger.error(errorMessage);
 				System.out.println(errorMessage);
 				return fileHasExistReadAndWriteResult(readAndWriteResult, realPath2);
-			} else {
-				setServletUrl(request, path, readAndWriteResult);
-                writeStubFile(content, charset, readAndWriteResult, file, index);
-                readAndWriteResult.setTips("添加成功");
 			}
+            setServletUrl(request, path, readAndWriteResult);
+            writeStubFile(content, charset, readAndWriteResult, file, index);
+            readAndWriteResult.setTips("添加成功");
 
 		} catch (java.io.FileNotFoundException ex) {
 			ex.printStackTrace();
@@ -432,8 +425,17 @@ public class HWUtils {
 		return readAndWriteResult;
 	}
 
-	private static void setServletUrl(HttpServletRequest request, String path, ReadAndWriteResult readAndWriteResult) {
-		String serverUrl = getServletUrl(request);//http://10.1.253.44:81/tv_mobile
+    public static boolean contentNull(String content, ReadAndWriteResult readAndWriteResult) {
+        if (ValueWidget.isNullOrEmpty(content)) {
+            readAndWriteResult.setResult(false);
+            readAndWriteResult.setErrorMessage("内容为空");
+            return true;
+        }
+        return false;
+    }
+
+    private static void setServletUrl(HttpServletRequest request, String path, ReadAndWriteResult readAndWriteResult) {
+        String serverUrl = getServletUrl(request);//http://10.1.253.44:81/tv_mobile
 		logger.info("serverUrl:" + serverUrl);
 		readAndWriteResult.setUrl(serverUrl + Constant2.Slash + path.replaceAll("\\.json$"/*需要转义，否则就是通配符*/, SystemHWUtil.EMPTY));
 	}
