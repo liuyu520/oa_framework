@@ -37,6 +37,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
+import static com.common.util.WebServletUtil.escapePath;
+
 public class HWUtils {
 	public static final String SESSION_KEY_STUB_OLD_CONTENT = "stub_old_content";
     protected static final Logger logger = Logger.getLogger(HWUtils.class);
@@ -105,18 +107,7 @@ public class HWUtils {
 	{
 		return getJsonP(map, null, null);
 	}
-	/***
-	 * 
-	 * @param key
-	 * @param value2
-	 * @param callback
-	 * @return : js函数名(json字符串)
-	 */
-	public static String getJsonP(String key ,Object value2,String callback){
-		Map map = new HashMap();
-		map.put(key, value2);
-		return getJsonP(map, callback);
-	}
+
 
 	public static void buildExcel(Map<String, Object> model,
 			HttpServletResponse resp, String templatePath) throws IOException,
@@ -181,8 +172,11 @@ public class HWUtils {
 			}
 			realPath2 = file.getAbsolutePath();
 			if (!file.exists()) {
-				return fileNotExistReadAndWriteResult(readAndWriteResult, realPath2);
-			}
+                String errorMessage = realPath2 + " does not exist";
+                logger.error(errorMessage);
+                System.out.println(errorMessage);
+                return fileNotExistReadAndWriteResult(readAndWriteResult, realPath2);
+            }
 			java.io.InputStream input = new FileInputStream(file);
 			if (null == input) {
 				return fileNotExistReadAndWriteResult(readAndWriteResult, realPath2);
@@ -219,9 +213,6 @@ public class HWUtils {
 		return readAndWriteResult;
 	}
 
-	private static String escapePath(String realPath2) {
-		return realPath2.replace("\\", "\\\\");
-	}
 
 	/***
 	 * 文件已经存在
@@ -305,6 +296,99 @@ public class HWUtils {
 		readAndWriteResult.setContent(content);
 	}
 
+    /***
+     * 第一个元素从0开始
+     * @param content : 不是完整内容,只是一个选项(option)
+     * @param charset
+     * @param readAndWriteResult
+     * @param file
+     * @param index : 从0开始
+     * @throws IOException
+     */
+    public static void writeStubFileOneOption(String content, String charset, ReadAndWriteResult readAndWriteResult, File file, int index) throws IOException {
+        StubRange stubRange = getStubRange(file);
+        String absolutePath = file.getAbsolutePath();
+        if (ValueWidget.isNullOrEmpty(readAndWriteResult.getAbsolutePath())) {
+            readAndWriteResult.setAbsolutePath(absolutePath);
+        }
+        if (stubRange == null) {
+            readAndWriteResult.setResult(false);
+            readAndWriteResult.setErrorMessage(absolutePath + " 的内容为空");
+            return;
+        }
+
+        if (index < 0) {
+            index = 0;
+        }
+        stubRange.setSelectedIndex(index);
+        List<String> list = stubRange.getStubs();
+        readAndWriteResult.setContent(content);
+        if (list.get(index).equals(content)) {
+            readAndWriteResult.setResult(false);
+            readAndWriteResult.setErrorMessage("无变化");
+            return;
+        }
+        replaceElement(content, index, list);
+        stubRange.setStubs(list);
+        writeStubRange(stubRange, file);
+        readAndWriteResult.setResult(true);
+
+    }
+
+    /***
+     * 写入文件<br >io操作
+     * @param stubRange
+     * @param file
+     * @throws IOException
+     */
+    public static void writeStubRange(StubRange stubRange, File file) throws IOException {
+        FileWriterWithEncoding fileW = new FileWriterWithEncoding(file, SystemHWUtil.CHARSET_UTF);
+        fileW.write(XmlYunmaUtil.assembleStub(stubRange));
+        fileW.close();
+    }
+
+    public static StubRange getStubRange(File file) throws IOException {
+        String oldContent = FileUtils.getFullContent2(file, SystemHWUtil.CHARSET_UTF);//必须放在new FileWriterWithEncoding()之前,
+        //为什么呢?因为new FileWriterWithEncoding()会把文件先清空.
+        StubRange stubRange = XmlYunmaUtil.deAssembleStub(oldContent);
+        if (null == stubRange) {
+            return null;
+        }
+        return stubRange;
+    }
+
+    /***
+     * 对已经存在的stub,增加一个选项(option)
+     * @param content
+     * @param charset
+     * @param readAndWriteResult
+     * @param file
+     * @throws IOException
+     */
+    public static void addOneOptionStub(String content, String charset, ReadAndWriteResult readAndWriteResult, File file) throws IOException {
+        StubRange stubRange = getStubRange(file);
+        String absolutePath = file.getAbsolutePath();
+        if (ValueWidget.isNullOrEmpty(readAndWriteResult.getAbsolutePath())) {
+            readAndWriteResult.setAbsolutePath(absolutePath);
+        }
+        if (stubRange == null) {
+            readAndWriteResult.setResult(false);
+            readAndWriteResult.setErrorMessage(absolutePath + " 的内容为空");
+            return;
+        }
+        List<String> list = stubRange.getStubs();
+        list.add(content);
+        stubRange.setStubs(list);
+//        FileWriterWithEncoding fileW = new FileWriterWithEncoding(file, charset);
+        writeStubRange(stubRange, file);
+        readAndWriteResult.setResult(true);
+        readAndWriteResult.setContent(content);
+    }
+
+    public static void replaceElement(String content, int index, List<String> list) {
+        ValueWidget.replaceElement(content, index, list);
+    }
+
 	/***
 	 * 新增一个新的接口
 	 * 若文件已经存在则报错
@@ -327,8 +411,8 @@ public class HWUtils {
 			if (!parentFile.exists()) {
 				parentFile.mkdirs();
 			}
-			readAndWriteResult.setAbsolutePath(escapePath(realPath2));
-			File file = new File(realPath2);
+            readAndWriteResult.setAbsolutePath(WebServletUtil.escapePath(realPath2));
+            File file = new File(realPath2);
 			if (file.exists()) {
 				String errorMessage = "文件" + realPath2 + "已经存在";
 				logger.error(errorMessage);
@@ -369,6 +453,7 @@ public class HWUtils {
 	public static List<String> listStubServletPath(String rootPath) {
 		return listStubServletPath(rootPath, null);
 	}
+
 	/***
 	 * 列出所有的stub 接口
 	 *
@@ -389,46 +474,6 @@ public class HWUtils {
 		return pathList;
 	}
 
-	/***
-	 * @param request
-	 * @param relativePath
-	 * @param finalFileName
-	 * @return
-	 */
-	public static String getRelativeUrl(HttpServletRequest request, String relativePath, String finalFileName) {
-		String rootPath = request.getContextPath();
-		if (!rootPath.endsWith("/")) {
-			rootPath = rootPath + "/";
-		}
-		if (relativePath.endsWith("/")) {
-			relativePath = getRelativePath(relativePath, finalFileName);
-		}
-		return rootPath + relativePath;
-	}
-
-	public static String getRelativePath(String relativePath, String finalFileName) {
-		if (!relativePath.endsWith("/")) {
-			relativePath = relativePath + "/";
-		}
-		if (relativePath.endsWith("/")) {
-			relativePath = relativePath + finalFileName;//upload/image/20150329170823_2122015-03-23_01-42-03.jpg
-		}
-		return relativePath;
-	}
-
-	public static String getFullUrl(HttpServletRequest request, String relativePath, String finalFileName) {
-		String fullUrl;
-		String prefixPath = request.getRequestURL().toString().replaceAll(request.getServletPath(), "");
-		if (!prefixPath.endsWith("/") && (!relativePath.startsWith("/"))) {
-			prefixPath = prefixPath + "/";
-		}
-        if (relativePath.endsWith("/")) {
-            relativePath = relativePath + finalFileName;//upload/image/20150329170823_2122015-03-23_01-42-03.jpg
-        }
-        fullUrl = prefixPath + relativePath;
-		return fullUrl;
-	}
-
     /***
      * sameFileName is false
      * @param request
@@ -439,6 +484,7 @@ public class HWUtils {
     public static UploadResult getSavedToFile(HttpServletRequest request, String fileName, String uploadFolder) {
         return getSavedToFile(request, fileName, uploadFolder, false);
     }
+
     public static UploadResult getSavedToFile(HttpServletRequest request, String fileName, String uploadFolder, boolean sameFileName) {
         fileName = RegexUtil.filterBlank(fileName);//IE中识别不了有空格的json
         // 保存到哪儿
@@ -463,7 +509,7 @@ public class HWUtils {
 				, finalFileName,
 				Constant2.SRC_MAIN_WEBAPP);
 		uploadResult.setSavedFile(savedFile);
-        String relativeUrl = HWUtils.getRelativePath(relativePath, finalFileName);
+        String relativeUrl = WebServletUtil.getRelativePath(relativePath, finalFileName);
         if (!relativeUrl.startsWith("/")) {//uploadResult中的RelativePath 必须以斜杠开头
             relativeUrl = "/" + relativeUrl;
         }
@@ -482,6 +528,7 @@ public class HWUtils {
     public static Map getUploadResultMap(MultipartFile file, HttpServletRequest request) {
         return getUploadResultMap(file, request, false, false);
     }
+
     /***
      *
      * @param file
@@ -512,14 +559,14 @@ public class HWUtils {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        String url2 = HWUtils.getRelativeUrl(request, uploadResult.getRelativePath(), uploadResult.getFinalFileName());
+        String url2 = WebServletUtil.getRelativeUrl(request, uploadResult.getRelativePath(), uploadResult.getFinalFileName());
         String fullUrl = null;//http://localhost:8080/tv_mobile/upload/image/20150329170823_2122015-03-23_01-42-03.jpg
         /***
          * request.getRequestURL():http://localhost:8081/SSLServer/addUser.security<br>
          * request.getServletPath():/addUser.security<br>
          * prefixPath:http://localhost:8080/tv_mobile/
          */
-        fullUrl = HWUtils.getFullUrl(request, uploadResult.getRelativePath(), uploadResult.getFinalFileName());
+        fullUrl = WebServletUtil.getFullUrl(request, uploadResult.getRelativePath(), uploadResult.getFinalFileName());
         Map map = new HashMap();
 
         map.put("fileName", uploadResult.getFinalFileName());
@@ -533,6 +580,23 @@ public class HWUtils {
 
     public static String getHtmlImgTag(String fullUrl) {
         return "<img style=\"max-width: 99%\" src=\"" + fullUrl + "\" alt=\"不是图片,无法显示\">";
+    }
+
+    //    @Test
+    public void test_writeStubFileOne() {
+        try {
+            ReadAndWriteResult readAndWriteResult = new ReadAndWriteResult();
+            writeStubFileOneOption("ccc", SystemHWUtil.CHARSET_UTF,
+                    readAndWriteResult, new File("/Users/whuanghkl/work/project/stub_test/src/main/webapp/stub/ab/test.json")
+                    , 0);
+
+           /* addOneOptionStub("新增一个元素aaa",SystemHWUtil.CHARSET_UTF,
+                    readAndWriteResult ,new File("/Users/whuanghkl/work/project/stub_test/src/main/webapp/stub/ab/test.json"));*/
+            System.out.println(HWUtils.getJsonP(readAndWriteResult));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
 }
