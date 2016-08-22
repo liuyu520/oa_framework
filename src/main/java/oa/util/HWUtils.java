@@ -71,25 +71,25 @@ public class HWUtils {
 		if(map instanceof String){
 			content=(String)map;
 		}else{
-		ObjectMapper mapper = getObjectMapper();
-		
-		ObjectWriter writer=null;
-		try {
-			if(filters!=null){
-				writer=mapper.writer(filters);
-			}else{
-				writer=mapper.writer();
-			}
-			content=writer.writeValueAsString(map);
-			logger.info(content);
-		} catch (JsonGenerationException e) {
-			e.printStackTrace();
-		} catch (JsonMappingException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		}
+            ObjectMapper mapper = getObjectMapper();
+
+            ObjectWriter writer = null;
+            try {
+                if (filters != null) {
+                    writer = mapper.writer(filters);
+                } else {
+                    writer = mapper.writer();
+                }
+                content = writer.writeValueAsString(map);
+//                logger.info(content);
+            } catch (JsonGenerationException e) {
+                e.printStackTrace();
+            } catch (JsonMappingException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 		if(ValueWidget.isNullOrEmpty(callback)){
 			return content;
 		}
@@ -117,8 +117,8 @@ public class HWUtils {
 		org.apache.poi.ss.usermodel.Workbook workbook = getTemplateSource(templatePath);
 		XLSTransformer transformer = new XLSTransformer();
 		transformer.transformWorkbook(workbook, model);
-		resp.setContentType("application/vnd.ms-excel");
-		// 设置下载文件生成的文件名称
+        resp.setContentType(SystemHWUtil.RESPONSE_CONTENTTYPE_MS_EXCEL);
+        // 设置下载文件生成的文件名称
 		resp.setHeader("Content-Disposition", "attachment;filename="
 				+ RandomUtils.getTimeRandom2()+".xls");
 		// Flush byte array to servlet output stream.
@@ -156,10 +156,11 @@ public class HWUtils {
 		String content = null;
 		ReadAndWriteResult readAndWriteResult = new ReadAndWriteResult();
 		try {
-			String realPath2 = WebServletUtil.getRealPath(request, path);
+            //path:/stub/v1/xxx
+            String realPath2 = WebServletUtil.getRealPath(request, path);
 
             File file = getStubFile(realPath2);
-            realPath2 = file.getAbsolutePath();
+            realPath2 = file.getAbsolutePath();//执行getStubFile 之后,路径可能变化
             readAndWriteResult.setAbsolutePath(escapePath(realPath2));
             if (!file.exists()) {
                 String errorMessage = realPath2 + " does not exist";
@@ -168,15 +169,15 @@ public class HWUtils {
                 return fileNotExistReadAndWriteResult(readAndWriteResult, realPath2);
             }
 			java.io.InputStream input = new FileInputStream(file);
-			if (null == input) {
+            /*if (null == input) {
                 logger.error("input is null");
                 return fileNotExistReadAndWriteResult(readAndWriteResult, realPath2);
-			}
-            content = FileUtils.getFullContent2(input, charset);
+			}*/
+            content = FileUtils.getFullContent2(input);
             //反序列化
             StubRange stubRange = XmlYunmaUtil.deAssembleStub(content);
             int selectedIndex = stubRange.getSelectedIndex();
-            String sessionKey = path.replaceAll("\\" + Constant2.stub_file_Suffix + "$", SystemHWUtil.EMPTY) + "selectedIndex";
+            String sessionKey = deleteSuffix(path) + "selectedIndex";
             System.out.println("stub() get key:" + sessionKey);
             String selectedIndexStr = (String) SpringMVCUtil.resumeObject(sessionKey);
             if (!ValueWidget.isNullOrEmpty(selectedIndexStr)) {
@@ -208,9 +209,18 @@ public class HWUtils {
             System.out.println(errorMessage);
             logger.error(errorMessage);
             //兼容appList.do.json 文件名
-            file = new File(realPath2.replaceAll("\\" + Constant2.stub_file_Suffix + "$", SystemHWUtil.EMPTY) + ".do" + Constant2.stub_file_Suffix);
+            file = new File(deleteSuffix(realPath2) + ".do" + Constant2.stub_file_Suffix);
         }
         return file;
+    }
+
+    /***
+     * 删除后缀名.json
+     * @param realPath2
+     * @return
+     */
+    public static String deleteSuffix(String realPath2) {
+        return realPath2.replaceAll("\\" + Constant2.stub_file_Suffix + "$", SystemHWUtil.EMPTY);
     }
 
     /***
@@ -311,10 +321,14 @@ public class HWUtils {
 	}
 
     public static void writeStubFileOneOption(String content, /*String charset,*/ ReadAndWriteResult readAndWriteResult, String path, int index) throws IOException {
+        File file = getRealFile(path);
+        writeStubFileOneOption(content, readAndWriteResult, file, index);
+    }
+
+    public static File getRealFile(String path) {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         String realPath2 = WebServletUtil.getRealPath(request, path);//父目录可能不存在
-        File file = getStubFile(realPath2);
-        writeStubFileOneOption(content, readAndWriteResult, file, index);
+        return getStubFile(realPath2);
     }
 
     /***
@@ -325,9 +339,7 @@ public class HWUtils {
      * @throws IOException
      */
     public static void addOneOptionStub(String content, /*String charset, */ReadAndWriteResult readAndWriteResult, String path) throws IOException {
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        String realPath2 = WebServletUtil.getRealPath(request, path);//父目录可能不存在
-        File file = getStubFile(realPath2);
+        File file = getRealFile(path);
         addOneOptionStub(content,/*charset,*/readAndWriteResult, file);
     }
     /***
@@ -365,7 +377,7 @@ public class HWUtils {
         int length = list.size();
         if (index == length) {//新增一个option
             list.add(content);
-        } else if (index >= length) {//添加了多个textarea
+        } else if (index > length) {//添加了多个textarea
             for (int i = 0; i < (index - length + 1); i++) {
                 list.add(content);
             }
@@ -373,7 +385,7 @@ public class HWUtils {
             replaceElement(content, index, list);
         }
         stubRange.setStubs(list);
-        writeStubRange(stubRange, file);
+        writeStubRange(stubRange, file);//写入文件
         readAndWriteResult.setResult(true);
         return readAndWriteResult;
     }
@@ -511,8 +523,8 @@ public class HWUtils {
 		List<File> files = FileUtils.getListFiles(rootPath, "json");
 		List<String> pathList = new ArrayList<String>();
 		for (int i = 0; i < files.size(); i++) {
-			String interface2 = files.get(i).getAbsolutePath().replace(rootPath, "");
-			interface2 = interface2.replace("\\", "/").replaceAll(Constant2.stub_file_Suffix+"$", "");
+            String interface2 = files.get(i).getAbsolutePath().replace(rootPath, SystemHWUtil.EMPTY);
+            interface2 = interface2.replace("\\", "/").replaceAll(Constant2.stub_file_Suffix + "$", SystemHWUtil.EMPTY);
 //			System.out.println(interface2);
 			if (null == keyWord || interface2.contains(keyWord)) {
 				pathList.add(interface2);
@@ -598,7 +610,10 @@ public class HWUtils {
         //如果文件已经存在,则先删除
         if (deleteOldFile && savedFile.exists()) {
             System.out.println("删除 " + savedFile.getAbsolutePath());
-            savedFile.delete();
+            boolean deleteResult = savedFile.delete();
+            if (!deleteResult) {
+                logger.error("删除" + savedFile.getAbsolutePath() + "失败");
+            }
         }
         // 保存
         try {
