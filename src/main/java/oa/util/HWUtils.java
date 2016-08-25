@@ -1,15 +1,16 @@
 package oa.util;
 
+import com.common.bean.StubRange;
 import com.common.dict.Constant2;
 import com.common.util.SystemHWUtil;
 import com.common.util.WebServletUtil;
 import com.io.hw.file.util.FileUtils;
+import com.io.hw.json.XmlYunmaUtil;
 import com.string.widget.util.RandomUtils;
 import com.string.widget.util.RegexUtil;
 import com.string.widget.util.ValueWidget;
 import com.time.util.TimeHWUtil;
 import net.sf.jxls.transformer.XLSTransformer;
-import oa.bean.StubRange;
 import oa.bean.UploadResult;
 import oa.bean.stub.ReadAndWriteResult;
 import org.apache.commons.compress.archivers.dump.InvalidFormatException;
@@ -27,7 +28,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
-import yunma.oa.bean.xml.XmlYunmaUtil;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
