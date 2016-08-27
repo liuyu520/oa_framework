@@ -584,8 +584,8 @@ public class HWUtils {
      * @param request
      * @return
      */
-    public static Map getUploadResultMap(MultipartFile file, HttpServletRequest request) {
-        return getUploadResultMap(file, request, false, false);
+    public static Map getUploadResultMap(MultipartFile file, HttpServletRequest request, String specifiedFileName) {
+        return getUploadResultMap(file, request, false, false, specifiedFileName);
     }
 
     /***
@@ -596,10 +596,15 @@ public class HWUtils {
      * @param sameFileName : 文件名是否动态改变(加上时间戳就会动态改变)
      * @return
      */
-    public static Map getUploadResultMap(MultipartFile file, HttpServletRequest request, boolean sameFileName, boolean deleteOldFile) {
+    public static Map getUploadResultMap(MultipartFile file, HttpServletRequest request, boolean sameFileName, boolean deleteOldFile, String specifiedFileName) {
         String fileName = file.getOriginalFilename();// 上传的文件名
-        //删除所有的空格
-        fileName = RegexUtil.filterBlank(fileName);//IE中识别不了有空格的json
+        if (ValueWidget.isNullOrEmpty(specifiedFileName)) {
+            //删除所有的空格
+            fileName = RegexUtil.filterBlank(fileName).replace("?", SystemHWUtil.EMPTY);//IE中识别不了有空格的json
+        } else {
+            fileName = specifiedFileName;
+        }
+//        System.out.println("fileName:"+fileName);
 
         UploadResult uploadResult = HWUtils.getSavedToFile(request, fileName, null, sameFileName);
         File savedFile = uploadResult.getSavedFile();
