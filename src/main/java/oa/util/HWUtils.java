@@ -577,6 +577,9 @@ public class HWUtils {
 		return uploadResult;
 	}
 
+    public static Map getUploadResultMap(MultipartFile file, HttpServletRequest request) {
+        return getUploadResultMap(file, request, (String) null/*specifiedFileName*/);
+    }
     /***
      * sameFileName is false <br >
      *     deleteOldFile is false
