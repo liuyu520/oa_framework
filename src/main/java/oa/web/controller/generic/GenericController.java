@@ -642,7 +642,11 @@ public abstract class GenericController <T>{
 		if(!ValueWidget.isNullOrEmpty(view.getPageFlag())&&view.getPageFlag().equals(Constant2.PAGEFLAG_NOT_QUERY)){
 			System.out.println("不是查询");
 			roleLevel=(T)session.getAttribute(sessionKey);
-			if(!ValueWidget.isNullOrEmpty(roleLevel)){
+            columns = (String[]) session.getAttribute("keyword_columns");
+            if (!ValueWidget.isNullOrEmpty(columns)) {
+                keyword = (String) session.getAttribute("alias_keyword233");
+            }
+            if(!ValueWidget.isNullOrEmpty(roleLevel)){
 				try {
 					BeanUtils.copyProperties(view, roleLevel);
 				} catch (IllegalAccessException e) {
@@ -656,7 +660,11 @@ public abstract class GenericController <T>{
 			if(!ValueWidget.isNullOrEmpty(roleLevel)){
 				session.setAttribute(sessionKey, roleLevel);
 			}
-		}
+            if (!ValueWidget.isNullOrEmpty(columns) && !ValueWidget.isNullOrEmpty(keyword)) {
+                session.setAttribute("keyword_columns", columns);
+                session.setAttribute("alias_keyword233", keyword);
+            }
+        }
 		if(ValueWidget.isNullOrEmpty(roleLevel)){
 			roleLevel=(T) getDao().createEmptyObj();
 		}
