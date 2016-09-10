@@ -609,21 +609,25 @@ public abstract class GenericController <T>{
      * @return
      */
     @RequestMapping(value = VIEW_LIST)
-    public String list(Model model, T roleLevel, PageView view, HttpSession session, HttpServletRequest request, String targetView, String columnsArr, String keyword) {
+    public String list(Model model, T roleLevel, PageView view, HttpSession session, HttpServletRequest request, String targetView, String columnsArr, String keyword, String isAccurate) {
         init(request);
         if (ValueWidget.isNullOrEmpty(columnsArr)) {
             return listCommon(model, roleLevel, view, session, request, targetView);
         } else {
             String[] columns = columnsArr.split(",");
-            return listCommon(model, roleLevel, view, session, request, targetView, columns, keyword);
+            return listCommon(model, roleLevel, view, session, request, targetView, columns, keyword, "1".equals(isAccurate));
         }
 
     }
 
     private String listCommon(Model model, T roleLevel, PageView view, HttpSession session, HttpServletRequest request, String targetView) {
-        return listCommon(model, roleLevel, view, session, request, targetView, (String[]) null, null);
+        return listCommon(model, roleLevel, view, session, request, targetView, (String[]) null, null, false);
     }
 
+    private String listCommon(Model model, T roleLevel, PageView view, HttpSession session, HttpServletRequest request, String targetView
+            , String[] columns, String keyword) {
+        return listCommon(model, roleLevel, view, session, request, targetView, columns, keyword, false);
+    }
     /***
      *
      * @param model
@@ -637,7 +641,7 @@ public abstract class GenericController <T>{
      * @return
      */
     private String listCommon(Model model, T roleLevel, PageView view, HttpSession session, HttpServletRequest request, String targetView
-            , String[] columns, String keyword) {
+            , String[] columns, String keyword, boolean isAccurate) {
         String sessionKey=getJspFolder();
 		if(!ValueWidget.isNullOrEmpty(view.getPageFlag())&&view.getPageFlag().equals(Constant2.PAGEFLAG_NOT_QUERY)){
 			System.out.println("不是查询");
@@ -696,7 +700,7 @@ public abstract class GenericController <T>{
             or this_.alias2 like ?
         )
             * */
-            PageUtil.paging(condition, columns, keyword, view, getDao(), getListOrderBy());
+            PageUtil.paging(condition, columns, keyword, view, getDao(), getListOrderBy(), isAccurate);
         }
 
 		listTODO(model,view,request);
