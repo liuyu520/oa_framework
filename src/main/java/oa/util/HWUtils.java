@@ -179,7 +179,7 @@ public class HWUtils {
             int selectedIndex = stubRange.getSelectedIndex();
             String sessionKey = deleteSuffix(path) + "selectedIndex";
             System.out.println("stub() get key:" + sessionKey);
-            String selectedIndexStr = (String) SpringMVCUtil.resumeObject(sessionKey);
+            String selectedIndexStr = (String) SpringMVCUtil.resumeGlobalObject(sessionKey);
             if (!ValueWidget.isNullOrEmpty(selectedIndexStr)) {
                 selectedIndex = Integer.parseInt(selectedIndexStr);
             } else {

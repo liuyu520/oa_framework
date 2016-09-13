@@ -9,6 +9,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.Map;
@@ -40,6 +41,36 @@ public class SpringMVCUtil {
         httpSession.setAttribute(sessionKey, object);
     }
 
+    public static ServletContext getApplication() {
+        ServletContext application = null;
+        ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        if (null == servletRequestAttributes) {
+            return null;
+        }
+        HttpServletRequest request = servletRequestAttributes.getRequest();
+        application = request.getSession().getServletContext();
+        return application;
+    }
+
+    /***
+     * 全局的变量,所有的请求都可以共享<br >
+     * @param sessionKey
+     * @param object
+     */
+    public static void saveGlobalObject(String sessionKey, Object object) {
+        ServletContext application = getApplication();
+        application.setAttribute(sessionKey, object);
+    }
+
+    /***
+     * 全局的变量,所有的请求都可以共享<br >
+     * @param sessionKey
+     * @return
+     */
+    public static Object resumeGlobalObject(String sessionKey) {
+        ServletContext application = getApplication();
+        return application.getAttribute(sessionKey);
+    }
     public static Object resumeObject(String sessionKey) {
         ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         if (null == servletRequestAttributes) {
