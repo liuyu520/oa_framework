@@ -182,6 +182,8 @@ public class HWUtils {
             String selectedIndexStr = (String) SpringMVCUtil.resumeObject(sessionKey);
             if (!ValueWidget.isNullOrEmpty(selectedIndexStr)) {
                 selectedIndex = Integer.parseInt(selectedIndexStr);
+            } else {
+                System.out.println("使用工具请求时,请确认是否设置了JSESSIONID");
             }
             content = stubRange.getStubs().get(selectedIndex);
             setServletUrl(request, path, readAndWriteResult);
