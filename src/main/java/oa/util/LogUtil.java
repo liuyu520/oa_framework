@@ -58,6 +58,8 @@ public class LogUtil {
         accessLog.setTime(TimeHWUtil.getCurrentTimeSecond(now));
         accessLog.setAccessDay(TimeHWUtil.formatDateShortEN(now));
         accessLog.setAccessDayTime(TimeHWUtil.formatDateTime(now));
+        //如果服务器使用nginx,则必须配置:proxy_set_header X-Real-IP $remote_addr;
+        //否则,得不到真实的ip地址
         String ip = WebServletUtil.getIpAddr(request);
         System.out.println("client ip:" + ip);
         accessLog.setIp(ip);
