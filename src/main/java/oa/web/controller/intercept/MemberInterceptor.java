@@ -64,7 +64,7 @@ public class MemberInterceptor implements HandlerInterceptor {
         AccessLog accessLog = LogUtil.logByMethod(request, Constant2.LOGS_ACCESS_TYPE_INTO, null);
         accessLog.setDescription("access " + path);
         accessLog.setOperateResult("401");
-        LogUtil.logSave(accessLog, request, SpringMVCUtil.getDao(getDaoBeanName()));
+        LogUtil.logSave(accessLog, request, SpringMVCUtil.getDao(getDaoBeanName()), true/*realSave*/);
     }
 
     /***
