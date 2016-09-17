@@ -145,7 +145,9 @@ public abstract class GenericController <T>{
 		if (!saveValidate(roleLevel, binding, model)) {
 			return getJspFolder2() + "/add";
 		}
-        beforeSave(roleLevel, model, response);
+        if (!beforeSave(roleLevel, model, response)) {
+            return null;
+        }
 
         saveCommon(roleLevel, model);
 		commonAction(model);
@@ -202,11 +204,12 @@ public abstract class GenericController <T>{
 	 * 一定要在saveCommon 之前调用
 	 * @param roleLevel
 	 */
-    protected void beforeSave(T roleLevel, Model model, HttpServletResponse response) {
+    protected boolean beforeSave(T roleLevel, Model model, HttpServletResponse response) {
         if(!ValueWidget.isNullOrEmpty(roleLevel)){
 			try {
 				ReflectHWUtils.fillTimeForObj(roleLevel);
-			} catch (SecurityException e) {
+                return true;
+            } catch (SecurityException e) {
 				e.printStackTrace();
 			} catch (NoSuchFieldException e) {
 				e.printStackTrace();
@@ -216,7 +219,8 @@ public abstract class GenericController <T>{
 				e.printStackTrace();
 			}
 		}
-	}
+        return true;
+    }
 
 	/***
 	 * 兼容ID的类型:long,int
