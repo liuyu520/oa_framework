@@ -438,7 +438,7 @@ public abstract class GenericController <T>{
 	@RequestMapping(value = "/{id}/update",method=RequestMethod.POST)
     public String updateByIdliuyu(@PathVariable int id, T roleLevel, Model model, HttpServletRequest request, String targetView, String targetView2) throws SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
         updateCommon(id, roleLevel, model, request);
-		String resultUrl=getRedirectViewAll() + "?fsdf=" + new Date().getTime();
+        String resultUrl=getRedirectViewAll() + "?fsdf=" + new Date().getTime();
 		if(!ValueWidget.isNullOrEmpty(targetView2)){
 			return targetView2;
 		}
@@ -476,7 +476,14 @@ public abstract class GenericController <T>{
 	}
 	protected boolean updateCommon(int id,T roleLevel, Model model,HttpServletRequest request) throws SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException{
 		init(request);
-		beforeUpdate(roleLevel);
+        if (null == roleLevel) {
+            String msg = "java bean is null,id:" + id;
+            System.out.println(msg);
+            logger.error(msg);
+            roleLevel = (T) getDao().createEmptyObj();
+            ReflectHWUtils.setObjectValue(roleLevel, "id", id);
+        }
+        beforeUpdate(roleLevel);
 		T t=getById(id);
 		if(ValueWidget.isNullOrEmpty(t)){//要更新的对象不存在
 			return false;
