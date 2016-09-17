@@ -24,6 +24,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.io.IOException;
@@ -138,15 +139,15 @@ public abstract class GenericController <T>{
 	 * @return
 	 */
 	@RequestMapping(value = "/add",method=RequestMethod.POST)
-	public String save(@Valid T roleLevel, BindingResult binding, Model model,HttpServletRequest request,String targetView) {
-		init(request);
+    public String save(@Valid T roleLevel, BindingResult binding, Model model, HttpServletRequest request, String targetView, HttpServletResponse response) {
+        init(request);
 
 		if (!saveValidate(roleLevel, binding, model)) {
 			return getJspFolder2() + "/add";
 		}
-		beforeSave(roleLevel,model);
-		
-		saveCommon(roleLevel, model);
+        beforeSave(roleLevel, model, response);
+
+        saveCommon(roleLevel, model);
 		commonAction(model);
 		if(!ValueWidget.isNullOrEmpty(targetView)){
 			return targetView;
@@ -157,17 +158,17 @@ public abstract class GenericController <T>{
 	@ResponseBody
 	@RequestMapping(value = "/add_json", method = RequestMethod.POST)
 	public String save_json(@Valid T roleLevel,
-							BindingResult binding,
-							Model model,
-							HttpServletRequest request,
-							String callback) {
-		init(request);
+                            BindingResult binding,
+                            Model model,
+                            HttpServletRequest request,
+                            String callback, HttpServletResponse response) {
+        init(request);
 		Map map = new HashMap();
 		int login_result = 0;
 		if (saveValidate(roleLevel, binding, model)) {
 			login_result = Constant2.LOGIN_RESULT_SUCCESS;
-			beforeSave(roleLevel, model);
-			saveCommon(roleLevel, model);
+            beforeSave(roleLevel, model, response);
+            saveCommon(roleLevel, model);
 			commonAction(model);
 		}
 		map.put(Constant2.LOGIN_RESULT_KEY, login_result);
@@ -201,8 +202,8 @@ public abstract class GenericController <T>{
 	 * 一定要在saveCommon 之前调用
 	 * @param roleLevel
 	 */
-	protected  void beforeSave(T roleLevel,Model model){
-		if(!ValueWidget.isNullOrEmpty(roleLevel)){
+    protected void beforeSave(T roleLevel, Model model, HttpServletResponse response) {
+        if(!ValueWidget.isNullOrEmpty(roleLevel)){
 			try {
 				ReflectHWUtils.fillTimeForObj(roleLevel);
 			} catch (SecurityException e) {
