@@ -423,8 +423,9 @@ public abstract class GenericController <T>{
 	protected  void beforeEditInput(int id,T currentBlog, Model model){
 	}
 	/***
-	 * 需要覆写
-	 * @param roleLevel
+     * 需要覆写<br >
+     *     子类有可能有相同的方法名,所以修改方法名称"update"为"updateByIdliuyu"
+     * @param roleLevel
 	 * @param model
 	 * @param targetView
 	 * @param targetView2 : 优先级比targetView 高
@@ -434,9 +435,9 @@ public abstract class GenericController <T>{
 	 * @throws NoSuchFieldException 
 	 * @throws SecurityException 
 	 */
-	@RequestMapping(value = "/{id}/update",method=RequestMethod.POST) 
-	public String update(@PathVariable int id,T roleLevel, Model model,HttpServletRequest request,String targetView, String targetView2) throws SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
-		updateCommon(id, roleLevel, model, request);
+	@RequestMapping(value = "/{id}/update",method=RequestMethod.POST)
+    public String updateByIdliuyu(@PathVariable int id, T roleLevel, Model model, HttpServletRequest request, String targetView, String targetView2) throws SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
+        updateCommon(id, roleLevel, model, request);
 		String resultUrl=getRedirectViewAll() + "?fsdf=" + new Date().getTime();
 		if(!ValueWidget.isNullOrEmpty(targetView2)){
 			return targetView2;

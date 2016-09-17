@@ -3,6 +3,7 @@ package oa.util;
 import com.common.dao.generic.GenericDao;
 import com.common.util.WebServletUtil;
 import com.io.hw.json.HWJacksonUtils;
+import com.string.widget.util.ValueWidget;
 import org.springframework.ui.Model;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -11,7 +12,9 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.util.Map;
 
 /**
@@ -119,4 +122,20 @@ public class SpringMVCUtil {
         model.addAllAttributes(map);
         return model;
     }
+
+    public static boolean redirectLogin(HttpServletResponse response, String callbackURL) throws IOException {
+        response.setStatus(401);
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        response.sendRedirect(WebServletUtil.getBasePath(request) + "user/loginInput?callback=" + callbackURL);
+        return false;
+    }
+
+    public static String getCallbackUrl(HttpServletRequest request) {
+        String callbackUrl = request.getRequestURL().toString();
+        if (!ValueWidget.isNullOrEmpty(request.getQueryString())) {
+            callbackUrl = callbackUrl + "?" + request.getQueryString();
+        }
+        return callbackUrl;
+    }
+
 }
