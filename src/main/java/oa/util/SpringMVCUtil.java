@@ -4,6 +4,9 @@ import com.common.dao.generic.GenericDao;
 import com.common.util.WebServletUtil;
 import com.io.hw.json.HWJacksonUtils;
 import com.string.widget.util.ValueWidget;
+import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.PropertySource;
+import org.springframework.core.env.PropertySources;
 import org.springframework.ui.Model;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -15,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -138,4 +142,15 @@ public class SpringMVCUtil {
         return callbackUrl;
     }
 
+    /***
+     * 在spring MVC配置文件中初始化的PropertySources,不会自动注入到ConfigurableEnvironment中,<br>
+     *     所以才需要手动把PropertySources 添加进env中
+     * @param propertySources : 是在spring MVC配置文件中初始化的<br>
+     * @param env
+     */
+    public static void addCustomPropertySources(PropertySources propertySources, ConfigurableEnvironment env) {
+        for (Iterator<PropertySource<?>> it = propertySources.iterator(); it.hasNext(); ) {
+            env.getPropertySources().addFirst((PropertySource) it.next());
+        }
+    }
 }

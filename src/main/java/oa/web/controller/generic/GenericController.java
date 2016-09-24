@@ -680,6 +680,9 @@ public abstract class GenericController <T>{
             if (!ValueWidget.isNullOrEmpty(columns) && !ValueWidget.isNullOrEmpty(keyword)) {
                 session.setAttribute("keyword_columns", columns);
                 session.setAttribute("alias_keyword233", keyword);
+            } else {
+                session.removeAttribute("keyword_columns");
+                session.removeAttribute("alias_keyword233");
             }
         }
 		if(ValueWidget.isNullOrEmpty(roleLevel)){
