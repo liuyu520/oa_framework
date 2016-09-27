@@ -442,7 +442,10 @@ public abstract class GenericController <T>{
 		if(!ValueWidget.isNullOrEmpty(targetView2)){
 			return targetView2;
 		}
-		if(!ValueWidget.isNullOrEmpty(targetView)){
+        if (ValueWidget.isNullOrEmpty(targetView)) {
+            targetView = request.getParameter("targetView");
+        }
+        if(!ValueWidget.isNullOrEmpty(targetView)){
 			resultUrl=resultUrl+"&targetView="+targetView;//先调用list刷新数据,在导向targetView
 		}
 		return resultUrl;
@@ -483,9 +486,9 @@ public abstract class GenericController <T>{
             roleLevel = (T) getDao().createEmptyObj();
             ReflectHWUtils.setObjectValue(roleLevel, "id", id);
         }
-        beforeUpdate(roleLevel);
-		T t=getById(id);
-		if(ValueWidget.isNullOrEmpty(t)){//要更新的对象不存在
+        T t = getById(id);
+        beforeUpdate(roleLevel, t);
+        if(ValueWidget.isNullOrEmpty(t)){//要更新的对象不存在
 			return false;
 		}
 		ReflectHWUtils.fillTimeForEditedObj(roleLevel, t);
@@ -497,7 +500,7 @@ public abstract class GenericController <T>{
 	 * 应该被覆写
 	 * @param roleLevel
 	 */
-	protected  void beforeUpdate(T roleLevel){
+    protected void beforeUpdate(T roleLevel, T justQuery) {
 //		try {
 //			ReflectHWUtils.fillTimeForObj(roleLevel);
 //		} catch (SecurityException e) {
@@ -674,14 +677,16 @@ public abstract class GenericController <T>{
 			}
 		}else{//查询
 			System.out.println("是查询");
-			if(!ValueWidget.isNullOrEmpty(roleLevel)){
-				session.setAttribute(sessionKey, roleLevel);
-			}
+            if (ValueWidget.isNullOrEmpty(roleLevel)) {
+                session.removeAttribute(sessionKey);
+            } else {
+                session.setAttribute(sessionKey, roleLevel);//恢复现场
+            }
             if (!ValueWidget.isNullOrEmpty(columns) && !ValueWidget.isNullOrEmpty(keyword)) {
                 session.setAttribute("keyword_columns", columns);
                 session.setAttribute("alias_keyword233", keyword);
             } else {
-                session.removeAttribute("keyword_columns");
+                session.removeAttribute("keyword_columns");//恢复现场
                 session.removeAttribute("alias_keyword233");
             }
         }
