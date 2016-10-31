@@ -66,7 +66,7 @@ public class QRCoderController {
             size = 300;//像素
         }
         byte[] byrtes = QRCodeUtil.encode(info, size);
-        response.setContentType("application/octet-stream");
+        response.setContentType(SystemHWUtil.RESPONSE_CONTENTTYPE_JPEG);
         response.addHeader("Content-Disposition", "inline;filename=\"qrcode" + RandomUtils.getTimeRandom2() + ".jpg\"");
         OutputStream out = response.getOutputStream();
 //		byte[] reBytes = FileUtils.getByteArrayInputSreamFromByteArr(byrtes);
