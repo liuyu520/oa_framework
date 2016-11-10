@@ -4,6 +4,7 @@ import com.common.dao.generic.GenericDao;
 import com.common.util.WebServletUtil;
 import com.io.hw.json.HWJacksonUtils;
 import com.string.widget.util.ValueWidget;
+import org.codehaus.jackson.JsonParseException;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.env.PropertySources;
@@ -122,8 +123,13 @@ public class SpringMVCUtil {
      * @return
      */
     public static Model stubModel(Model model, String json) {
-        Map map = (Map) HWJacksonUtils.deSerialize(json, Map.class);
-        model.addAllAttributes(map);
+        Map map;
+        try {
+            map = (Map) HWJacksonUtils.deSerialize(json, Map.class);
+            model.addAllAttributes(map);
+        } catch (JsonParseException e) {
+            e.printStackTrace();
+        }
         return model;
     }
 

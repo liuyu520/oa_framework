@@ -39,6 +39,9 @@ public class MemberInterceptor implements HandlerInterceptor {
         if (!AuthenticateUtil.isLogined(session)) {
             String path = request.getRequestURI();//"/demo_channel_terminal/news/list"
             System.out.println("您无权访问:" + path);
+            if (!ValueWidget.isNullOrEmpty(request.getQueryString())) {
+                path = path + "?" + request.getQueryString();
+            }
             //用于登录成功之后回调
             session.setAttribute(LoginUtil.SESSION_KEY_LOGIN_RETURN_URL, path);
             System.out.println();
@@ -52,6 +55,10 @@ public class MemberInterceptor implements HandlerInterceptor {
                 message = getErrorMessage();
             }
             log(request);
+            String cacheContextPath = (String) SpringMVCUtil.resumeGlobalObject("convention_context");
+            if (!ValueWidget.isNullOrEmpty(cacheContextPath)) {
+                contextPath = cacheContextPath;
+            }
             response.sendRedirect(contextPath + getReturnUrl() + "?" + Constant2.RESPONSE_KEY_ERROR_MESSAGE + "=" + URLEncoder.encode(message, "UTF-8"));
             return false;
         }
