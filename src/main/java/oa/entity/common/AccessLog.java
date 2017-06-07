@@ -19,8 +19,9 @@ public class AccessLog {
 	 */
 	private String osType;
 	/***
-	 * 设备标示（device token or clientid）
-	 */
+     * 设备标示（device token or clientid）<br />
+     * 用于消息推送时,定位设备
+     */
 	private String deviceId;
 	private long time;
 	/***
@@ -89,142 +90,193 @@ public class AccessLog {
 	public int getId() {
 		return id;
 	}
-	public void setId(int id) {
-		this.id = id;
-	}
+
+    public AccessLog setId(int id) {
+        this.id = id;
+        return this;
+    }
 	
 	@Column(name="os_type")
 	public String getOsType() {
 		return osType;
 	}
-	public void setOsType(String osType) {
-		this.osType = osType;
-	}
+
+    /***
+     * "Android"<br />
+     * "Ios"<br />
+     * "WINDOWS PHONE"
+     * @param osType
+     */
+    public AccessLog setOsType(String osType) {
+        this.osType = osType;
+        return this;
+    }
 	
 	@Column(name="device_id")
 	public String getDeviceId() {
 		return deviceId;
 	}
-	public void setDeviceId(String deviceId) {
-		this.deviceId = deviceId;
-	}
+
+    /***
+     * 设备标示（device token or clientid）<br />
+     * 用于消息推送时,定位设备
+     * @param deviceId
+     */
+    public AccessLog setDeviceId(String deviceId) {
+        this.deviceId = deviceId;
+        return this;
+    }
 	public long getTime() {
 		return time;
 	}
-	public void setTime(long time) {
-		this.time = time;
-	}
+
+    public AccessLog setTime(long time) {
+        this.time = time;
+        return this;
+    }
 	
 	@Column(name="access_day")
 	public String getAccessDay() {
 		return accessDay;
 	}
-	public void setAccessDay(String accessDay) {
-		this.accessDay = accessDay;
-	}
+
+    public AccessLog setAccessDay(String accessDay) {
+        this.accessDay = accessDay;
+        return this;
+    }
 	public String getIp() {
 		return ip;
 	}
-	public void setIp(String ip) {
-		this.ip = ip;
-	}
+
+    public AccessLog setIp(String ip) {
+        this.ip = ip;
+        return this;
+    }
 	public String getDescription() {
 		return description;
 	}
-	public void setDescription(String description) {
-		this.description = description;
-	}
+
+    public AccessLog setDescription(String description) {
+        this.description = description;
+        return this;
+    }
 	public String getReserved() {
 		return reserved;
 	}
-	public void setReserved(String reserved) {
-		this.reserved = reserved;
-	}
+
+    public AccessLog setReserved(String reserved) {
+        this.reserved = reserved;
+        return this;
+    }
 	@Column(name="access_type")
 	public int getAccessType() {
 		return accessType;
 	}
-	public void setAccessType(int accessType) {
-		this.accessType = accessType;
-	}
+
+    public AccessLog setAccessType(int accessType) {
+        this.accessType = accessType;
+        return this;
+    }
 	
 	@Column(name="extranet_ip")
 	public String getExtranetIp() {
 		return extranetIp;
 	}
-	public void setExtranetIp(String extranetIp) {
-		this.extranetIp = extranetIp;
-	}
+
+    public AccessLog setExtranetIp(String extranetIp) {
+        this.extranetIp = extranetIp;
+        return this;
+    }
 	public int getUserId() {
 		return userId;
 	}
-	public void setUserId(int userId) {
-		this.userId = userId;
-	}
+
+    public AccessLog setUserId(int userId) {
+        this.userId = userId;
+        return this;
+    }
 	public String getUsername() {
 		return username;
 	}
-	public void setUsername(String username) {
-		this.username = username;
-	}
+
+    public AccessLog setUsername(String username) {
+        this.username = username;
+        return this;
+    }
 	public String getRequestURI() {
 		return requestURI;
 	}
-	public void setRequestURI(String requestURI) {
-		this.requestURI = requestURI;
-	}
+
+    public AccessLog setRequestURI(String requestURI) {
+        this.requestURI = requestURI;
+        return this;
+    }
 	
 	@Column(name="query_string")
 	public String getQueryString() {
 		return queryString;
 	}
-	public void setQueryString(String queryString) {
-		this.queryString = queryString;
-	}
+
+    public AccessLog setQueryString(String queryString) {
+        this.queryString = queryString;
+        return this;
+    }
 	@Column(name="user_agent")
 	public String getUserAgent() {
 		return userAgent;
 	}
-	public void setUserAgent(String userAgent) {
-		this.userAgent = userAgent;
-	}
+
+    public AccessLog setUserAgent(String userAgent) {
+        this.userAgent = userAgent;
+        return this;
+    }
 	@Column(name="request_target")
 	public String getRequestTarget() {
 		return requestTarget;
 	}
-	public void setRequestTarget(String requestTarget) {
-		this.requestTarget = requestTarget;
-	}
+
+    public AccessLog setRequestTarget(String requestTarget) {
+        this.requestTarget = requestTarget;
+        return this;
+    }
 	@Column(name="operate_result")
 	public String getOperateResult() {
 		return operateResult;
 	}
-	public void setOperateResult(String operateResult) {
-		if(!ValueWidget.isNullOrEmpty(operateResult)){
+
+    public AccessLog setOperateResult(String operateResult) {
+        if(!ValueWidget.isNullOrEmpty(operateResult)){
 			operateResult=SystemHWUtil.splitAndFilterString(operateResult,240,false);
 		}
 		this.operateResult = operateResult;
-	}
+        return this;
+    }
 	@Column(name="device_type")
 	public String getDeviceType() {
 		return deviceType;
 	}
-	public void setDeviceType(String deviceType) {
-		this.deviceType = deviceType;
-	}
+
+    public AccessLog setDeviceType(String deviceType) {
+        this.deviceType = deviceType;
+        return this;
+    }
 	@Column(name="access_daytime")
 	public String getAccessDayTime() {
 		return accessDayTime;
 	}
-	public void setAccessDayTime(String accessDayTime) {
-		this.accessDayTime = accessDayTime;
-	}
+
+    public AccessLog setAccessDayTime(String accessDayTime) {
+        this.accessDayTime = accessDayTime;
+        return this;
+    }
 	@Column(name="session2_id")
 	public String getSessionId() {
 		return sessionId;
 	}
-	public void setSessionId(String sessionId) {
-		this.sessionId = sessionId;
-	}
+
+    public AccessLog setSessionId(String sessionId) {
+        this.sessionId = sessionId;
+        return this;
+    }
 	
 }

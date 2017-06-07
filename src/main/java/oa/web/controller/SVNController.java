@@ -21,8 +21,8 @@ public class SVNController {
     protected static final Logger logger = Logger.getLogger(SVNController.class);
 
     @RequestMapping(value = "/update")
-	public String update(HttpServletResponse response,String folder2update) throws IOException{
-		if(ValueWidget.isNullOrEmpty(folder2update)){
+    public String update(HttpServletResponse response, String folder2update, Boolean goBack) throws IOException {
+        if(ValueWidget.isNullOrEmpty(folder2update)){
 			folder2update="/var/www/ajl/";
 		}
 		logger.info("svn update:" + folder2update);
@@ -31,8 +31,10 @@ public class SVNController {
 		out.println("<html>svn update " + folder2update + " successfully!<br>");
 		out.println(result);
 		out.println("<script type=\"text/javascript\" charset=\"UTF-8\" >");
-		out.println("setTimeout(function(){history.go(-1);},3000);");
-		out.println("</script></html>");
+        if (null == goBack || goBack) {
+            out.println("setTimeout(function(){history.go(-1);},3000);");
+        }
+        out.println("</script></html>");
 		return null;
 	}
 }

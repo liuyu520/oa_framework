@@ -16,18 +16,25 @@ import javax.servlet.http.HttpSession;
 import java.util.Date;
 
 public class LogUtil {
+    public static void logSave(AccessLog accessLog, HttpServletRequest request, GenericDao accessLogDao1) {
+        logSave(accessLog, request, accessLogDao1, true);
+    }
     /***
      * 保存日志到数据库<br>
      * 从session获取用户信息
      *
      * @param accessLog
      * @param request
+     * @param realSave : 是否真的存储到数据库
      */
-    public static void logSave(AccessLog accessLog, HttpServletRequest request, GenericDao accessLogDao1) {
+    public static void logSave(AccessLog accessLog, HttpServletRequest request, final GenericDao accessLogDao1, boolean realSave) {
         /*if (WebServletUtil.isLocalIp(request)) {
             System.out.println("本地服务不记录日志");
             return;
         }*/
+        if (!realSave) {
+            return;
+        }
         if (accessLog == null) {
             accessLog = new AccessLog();
         }
@@ -43,11 +50,7 @@ public class LogUtil {
                 }
             } catch (SecurityException e) {
                 e.printStackTrace();
-            } catch (NoSuchFieldException e) {
-                e.printStackTrace();
             } catch (IllegalArgumentException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }
 
@@ -58,6 +61,8 @@ public class LogUtil {
         accessLog.setTime(TimeHWUtil.getCurrentTimeSecond(now));
         accessLog.setAccessDay(TimeHWUtil.formatDateShortEN(now));
         accessLog.setAccessDayTime(TimeHWUtil.formatDateTime(now));
+        //如果服务器使用nginx,则必须配置:proxy_set_header X-Real-IP $remote_addr;
+        //否则,得不到真实的ip地址
         String ip = WebServletUtil.getIpAddr(request);
         System.out.println("client ip:" + ip);
         accessLog.setIp(ip);
@@ -73,8 +78,18 @@ public class LogUtil {
             }
             accessLog.setQueryString(queryString);//例如"username=whuang&password=root"
         }
-
-        saveLog(accessLog, accessLogDao1);
+        final AccessLog accessLogFinal = accessLog;
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                saveLog(accessLogFinal, accessLogDao1);
+            }
+        }).start();
     }
 
     /**
@@ -99,8 +114,12 @@ public class LogUtil {
         String methodName = eles[3]/*调用logByMethod 的方法logInto上一个方法*/
                 .getMethodName();
         accessLog.setRequestTarget(jspFolder + ":" + methodName);
-        String osType = request.getParameter("osType");
-        String deviceId = request.getParameter("deviceId");
+        /**"Android"<br />
+         * "Ios"<br />
+         * "WINDOWS PHONE"*/
+        String osType = request.getParameter("osType");//HeaderUtil 中有常量
+        //设备标示（device token or clientid） 用于消息推送时,定位设备
+//        String deviceId = request.getParameter("deviceId");
         ClientOsInfo info = WebServletUtil.getMobileOsInfo(request);
         accessLog.setUserAgent(info.getUserAgent());
         accessLog.setDeviceType(info.getDeviceType());//Pad或Phone
@@ -109,8 +128,8 @@ public class LogUtil {
         } else {
             accessLog.setOsType(info.getOsType());
         }
-        if (!ValueWidget.isNullOrEmpty(deviceId)) {
-            accessLog.setDeviceId(deviceId);
+        if (!ValueWidget.isNullOrEmpty(info.getDeviceId())) {
+            accessLog.setDeviceId(info.getDeviceId());
         }
         return accessLog;
     }

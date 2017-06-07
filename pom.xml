@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>yunmasoft.com</groupId>
     <artifactId>oa_framework</artifactId>
-    <version>0.0.2-SNAPSHOT</version>
+    <version>0.0.3.2-SNAPSHOT</version>
     <properties>
         <java.version>1.6</java.version>
         <tomcat.version>7.0.26</tomcat.version>
@@ -132,8 +132,8 @@
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
-            <version>2.5</version>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>3.0.1</version>
             <scope>provided</scope>
         </dependency>
         <!-- spring MVC 校验,依赖以下两个jar包 -->
@@ -186,6 +186,17 @@
 			<artifactId>antlr</artifactId>
 			<version>3.2</version>
 		</dependency>
+        <dependency>
+            <groupId>com.kunlunsoft</groupId>
+            <artifactId>io0007</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>2.8.0</version>
+        </dependency>
+
     </dependencies>
     <distributionManagement>
         <repository>
@@ -259,6 +270,16 @@
                 </executions>
             </plugin>
 
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.7</source>
+                    <target>1.7</target>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+
+            </plugin>
         </plugins>
     </build>
 </project>

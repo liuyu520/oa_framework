@@ -18,4 +18,6 @@ public interface UploadCallback {
 	 * @throws IOException
 	 */
 	public String callback(Model model, MultipartFile file, HttpServletRequest request, HttpServletResponse response) throws ParseException, IOException;
+
+    public String callback(Model model, MultipartFile[] files, HttpServletRequest request, HttpServletResponse response) throws ParseException, IOException;
 }

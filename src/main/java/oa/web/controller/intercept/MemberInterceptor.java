@@ -14,9 +14,11 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.URLEncoder;
 
-public class MemberInterceptor implements HandlerInterceptor {
+public class MemberInterceptor<T> implements HandlerInterceptor {
     private String errorMessage;
 
     @Override
@@ -36,14 +38,20 @@ public class MemberInterceptor implements HandlerInterceptor {
                              HttpServletResponse response, Object arg2) throws Exception {
         HttpSession session = request.getSession(true);
 
-        if (!AuthenticateUtil.isLogined(session)) {
+        if (AuthenticateUtil.checkLogin(response, session, SystemHWUtil.getGenricClassType(getClass()))) return true;
+        if (AuthenticateUtil.checkToken(request, response)) return true;
+
             String path = request.getRequestURI();//"/demo_channel_terminal/news/list"
             System.out.println("您无权访问:" + path);
+        response.setCharacterEncoding(SystemHWUtil.CHARSET_UTF);
+        if (requestJson(response, path)) return false;
+        if (!ValueWidget.isNullOrEmpty(request.getQueryString())) {
+            path = path + "?" + request.getQueryString();
+        }
             //用于登录成功之后回调
             session.setAttribute(LoginUtil.SESSION_KEY_LOGIN_RETURN_URL, path);
             System.out.println();
             String contextPath = request.getContextPath();
-            response.setCharacterEncoding(SystemHWUtil.CHARSET_UTF);
             request.setCharacterEncoding("UTF-8");
             String message = null;
             if (ValueWidget.isNullOrEmpty(getErrorMessage())) {
@@ -52,10 +60,29 @@ public class MemberInterceptor implements HandlerInterceptor {
                 message = getErrorMessage();
             }
             log(request);
-            response.sendRedirect(contextPath + getReturnUrl() + "?" + Constant2.RESPONSE_KEY_ERROR_MESSAGE + "=" + URLEncoder.encode(message, "UTF-8"));
-            return false;
+
+        redirectLogin(response, contextPath, message);
+        return false;
+    }
+
+
+    public void redirectLogin(HttpServletResponse response, String contextPath, String message) throws IOException {
+        String cacheContextPath = (String) SpringMVCUtil.resumeGlobalObject("convention_context");
+        if (!ValueWidget.isNullOrEmpty(cacheContextPath)) {
+            contextPath = cacheContextPath;
         }
-        return true;
+        response.sendRedirect(contextPath + getReturnUrl() + "?" + Constant2.RESPONSE_KEY_ERROR_MESSAGE + "=" + URLEncoder.encode(message, "UTF-8"));
+    }
+
+    public boolean requestJson(HttpServletResponse response, String path) throws IOException {
+        if (path.endsWith("/json")) {
+            response.setContentType(SystemHWUtil.RESPONSE_CONTENTTYPE_JSON_UTF);
+            PrintWriter out = response.getWriter();
+            out.print(Constant2.RESPONSE_WRONG_RESULT);
+            out.flush();
+            return true;
+        }
+        return false;
     }
 
     public void log(HttpServletRequest request) {
@@ -64,7 +91,7 @@ public class MemberInterceptor implements HandlerInterceptor {
         AccessLog accessLog = LogUtil.logByMethod(request, Constant2.LOGS_ACCESS_TYPE_INTO, null);
         accessLog.setDescription("access " + path);
         accessLog.setOperateResult("401");
-        LogUtil.logSave(accessLog, request, SpringMVCUtil.getDao(getDaoBeanName()));
+        LogUtil.logSave(accessLog, request, SpringMVCUtil.getDao(getDaoBeanName()), true/*realSave*/);
     }
 
     /***

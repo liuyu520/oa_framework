@@ -1,9 +1,9 @@
 package yunma.oa.bean.xml;
 
+import com.common.bean.StubRange;
 import com.common.util.SystemHWUtil;
 import com.io.hw.file.util.FileUtils;
 import com.string.widget.util.ValueWidget;
-import oa.bean.StubRange;
 import yunma.oa.util.OAUtil;
 
 import java.io.File;

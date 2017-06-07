@@ -27,8 +27,9 @@ public class UploadResult {
 	private  File savedFile;
 	private String finalFileName;
 	/***
-	 * upload/image/20150329170823_2122015-03-23_01-42-03.jpg
-	 */
+     * / upload/image/20150329170823_2122015-03-23_01-42-03.jpg<br />
+     * 不包含项目名
+     */
 	private String relativePath;
 	
 	public UploadResult() {

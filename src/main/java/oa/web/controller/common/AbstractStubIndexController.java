@@ -25,8 +25,8 @@ import java.util.Map;
  * @author whuanghkl
  *         需要子类继承
  */
-public class StubIndexController {
-    protected static final Logger logger = Logger.getLogger(StubIndexController.class);
+public class AbstractStubIndexController {
+    protected static final Logger logger = Logger.getLogger(AbstractStubIndexController.class);
 
     private static String getNginxScript(String targetUrl, String stubUrl) {
         if (ValueWidget.isNullOrEmpty(stubUrl)) {
@@ -35,6 +35,14 @@ public class StubIndexController {
         return ValueWidget.getNginxDispatch(targetUrl, stubUrl);
     }
 
+    /***
+     * stub list列表
+     * @param request
+     * @param model
+     * @param targetView
+     * @param keyWord
+     * @return
+     */
     @RequestMapping("/")
     public String list(HttpServletRequest request, Model model, String targetView, String keyWord) {
         List<String> stubPathList = getStubPathList(request, keyWord);
@@ -46,6 +54,13 @@ public class StubIndexController {
         return "list";
     }
 
+    /***
+     * stub list列表
+     * @param request
+     * @param model
+     * @param keyWord
+     * @return : json
+     */
     @ResponseBody
     @RequestMapping(value = "/listJson", produces = SystemHWUtil.RESPONSE_CONTENTTYPE_JSON_UTF)
     public String listJson(HttpServletRequest request, Model model, String keyWord) {
@@ -66,7 +81,7 @@ public class StubIndexController {
         logger.debug("/old_content sessionId:" + session.getId());
         String content = (String) session.getAttribute(HWUtils.SESSION_KEY_STUB_OLD_CONTENT);
         if (null == content) {
-            content = "(暂无)";
+            return "(暂无)";
         }
         return content;
     }

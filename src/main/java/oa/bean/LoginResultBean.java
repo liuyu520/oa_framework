@@ -3,6 +3,7 @@ package oa.bean;
 public class LoginResultBean {
     private boolean isFailed;
     private String message;
+    private String errorCode;
 
     public boolean isFailed() {
         return isFailed;
@@ -20,4 +21,11 @@ public class LoginResultBean {
         this.message = message;
     }
 
+    public String getErrorCode() {
+        return errorCode;
+    }
+
+    public void setErrorCode(String errorCode) {
+        this.errorCode = errorCode;
+    }
 }

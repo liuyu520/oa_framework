@@ -1,6 +1,6 @@
 package oa.bean.stub;
 
-import oa.bean.StubRange;
+import com.common.bean.StubRange;
 
 /**
  * Created by huangweii on 2016/2/19.<br />

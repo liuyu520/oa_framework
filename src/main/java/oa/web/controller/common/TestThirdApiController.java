@@ -97,7 +97,8 @@ public class TestThirdApiController {
     }
 
     /***
-     * Content-Type should not be "application/x-www-form-urlencoded;charset=UTF-8"
+     * Content-Type should not be "application/x-www-form-urlencoded;charset=UTF-8"<br />
+     * request contentType:application/json;charset=UTF-8
      *
      * @param requestInfoBean
      * @return
@@ -126,5 +127,93 @@ public class TestThirdApiController {
         map.put("responseText", jsonResult);
 
         return HWJacksonUtils.getJsonP(map);
+    }
+
+    @RequestMapping(value = "/innerSign", produces = SystemHWUtil.RESPONSE_CONTENTTYPE_JSON_UTF)
+    @ResponseBody
+    public String innerSign(@RequestParam(required = false, defaultValue = "1") String type,
+                            @RequestParam(required = false, defaultValue = "2") String netType,
+                            @RequestParam(required = false) String authorization,
+                            @RequestParam(required = false) String Authorization,
+                            @RequestParam(required = false, defaultValue = "gzq.chanjet.com") String host
+    ) throws IOException, KeyManagementException, NoSuchAlgorithmException {
+// 签到
+        com.common.bean.RequestSendChain requestInfoBeanOrderBnz = new com.common.bean.RequestSendChain();
+        requestInfoBeanOrderBnz.setServerIp(host);
+        requestInfoBeanOrderBnz.setSsl(false);
+        requestInfoBeanOrderBnz.setPort("80");
+        requestInfoBeanOrderBnz.setActionPath("/app/rest/innerSign/add?orgId=90003720382");
+        requestInfoBeanOrderBnz.setRequestCookie("");
+        requestInfoBeanOrderBnz.setCustomRequestContentType("");
+        requestInfoBeanOrderBnz.setRequestMethod(com.common.dict.Constant2.REQUEST_METHOD_POST);
+        // requestInfoBeanOrderBnz.setDependentRequest(requestInfoBeanLogin);
+        requestInfoBeanOrderBnz.setCurrRequestParameterName("");
+        requestInfoBeanOrderBnz.setPreRequestParameterName("");
+        if (ValueWidget.isNullOrEmpty(authorization)) {
+            authorization = Authorization;
+        }
+        /*if(ValueWidget.isNullOrEmpty(authorization)){
+            authorization="8124B7786EF98B6EAE3A5AC8BD6F9B7FD915B6B4E12813E069C5F1CCE23F1041B392D9B54AEFF4FAF7D5C0553D8CE4036C800C7FD33968878525024D66043DCBEC97B1497A0952BD53C1ED148F61E954724AEC4915AC2AF32D48765C5E1B55C8";
+        }*/
+        java.util.TreeMap parameterMapSnAN = new java.util.TreeMap();//请求参数
+        parameterMapSnAN.put("{DES}/jVtMAHuT1k=", "{DES}fpNSygs55lpnVBj6rO7FzReAucFefdcfRD1JRNSpQ4SulZ/g5hvulg==");
+        parameterMapSnAN.put("{DES}gfUUxw79kM0pxktdDXuaIQ==", "{DES}EfOfhHlPOVI=");
+        parameterMapSnAN.put("{DES}ahg1TAT803W5c3Qxiv/pjg==", "{DES}EfOfhHlPOVI=");
+        parameterMapSnAN.put("deviceId", "864587025867988");
+        parameterMapSnAN.put("isLightApp", "1");
+        parameterMapSnAN.put("netType", netType);
+        parameterMapSnAN.put("type", type);
+        parameterMapSnAN.put("wifiIdentify", "38%3A97%3Ad6%3Ad2%3A1e%3A41");
+        parameterMapSnAN.put("wifiName", "chanjet");
+        requestInfoBeanOrderBnz.setRequestParameters(parameterMapSnAN);
+        requestInfoBeanOrderBnz.updateRequestBody();
+
+
+        org.apache.commons.collections.map.ListOrderedMap header = new org.apache.commons.collections.map.ListOrderedMap();
+        header.put("Authorization", authorization);
+        header.put("gzq-sig", "0002|58328c926023997437d684726e77b613");
+        header.put("Host", host);
+        requestInfoBeanOrderBnz.setHeaderMap(header);
+
+        com.common.bean.ResponseResult responseResultOrderXbT = requestInfoBeanOrderBnz.request(); //new RequestPanel.ResponseResult(requestInfoBeanLogin).invoke();
+        String responseOrderTAs = responseResultOrderXbT.getResponseJsonResult();
+        System.out.println("responseText:" + responseOrderTAs);
+        System.out.println(com.io.hw.json.JSONHWUtil.jsonFormatter(responseOrderTAs));
+        return responseOrderTAs + SystemHWUtil.CRLF;
+    }
+
+    /**
+     * 京东签到领京豆
+     *
+     * @return
+     * @throws IOException
+     * @throws KeyManagementException
+     * @throws NoSuchAlgorithmException
+     */
+    @RequestMapping(value = "/getBeans", produces = SystemHWUtil.RESPONSE_CONTENTTYPE_JSON_UTF)
+    @ResponseBody
+    public String getBeans() throws IOException, KeyManagementException, NoSuchAlgorithmException {
+// 京东领京豆
+        com.common.bean.RequestSendChain requestInfoBeanOrdermbw = new com.common.bean.RequestSendChain();
+        requestInfoBeanOrdermbw.setServerIp("ld.m.jd.com");
+        requestInfoBeanOrdermbw.setSsl(true);
+        requestInfoBeanOrdermbw.setPort("80");
+        requestInfoBeanOrdermbw.setActionPath("/SignAndGetBeansN/signStart");
+        requestInfoBeanOrdermbw.setRequestCookie("pt_key=app_openAAFY9NydADDfImiRK13EAVAFTjk9oeM523klkYPDAtkkuBIOKcVyK2z8Tu0joOt_w4_lqHwmgvc;pt_pin=whuanghkl;pwdt_id=whuanghkl;sid=a73a5d58aa734e5b7fa783644732725w;JSESSIONID=C528B52C2631E897B219C71291909071.s1;pre_session=864587025867988-c0eefb05dec4|127;pre_seq=2;__jdv=122270672|jdzt_refer_null|t_108549027_1|jzt-zhitou|ak4nawahaaaonve6b53a|1490073600000");
+        requestInfoBeanOrdermbw.setCustomRequestContentType("");
+        requestInfoBeanOrdermbw.setRequestMethod(com.common.dict.Constant2.REQUEST_METHOD_GET);
+        // requestInfoBeanOrdermbw.setDependentRequest(requestInfoBeanLogin);
+        requestInfoBeanOrdermbw.setCurrRequestParameterName("");
+        requestInfoBeanOrdermbw.setPreRequestParameterName("");
+
+        java.util.TreeMap parameterMaphrkI = new java.util.TreeMap();//请求参数
+        requestInfoBeanOrdermbw.setRequestParameters(parameterMaphrkI);
+        requestInfoBeanOrdermbw.updateRequestBody();
+
+        com.common.bean.ResponseResult responseResultOrdertnX = requestInfoBeanOrdermbw.request(); //new RequestPanel.ResponseResult(requestInfoBeanLogin).invoke();
+        String responseOrderUlH = responseResultOrdertnX.getResponseJsonResult();
+        System.out.println("responseText:" + responseOrderUlH);
+        System.out.println(com.io.hw.json.JSONHWUtil.jsonFormatter(responseOrderUlH));
+        return responseOrderUlH + SystemHWUtil.CRLF;
     }
 }
