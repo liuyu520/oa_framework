@@ -160,24 +160,12 @@ public class GetRequestParametersController {
 
     @ResponseBody
     @RequestMapping(value = "/request2", produces = SystemHWUtil.RESPONSE_CONTENTTYPE_JSON_UTF)
-    public String getParameter2(HttpServletRequest request
-            /*,String client_secret
-			,String auth_code
-			,String client_id
-			,String password
-			,String auth_username
-			,String appKey*/) throws IOException {
+    public String getParameter2(HttpServletRequest request) throws IOException {
         String requestBody = WebServletUtil.getRequestPostStr(request);
         String queryStr = WebServletUtil.getRequestQueryStr(request, null);
         Map map = new HashMap();
         map.put("requestBody", requestBody);
         map.put("queryStr", queryStr);
-		/*System.out.println("client_secret:"+client_secret);
-		System.out.println("auth_code:"+auth_code);
-		System.out.println("client_id:"+client_id);
-		System.out.println("password:"+password);
-		System.out.println("auth_username:"+auth_username);
-		System.out.println("appKey:"+appKey);*/
         return HWJacksonUtils.getJsonP(map);
     }
 
