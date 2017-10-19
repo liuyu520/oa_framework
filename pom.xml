@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>yunmasoft.com</groupId>
     <artifactId>oa_framework</artifactId>
-    <version>0.0.3.2-SNAPSHOT</version>
+    <version>0.0.3.2-github-SNAPSHOT</version>
     <properties>
         <java.version>1.6</java.version>
         <tomcat.version>7.0.26</tomcat.version>

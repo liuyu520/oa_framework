@@ -2,7 +2,6 @@ package oa.web.controller.generic;
 
 import com.common.bean.BaseResponseDto;
 import com.common.bean.ClientOsInfo;
-import com.common.bean.exception.LogicBusinessException;
 import com.common.dao.generic.GenericDao;
 import com.common.dict.Constant2;
 import com.common.util.PageUtil;
@@ -273,15 +272,9 @@ public abstract class GenericController <T>{
         //判断请求参数reqtype=json
         String reqtype = request.getParameter("reqtype");
         if ("json".equals(reqtype)) {
-            try {
-                String requestBody = WebServletUtil.getRequestPostStr(request);
-                T roleLevel = (T) HWJacksonUtils.deSerialize(requestBody, clz);//对请求体进行反序列化
-                return roleLevel;
-            } catch (IOException e) {
-                e.printStackTrace();
-                logger.error(e.getMessage(), e);
-                throw new LogicBusinessException().setErrorCode("7");//缺少参数
-            }
+            String requestBody = WebServletUtil.getRequestPostStr(request);
+            T roleLevel = (T) HWJacksonUtils.deSerialize(requestBody, clz);//对请求体进行反序列化
+            return roleLevel;
         }
         return null;
     }
