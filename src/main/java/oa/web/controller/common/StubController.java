@@ -72,6 +72,12 @@ public class StubController {
             , Integer responseCode
             , Integer index
             , String headerJson) {
+        if (null == second) {
+            String delay = request.getParameter("delay");
+            if (!ValueWidget.isNullOrEmpty(delay)) {
+                second = Integer.parseInt(delay);
+            }
+        }
         if (second != null && second != 0) {
             try {
                 Thread.sleep(second * 1000);

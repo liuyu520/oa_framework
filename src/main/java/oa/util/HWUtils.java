@@ -426,8 +426,8 @@ public class HWUtils {
             return;
         }*/
         //content 中不能包含"</",可以有"/",比如图片地址
-        String specialChar = "</";
-        content = content.replace(specialChar, XSSUtil.cleanXSS(specialChar));
+//        String specialChar = "</";
+//        content = content.replace(specialChar, XSSUtil.cleanXSS(specialChar));//注释掉,因为有时候就是需要测试xss 攻击
         System.out.println("content:" + content + " , index:" + index);
         int length = list.size();
         if (index == length) {//新增一个option
