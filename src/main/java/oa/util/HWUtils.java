@@ -7,6 +7,7 @@ import com.common.dict.Constant2;
 import com.common.util.MapUtil;
 import com.common.util.SystemHWUtil;
 import com.common.util.WebServletUtil;
+import com.file.hw.props.GenericReadPropsUtil;
 import com.io.hw.file.util.FileUtils;
 import com.io.hw.json.HWJacksonUtils;
 import com.io.hw.json.XmlYunmaUtil;
@@ -164,9 +165,11 @@ public class HWUtils {
 		try {
             //path:/stub/v1/xxx
             String realPath2 = WebServletUtil.getRealPath(request, path);
+            logger.warn("realPath2:"+realPath2);
 
             File file = getStubFile(realPath2);
             realPath2 = file.getAbsolutePath();//执行getStubFile 之后,路径可能变化
+            logger.warn("realPath2:"+realPath2);
             readAndWriteResult.setAbsolutePath(WebServletUtil.escapePath(realPath2));
             if (!file.exists()) {
                 String errorMessage = realPath2 + " does not exist";
@@ -196,6 +199,7 @@ public class HWUtils {
             } else {
                 content = stubRange.getStubs().get(selectedIndex);
             }
+
             setServletUrl(request, path, readAndWriteResult);
 			readAndWriteResult.setContent(content);
             readAndWriteResult.setStubRange(stubRange);
@@ -584,7 +588,21 @@ public class HWUtils {
     }
 
 	private static void setServletUrl(HttpServletRequest request, String path, ReadAndWriteResult readAndWriteResult) {
-		String serverUrl = getServletUrl(request);//http://10.1.253.44:81/tv_mobile
+        boolean deleteProjectName = false;
+        try {
+            Properties properties = GenericReadPropsUtil.getProperties(true, "config/common.properties");
+            if (null != properties) {
+                String sentinelIpTmp = properties.getProperty("deleteProjectName");
+                if (!ValueWidget.isNullOrEmpty(sentinelIpTmp)) {
+                    deleteProjectName = SystemHWUtil.parse33(sentinelIpTmp);
+                }
+
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        logger.info("deleteProjectName:"+deleteProjectName);
+		String serverUrl = getServletUrl(request,!deleteProjectName);//http://10.1.253.44:81/tv_mobile
 		logger.info("serverUrl:" + serverUrl);
         readAndWriteResult.setUrl(serverUrl + Constant2.SLASH + path.replaceAll("\\.json$"/*需要转义，否则就是通配符*/, SystemHWUtil.EMPTY));
     }
@@ -593,8 +611,9 @@ public class HWUtils {
 	 * @param request
 	 * @return : http://10.1.253.44:81/tv_mobile
 	 */
-	public static String getServletUrl(HttpServletRequest request) {
-		return request.getRequestURL().toString().replaceAll("(https?://[^/]+)/.*$", "$1") + request.getContextPath();
+	public static String getServletUrl(HttpServletRequest request,boolean containsProjectName) {
+	    String url=request.getRequestURL().toString().replaceAll("(https?://[^/]+)/.*$", "$1");
+		return containsProjectName? (url + request.getContextPath()):url;
 	}
 
 	public static ReadAndWriteResult stub(HttpServletRequest request, String path) {
