@@ -158,6 +158,9 @@ public class SpringMVCUtil {
      * @param env
      */
     public static void addCustomPropertySources(PropertySources propertySources, ConfigurableEnvironment env) {
+        if (null == propertySources) {
+            return;
+        }
         for (Iterator<PropertySource<?>> it = propertySources.iterator(); it.hasNext(); ) {
             env.getPropertySources().addFirst((PropertySource) it.next());
         }
