@@ -347,12 +347,20 @@ public class HWUtils {
 	 * @throws IOException
 	 */
     private static void writeStubFile(String content, String charset, ReadAndWriteResult readAndWriteResult, File file, int index) throws IOException {
-        FileWriterWithEncoding fileW = new FileWriterWithEncoding(file, charset);
+        try {
+            FileWriterWithEncoding fileW = new FileWriterWithEncoding(file, charset);
+            fileW.write(content);
+            fileW.close();
+            readAndWriteResult.setResult(true);
+        } catch (java.io.FileNotFoundException e) {
+            e.printStackTrace();
+            readAndWriteResult.setResult(false);
+            //java.io.FileNotFoundException: /data/wwwroot/hweiWebsite/stub_test_svn/stub/api/b/c.xml (No such file or directory)
+            readAndWriteResult.setErrorMessage("可能是文件目录没有权限," + e.getMessage());
+        }
 //        StubRange stubRange = XmlYunmaUtil.deAssembleStub(content);
-        fileW.write(content);
-		fileW.close();
-		readAndWriteResult.setResult(true);
-		readAndWriteResult.setContent(content);
+
+        readAndWriteResult.setContent(content);
 	}
 
     /***
