@@ -588,7 +588,7 @@ public class HWUtils {
     }
 
 	private static void setServletUrl(HttpServletRequest request, String path, ReadAndWriteResult readAndWriteResult) {
-        boolean deleteProjectName = false;
+        boolean deleteProjectName = false;//为 true, 表示不包含项目名称
         try {
             Properties properties = GenericReadPropsUtil.getProperties(true, "config/common.properties");
             if (null != properties) {
@@ -604,12 +604,13 @@ public class HWUtils {
         logger.info("deleteProjectName:"+deleteProjectName);
 		String serverUrl = getServletUrl(request,!deleteProjectName);//http://10.1.253.44:81/tv_mobile
 		logger.info("serverUrl:" + serverUrl);
-        readAndWriteResult.setUrl(serverUrl + Constant2.SLASH + path.replaceAll("\\.json$"/*需要转义，否则就是通配符*/, SystemHWUtil.EMPTY));
+        readAndWriteResult.setUrl(serverUrl + Constant2.SLASH + path.replaceAll("\\" + Constant2.STUB_FILE_SUFFIX + "$"/*需要转义，否则就是通配符*/, SystemHWUtil.EMPTY));
     }
 
 	/***
 	 * @param request
-	 * @return : http://10.1.253.44:81/tv_mobile
+     * @param containsProjectName : 是否包含项目名,例如"http://stub.yhskyc.com/stub_test/stubEdit/search?servletAction=api/b/c"中的stub_test
+     * @return : http://10.1.253.44:81/tv_mobile
 	 */
 	public static String getServletUrl(HttpServletRequest request,boolean containsProjectName) {
 	    String url=request.getRequestURL().toString().replaceAll("(https?://[^/]+)/.*$", "$1");
