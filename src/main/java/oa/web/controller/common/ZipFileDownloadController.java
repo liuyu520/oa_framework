@@ -14,7 +14,7 @@ import java.io.IOException;
 
 /**
  * Created by 黄威 on 11/01/2017.<br >
- * localhost:8082/convention/download/zip?folderWillZipped=/Users/whuanghkl/work/mygit/chanjet_store_mobile_new/release/android
+ * localhost:8082/convention/download/zip?folderWillZipped=/Users/whuanghkl/work/mygit/xxx/release/android
  */
 @Controller
 @RequestMapping("/download")
