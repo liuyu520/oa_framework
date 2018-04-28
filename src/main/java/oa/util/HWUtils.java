@@ -441,9 +441,9 @@ public class HWUtils {
         if (index < 0) {
             index = 0;
         }
-        if (stubUpdateOption.isLocked()) {//参考 163行的stub() 方法
-            stubRange.setSelectedIndex(getSelectedIndex4Cache("stub" + stubUpdateOption.getServletAction()/*stub/a/b/c*/, index));
-        } else {
+        if (!stubUpdateOption.isLocked()) {//参考 163行的stub() 方法
+            /*stubRange.setSelectedIndex(getSelectedIndex4Cache("stub" + stubUpdateOption.getServletAction()*//*stub/a/b/c*//*, index));
+        } else {*/
             stubRange.setSelectedIndex(index);
         }
 
