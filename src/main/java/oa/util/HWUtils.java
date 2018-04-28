@@ -190,8 +190,11 @@ public class HWUtils {
             if (null != index && index > 0) {//index 的优先级最高
                 selectedIndex = index - 1;
             } else {
-                selectedIndex = getSelectedIndex4Cache(path/*stub/a/b/c*/);
+                selectedIndex = getSelectedIndex4Cache(path/*stub/a/b/c*/, selectedIndex);
                 selectedIndex = getSelectedIndexByParameter(request, stubRange, selectedIndex);
+                if (selectedIndex < 0) {
+                    selectedIndex = 0;
+                }
             }
 
 
@@ -231,8 +234,8 @@ public class HWUtils {
      * @param path : "stub/a/b/c"
      * @return
      */
-    private static int getSelectedIndex4Cache(String path) {
-        int selectedIndex = -1;
+    public static int getSelectedIndex4Cache(String path, int selectedIndex) {
+//        int selectedIndex = -1;
         String sessionKey = deleteSuffix(path) + "selectedIndex";
         System.out.println("getSelectedIndex4Cache() get key:" + sessionKey);
         String selectedIndexStr = (String) SpringMVCUtil.resumeGlobalObject(sessionKey);
@@ -439,7 +442,7 @@ public class HWUtils {
             index = 0;
         }
         if (stubUpdateOption.isLocked()) {//参考 163行的stub() 方法
-            stubRange.setSelectedIndex(getSelectedIndex4Cache("stub" + stubUpdateOption.getServletAction()/*stub/a/b/c*/));
+            stubRange.setSelectedIndex(getSelectedIndex4Cache("stub" + stubUpdateOption.getServletAction()/*stub/a/b/c*/, index));
         } else {
             stubRange.setSelectedIndex(index);
         }
