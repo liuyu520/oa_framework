@@ -18,6 +18,7 @@ import com.time.util.TimeHWUtil;
 import net.sf.jxls.transformer.XLSTransformer;
 import oa.bean.UploadResult;
 import oa.bean.stub.ReadAndWriteResult;
+import oa.bean.stub.StubUpdateOption;
 import org.apache.commons.compress.archivers.dump.InvalidFormatException;
 import org.apache.commons.io.output.FileWriterWithEncoding;
 import org.apache.log4j.Logger;
@@ -413,9 +414,11 @@ public class HWUtils {
      * @param index : 从0开始
      * @throws IOException
      */
-    public static ReadAndWriteResult writeStubFileOneOption(String content, String attributeVal, /*String charset,*/ ReadAndWriteResult readAndWriteResult, File file, int index) throws IOException {
-        StubRange stubRange = getStubRange(file);
-        String absolutePath = file.getAbsolutePath();
+    public static ReadAndWriteResult writeStubFileOneOption(String content, String attributeVal, /*String charset,*/ StubUpdateOption stubUpdateOption) throws IOException {
+        ReadAndWriteResult readAndWriteResult = stubUpdateOption.getReadAndWriteResult();
+        int index = stubUpdateOption.getIndex();
+        StubRange stubRange = getStubRange(stubUpdateOption.getFile());
+        String absolutePath = stubUpdateOption.getFile().getAbsolutePath();
         if (ValueWidget.isNullOrEmpty(readAndWriteResult.getAbsolutePath())) {
             readAndWriteResult.setAbsolutePath(absolutePath);
         }
@@ -452,7 +455,7 @@ public class HWUtils {
         }
         updateAttributeVal(attributeVal, index, stubRange);
         stubRange.setStubs(list);
-        writeStubRange(stubRange, file);//写入文件
+        writeStubRange(stubRange, stubUpdateOption.getFile());//写入文件
         readAndWriteResult.setResult(true);
         return readAndWriteResult;
     }
