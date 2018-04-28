@@ -376,9 +376,10 @@ public class HWUtils {
      * @param index
      * @throws IOException
      */
-    public static void writeStubFileOneOption(String content, String attributeVal, /*String charset,*/ ReadAndWriteResult readAndWriteResult, String path, int index) throws IOException {
+    public static void writeStubFileOneOption2(String content, String attributeVal, /*String charset,*/  String path, StubUpdateOption stubUpdateOption) throws IOException {
         File file = getRealFile(path);
-        writeStubFileOneOption(content, attributeVal, readAndWriteResult, file, index);
+        stubUpdateOption.setFile(file);
+        writeStubFileOneOption(content, attributeVal, stubUpdateOption);
     }
 
     public static void updateAttributeName(String attributeVal, /*String charset,*/ ReadAndWriteResult readAndWriteResult, String path) throws IOException {
@@ -431,7 +432,10 @@ public class HWUtils {
         if (index < 0) {
             index = 0;
         }
-        stubRange.setSelectedIndex(index);
+        if (!stubUpdateOption.isLocked()) {
+            stubRange.setSelectedIndex(index);
+        }
+
         List<String> list = stubRange.getStubs();
         readAndWriteResult.setContent(content);
        /* if (list.get(index).equals(content)) {
