@@ -43,7 +43,7 @@ public class AbstractStubIndexController {
      * @param keyWord
      * @return
      */
-    @RequestMapping("/")
+    @RequestMapping({"/", "stub_test"})
     public String list(HttpServletRequest request, Model model, String targetView, String keyWord) {
         List<String> stubPathList = getStubPathList(request, keyWord);
         model.addAttribute("stubPathList", stubPathList);
