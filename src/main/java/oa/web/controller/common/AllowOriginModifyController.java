@@ -27,12 +27,15 @@ public class AllowOriginModifyController {
     public AllowOriginDto jsonUpdate2(Model model, HttpServletRequest request, HttpServletResponse response
             , @RequestParam(required = false) String allowOrigin, String allowCookie) {
         AllowOriginDto allowOriginDto = getAllowOriginDto(request);
-        if (!ValueWidget.isNullOrEmpty(allowOrigin)) {
-            allowOriginDto.setAccessControlAllowOrigin(allowOrigin);
+        synchronized (allowOriginDto) {
+            if (!ValueWidget.isNullOrEmpty(allowOrigin)) {
+                allowOriginDto.setAccessControlAllowOrigin(allowOrigin);
+            }
+            if (!ValueWidget.isNullOrEmpty(allowCookie)) {
+                allowOriginDto.setAccessControlAllowCredentials(Boolean.TRUE.toString().equalsIgnoreCase(allowCookie));
+            }
         }
-        if (!ValueWidget.isNullOrEmpty(allowCookie)) {
-            allowOriginDto.setAccessControlAllowCredentials(Boolean.TRUE.toString().equalsIgnoreCase(allowCookie));
-        }
+
         return allowOriginDto;
     }
 
@@ -43,7 +46,7 @@ public class AllowOriginModifyController {
     @ResponseBody
     @RequestMapping(value = "/query/json", produces = SystemHWUtil.RESPONSE_CONTENTTYPE_JSON_UTF)
     public AllowOriginDto json2(Model model, HttpServletRequest request, HttpServletResponse response
-            , @RequestParam(required = false) String demo) {
+    ) {
         AllowOriginDto allowOriginDto = getAllowOriginDto(request);
         return allowOriginDto;
     }
