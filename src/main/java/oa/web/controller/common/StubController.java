@@ -103,6 +103,10 @@ public class StubController {
             logger.error(readAndWriteResult.getErrorMessage());
         }
         String content = readAndWriteResult.getContent();
+        if (!readAndWriteResult.isResult()
+                && ValueWidget.isNullOrEmpty(content)) {
+            content = readAndWriteResult.getErrorMessage();
+        }
         logger.info(SystemHWUtil.CRLF + content);
         addResponseHeader(response, headerJson);
         return HWJacksonUtils.getJsonP(content, callback);
