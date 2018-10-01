@@ -658,7 +658,7 @@ public abstract class GenericController <T>{
         }
         init(request);
         Object oldVal = this.getDao().getOnePropertyById2(id, column);
-        this.getDao().updateSpecial(id, column, val);
+//        this.getDao().updateSpecial(id, column, val); TODO
         BaseResponseDto baseResponseDto = new BaseResponseDto();
         baseResponseDto.result = true;
 

@@ -170,7 +170,7 @@ public class HWUtils {
             String realPath2 = WebServletUtil.getRealPath(request, path);
             logger.warn("realPath2:"+realPath2);
 
-            File file = getStubFile(realPath2);
+            File file = getStubFile(realPath2, request.getServletPath());
             realPath2 = file.getAbsolutePath();//执行getStubFile 之后,路径可能变化
             logger.warn("realPath2:"+realPath2);
             readAndWriteResult.setAbsolutePath(WebServletUtil.escapePath(realPath2));
@@ -249,7 +249,7 @@ public class HWUtils {
         return selectedIndex;
     }
 
-    public static File getStubFile(String realPath2) {
+    public static File getStubFile(String realPath2, String servletPath) {
         String pathTmp;
         if (realPath2.endsWith(Constant2.STUB_FILE_SUFFIX)) {
             pathTmp = realPath2;
@@ -263,6 +263,11 @@ public class HWUtils {
             logger.error(errorMessage);
             //兼容appList.do.json 文件名
             file = new File(deleteSuffix(realPath2) + ".do" + Constant2.STUB_FILE_SUFFIX);
+        }
+        //http://localhost:8080/stub/a/b/c.json 会丢失.json
+        if (!file.exists() && (!realPath2.endsWith(servletPath))) {
+            String noSuffix = servletPath.replaceAll("\\.[\\w]+$", "");
+            file = new File(realPath2.replace(noSuffix, servletPath) + Constant2.STUB_FILE_SUFFIX);
         }
         return file;
     }
@@ -323,7 +328,7 @@ public class HWUtils {
         if (contentNull(content, readAndWriteResult)) return readAndWriteResult;
         try {
 			String realPath2 = WebServletUtil.getRealPath(request, path);
-            File file = getStubFile(realPath2);
+            File file = getStubFile(realPath2, request.getServletPath());
             realPath2 = file.getAbsolutePath();
             readAndWriteResult.setAbsolutePath(WebServletUtil.escapePath(realPath2));
             if (!file.exists()) {
@@ -402,7 +407,7 @@ public class HWUtils {
     public static File getRealFile(String path) {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         String realPath2 = WebServletUtil.getRealPath(request, path);//父目录可能不存在
-        return getStubFile(realPath2);
+        return getStubFile(realPath2, request.getServletPath());
     }
 
     /***
@@ -417,6 +422,16 @@ public class HWUtils {
         addOneOptionStub(content,/*charset,*/readAndWriteResult, file);
     }
 
+    private static String getPrefix(String servletAction) {
+        String prefix = null;
+        if (servletAction.startsWith(Constant2.SLASH)) {
+            prefix = Constant2.STUB_FOLDER_NO_SLASH;
+        } else {
+            prefix = Constant2.STUB_FOLDER;
+        }
+        return prefix;
+    }
+
     /***
      * 第一个元素从0开始
      * @param content : 不是完整内容,只是一个选项(option)<br />
@@ -428,6 +443,9 @@ public class HWUtils {
      */
     public static ReadAndWriteResult writeStubFileOneOption(String content, String attributeVal, /*String charset,*/ StubUpdateOption stubUpdateOption) throws IOException {
         ReadAndWriteResult readAndWriteResult = stubUpdateOption.getReadAndWriteResult();
+        String prefix = getPrefix(stubUpdateOption.getServletAction());
+        File file = getRealFile(prefix + stubUpdateOption.getServletAction());
+        stubUpdateOption.setFile(file);
         int index = stubUpdateOption.getIndex();
         StubRange stubRange = getStubRange(stubUpdateOption.getFile());
         String absolutePath = stubUpdateOption.getFile().getAbsolutePath();

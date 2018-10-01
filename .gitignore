@@ -7,3 +7,9 @@ release.properties
 dependency-reduced-pom.xml
 buildNumber.properties
 .mvn/timing.properties
+rebel.xml
+**/rebel.xml
+*.iml
+.idea
+correct.sh
+correct2.sh
