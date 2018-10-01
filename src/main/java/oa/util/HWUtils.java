@@ -3,8 +3,10 @@ package oa.util;
 import com.common.bean.RequestSendChain;
 import com.common.bean.ResponseResult;
 import com.common.bean.StubRange;
+import com.common.bean.UploadFileDto;
 import com.common.dict.Constant2;
 import com.common.util.MapUtil;
+import com.common.util.ReflectHWUtils;
 import com.common.util.SystemHWUtil;
 import com.common.util.WebServletUtil;
 import com.file.hw.props.GenericReadPropsUtil;
@@ -679,6 +681,7 @@ public class HWUtils {
      * @param request
      * @param fileName
      * @param uploadFolder
+     * @param beSameFileName
      * @return
      */
     public static UploadResult getSavedToFile(HttpServletRequest request, String fileName, String uploadFolder, boolean sameFileName) {
@@ -698,16 +701,12 @@ public class HWUtils {
                 finalFileName = prefix + SystemHWUtil.UNDERLINE + fileName;//"20170308201110_134_3C71E7EBAE9F48CEF1FE4A675E43F32B.jpg"
             }
         }
-        String relativePath = null;
-		if (ValueWidget.isNullOrEmpty(uploadFolder)) {
-            relativePath = Constant2.UPLOAD_FOLDER_NAME + "/image";//"upload/image"
-        } else {
-			relativePath = uploadFolder;
-		}
-		UploadResult uploadResult = new UploadResult();
+        String relativePath = getRelativeFolder(uploadFolder);
+
 		File savedFile = WebServletUtil.getUploadedFilePath(request, relativePath
 				, finalFileName,
                 Constant2.SRC_MAIN_WEBAPP);//"/Users/whuanghkl/code/mygit/convention/src/main/webapp/upload/image/20170308201110_134_3C71E7EBAE9F48CEF1FE4A675E43F32B.jpg"
+        UploadResult uploadResult = new UploadResult();
         uploadResult.setSavedFile(savedFile);
         try {//解决图片文件名中包含特殊字符,例如],(,` 导致访问不到的问题
             finalFileName = URLEncoder.encode(finalFileName, SystemHWUtil.CHARSET_UTF);//仅仅对多字节字符有影响
@@ -723,7 +722,22 @@ public class HWUtils {
         return uploadResult;
 	}
 
-    public static Map getUploadResultMap(MultipartFile file, HttpServletRequest request/*, boolean isEscape*/) {
+    /***
+     *
+     * @param uploadFolder
+     * @return : "/ upload/image"
+     */
+    public static String getRelativeFolder(String uploadFolder) {
+        String relativePath = null;
+        if (ValueWidget.isNullOrEmpty(uploadFolder)) {
+            relativePath = Constant2.SLASH + Constant2.UPLOAD_FOLDER_NAME + "/image2";//"/ upload/image" TODO
+        } else {
+            relativePath = uploadFolder;
+        }
+        return relativePath;
+    }
+
+    public static UploadFileDto getUploadResultMap(MultipartFile file, HttpServletRequest request/*, boolean isEscape*/) {
         return getUploadResultMap(file, request, (String) null/*specifiedFileName*//*, isEscape*/);
     }
     /***
@@ -733,7 +747,7 @@ public class HWUtils {
      * @param request
      * @return
      */
-    public static Map getUploadResultMap(MultipartFile file, HttpServletRequest request, String specifiedFileName/*, boolean isEscape*/) {
+    public static UploadFileDto getUploadResultMap(MultipartFile file, HttpServletRequest request, String specifiedFileName/*, boolean isEscape*/) {
         return getUploadResultMap(file, request, false, false, specifiedFileName/*, isEscape*/);
     }
 
@@ -753,7 +767,7 @@ public class HWUtils {
      *     imgTag:"",//escape之后的img 标签<br />
      * }
      */
-    public static Map getUploadResultMap(MultipartFile file, HttpServletRequest request, boolean sameFileName, boolean deleteOldFile, String specifiedFileName) {
+    public static UploadFileDto getUploadResultMap(MultipartFile file, HttpServletRequest request, boolean beSameFileName, boolean deleteOldFile, String specifiedFileName) {
         String fileName = file.getOriginalFilename();// 上传的文件名  "3C71E7EBAE9F48CEF1FE4A675E43F32B.jpg"
         if (ValueWidget.isNullOrEmpty(specifiedFileName)) {
             fileName = filterSpecialChar(fileName);//过滤掉特殊字符
@@ -763,7 +777,7 @@ public class HWUtils {
         }
 //        System.out.println("fileName:"+fileName);
 
-        UploadResult uploadResult = HWUtils.getSavedToFile(request, fileName, null, sameFileName);
+        UploadResult uploadResult = HWUtils.getSavedToFile(request, fileName, null, beSameFileName);
         File savedFile = uploadResult.getSavedFile();//"/Users/whuanghkl/code/mygit/convention/src/main/webapp/upload/image/20170308201110_134_3C71E7EBAE9F48CEF1FE4A675E43F32B.jpg"
         File parentFolder = SystemHWUtil.createParentFolder(savedFile);
         FileUtils.makeWritable(parentFolder);//使...可写  "/Users/whuanghkl/code/mygit/convention/src/main/webapp/upload/image"
@@ -777,11 +791,25 @@ public class HWUtils {
                 logger.error("删除" + savedFile.getAbsolutePath() + "失败");
             }
         }
+        StringBuffer errorBuffer = null;
         // 保存
         try {
             file.transferTo(savedFile);
+            uploadResult.setSuccess(true);
         } catch (Exception e) {
             e.printStackTrace();
+            errorBuffer = new StringBuffer();
+            StackTraceElement stackTrace = e.getStackTrace()[0];
+            errorBuffer.append(e.getMessage()).append(SystemHWUtil.CRLF)
+                    .append(stackTrace.getFileName()).append("-")
+                    .append(stackTrace.getClassName()).append(".")
+                    .append(stackTrace.getMethodName()).append("():")
+                    .append(stackTrace.getLineNumber())
+                    .append(SystemHWUtil.CRLF);
+            logger.error("getUploadResultMap error,SavedFile:" + uploadResult.getSavedFile(), e);
+            uploadResult.setSuccess(false);
+            uploadResult.setErrorMessage(errorBuffer.toString());
+            
         }
         String finalFileName = uploadResult.getFinalFileName();//"20170308201110_134_3C71E7EBAE9F48CEF1FE4A675E43F32B.jpg"
         String url2 = WebServletUtil.getRelativeUrl(request, uploadResult.getRelativePath(), finalFileName);
@@ -794,15 +822,24 @@ public class HWUtils {
         fullUrl = WebServletUtil.getFullUrl(request, uploadResult.getRelativePath(), finalFileName);//"http://localhost:8080/upload/image/20170308201110_134_3C71E7EBAE9F48CEF1FE4A675E43F32B.jpg"
         Map map = new HashMap();
         String relativePath = uploadResult.getRelativePath();//"/upload/image/20170308201110_134_3C71E7EBAE9F48CEF1FE4A675E43F32B.jpg"
+        UploadFileDto uploadFileDto = new UploadFileDto();
         map.put("fileName", finalFileName);//"20170308201110_134_3C71E7EBAE9F48CEF1FE4A675E43F32B.jpg"
+        uploadFileDto.setFileName(finalFileName);
         map.put("remoteAbsolutePath", savedFile.getAbsolutePath());
+        uploadFileDto.setRemoteAbsolutePath(savedFile.getAbsolutePath());
         //包含项目名
         map.put("url", url2);//"//upload/image/20170308201110_134_3C71E7EBAE9F48CEF1FE4A675E43F32B.jpg"
+        uploadFileDto.setUrl(url2);
         map.put("fullUrl", fullUrl);//"http://localhost:8080/upload/image/20170308201110_134_3C71E7EBAE9F48CEF1FE4A675E43F32B.jpg"
+        uploadFileDto.setFullUrl(fullUrl);
         //不包含项目名
         map.put("relativePath", relativePath);//"/upload/image/20170308201110_134_3C71E7EBAE9F48CEF1FE4A675E43F32B.jpg"
+        uploadFileDto.setRelativePath(relativePath);
         map.put("imgTag", ValueWidget.escapeHTML(getHtmlImgTag(fullUrl)));//"&lt;img style=&quot;max-width: 99%&quot; src=&quot;http://localhost:8080/upload/image/20170308201110_134_3C71E7EBAE9F48CEF1FE4A675E43F32B.jpg&quot; alt=&quot;不是图片,无法显示&quot;&gt;"
-        return map;
+        map.put("error", errorBuffer);
+        uploadFileDto.setSuccess(uploadResult.isSuccess());
+        uploadFileDto.setErrorMessage(uploadResult.getErrorMessage());
+        return uploadFileDto;
     }
 
     /**
@@ -887,9 +924,9 @@ public class HWUtils {
             System.out.println("上传时删除原文件");
         }
         String fileName = request.getParameter("fileName");
-        Map map = HWUtils.getUploadResultMap(file, request, sameFileName, deleteOldFile, fileName/*, isEscape*/);
-        model.addAllAttributes(map);
-        String content = HWJacksonUtils.getJsonP(map);
+        UploadFileDto uploadFileDto = HWUtils.getUploadResultMap(file, request, sameFileName, deleteOldFile, fileName/*, isEscape*/);
+        model.addAllAttributes(ReflectHWUtils.convertObj2Map(uploadFileDto, null, false, false));
+        String content = HWJacksonUtils.getJsonP(uploadFileDto);
         logger.info(content);
         return content;
     }
@@ -897,6 +934,41 @@ public class HWUtils {
     public static boolean isSameFileName(HttpServletRequest request) {
         String sameFileNameStr = request.getParameter(Constant2.PARAMETER_SAME_FILE_NAME);
         return SystemHWUtil.parse33(sameFileNameStr);
+    }
+
+    /***
+     * 通知文件上传的结果
+     * @param request
+     * @param response
+     * @param content
+     */
+    public static void notifyUploadResult(HttpServletRequest request, HttpServletResponse response, String content) {
+        // 文件上传结果
+        com.common.bean.RequestSendChain requestInfoBeanOrderiAf = new com.common.bean.RequestSendChain();
+        requestInfoBeanOrderiAf.setServerIp("i.yhskyc.com");
+        requestInfoBeanOrderiAf.setSsl(false);
+        requestInfoBeanOrderiAf.setPort("");
+        requestInfoBeanOrderiAf.setActionPath("/message/fileupload/result");
+        requestInfoBeanOrderiAf.setRequestCookie("conventionk=" + SpringMVCUtil.getCid(request, response));
+        requestInfoBeanOrderiAf.setCustomRequestContentType("");
+        requestInfoBeanOrderiAf.setRequestMethod(Constant2.REQUEST_METHOD_POST);
+        // requestInfoBeanOrderiAf.setDependentRequest(requestInfoBeanLogin);
+        requestInfoBeanOrderiAf.setCurrRequestParameterName("");
+        requestInfoBeanOrderiAf.setPreRequestParameterName("");
+
+        java.util.TreeMap parameterMapDCVN = new java.util.TreeMap();//请求参数
+        parameterMapDCVN.put("value", content);
+        requestInfoBeanOrderiAf.setRequestParameters(parameterMapDCVN);
+        requestInfoBeanOrderiAf.updateRequestBody();
+
+//                    org.apache.commons.collections.map.ListOrderedMap header=new org.apache.commons.collections.map.ListOrderedMap();
+//                    requestInfoBeanOrderiAf.setHeaderMap( header);
+
+        com.common.bean.ResponseResult responseResultOrderqwL = requestInfoBeanOrderiAf.request(); //new RequestPanel.ResponseResult(requestInfoBeanLogin).invoke();
+        String responseOrderhkO = responseResultOrderqwL.getResponseJsonResult();
+        System.out.println("responseText:" + responseOrderhkO);
+        System.out.println(responseOrderhkO);
+        //    System.out.println(com.io.hw.json.JSONHWUtil.jsonFormatter( responseOrderhkO));
     }
 
 }

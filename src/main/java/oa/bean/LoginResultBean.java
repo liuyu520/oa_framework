@@ -4,6 +4,7 @@ public class LoginResultBean {
     private boolean isFailed;
     private String message;
     private String errorCode;
+    private Object value;
 
     public boolean isFailed() {
         return isFailed;
@@ -27,5 +28,13 @@ public class LoginResultBean {
 
     public void setErrorCode(String errorCode) {
         this.errorCode = errorCode;
+    }
+
+    public Object getValue() {
+        return value;
+    }
+
+    public void setValue(Object value) {
+        this.value = value;
     }
 }

@@ -67,7 +67,7 @@ public class TestThirdApiController {
 
         }
 //        URL url = new URL(apiPath);
-        HttpURLConnection httpUrlConnection = HttpSocketUtil.getHttpURLConnection(apiPath, isSsl);
+        HttpURLConnection httpUrlConnection = HttpSocketUtil.getHttpURLConnection(apiPath, isSsl, null);
         /*urlConnection = url.openConnection();
         HttpURLConnection httpUrlConnection = (HttpURLConnection) urlConnection;*/
         httpUrlConnection.setDoInput(true);
@@ -135,7 +135,7 @@ public class TestThirdApiController {
                             @RequestParam(required = false, defaultValue = "2") String netType,
                             @RequestParam(required = false) String authorization,
                             @RequestParam(required = false) String Authorization,
-                            @RequestParam(required = false, defaultValue = "gzq.chanjet.com") String host
+                            @RequestParam(required = false, defaultValue = "") String host
     ) throws IOException, KeyManagementException, NoSuchAlgorithmException {
 // 签到
         com.common.bean.RequestSendChain requestInfoBeanOrderBnz = new com.common.bean.RequestSendChain();
@@ -164,7 +164,7 @@ public class TestThirdApiController {
         parameterMapSnAN.put("netType", netType);
         parameterMapSnAN.put("type", type);
         parameterMapSnAN.put("wifiIdentify", "38%3A97%3Ad6%3Ad2%3A1e%3A41");
-        parameterMapSnAN.put("wifiName", "chanjet");
+        parameterMapSnAN.put("wifiName", "aaa");
         requestInfoBeanOrderBnz.setRequestParameters(parameterMapSnAN);
         requestInfoBeanOrderBnz.updateRequestBody();
 
