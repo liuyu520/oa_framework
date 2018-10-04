@@ -42,7 +42,7 @@ public class StubController {
     public String corsJsonSimple(HttpServletRequest request, HttpServletResponse response,
                                  @PathVariable String action, String callback, String charset, Integer second/*模拟接口执行的时间*/
             , Integer responseCode
-            , Integer index, String headerJson) {
+            , String index, String headerJson) {
         return stubAction(request, response, Constant2.STUB_FOLDER + action /*+ stub_file_Suffix*/, callback, charset, second, responseCode, index, headerJson);
     }
 
@@ -58,7 +58,7 @@ public class StubController {
     public String corsJsonSimple(HttpServletRequest request, HttpServletResponse response,
                                  @PathVariable String namespace, @PathVariable String action,
                                  String callback
-            , String charset, Integer second/*模拟接口执行的时间*/, Integer responseCode, Integer index, String headerJson) {
+            , String charset, Integer second/*模拟接口执行的时间*/, Integer responseCode, String index, String headerJson) {
         return stubAction(request, response, Constant2.STUB_FOLDER + namespace + Constant2.SLASH + action
                 , callback, charset, second, responseCode, index, headerJson);
     }
@@ -70,7 +70,7 @@ public class StubController {
             , String charset
             , Integer second
             , Integer responseCode
-            , Integer index
+            , String index
             , String headerJson) {
         if (null == second) {
             String delay = request.getParameter("delay");
@@ -97,7 +97,7 @@ public class StubController {
         }
         actionPath = XSSUtil.deleteXSS(actionPath);
         System.out.println("访问:" + actionPath);
-        ReadAndWriteResult readAndWriteResult = HWUtils.stub(request, actionPath, charset, index);
+        ReadAndWriteResult readAndWriteResult = HWUtils.stub(request, actionPath, charset, ValueWidget.isNumeric(index) ? Integer.parseInt(index) : null);
 
         if (!readAndWriteResult.isResult()) {
             logger.error(readAndWriteResult.getErrorMessage());
@@ -128,7 +128,7 @@ public class StubController {
                              @PathVariable String group,
                              @PathVariable String namespace, @PathVariable String action,
                              String callback
-            , String charset, Integer second/*模拟接口执行的时间*/, Integer responseCode, Integer index, String headerJson) {
+            , String charset, Integer second/*模拟接口执行的时间*/, Integer responseCode, String index, String headerJson) {
         return stubAction(request, response, Constant2.STUB_FOLDER + group + Constant2.SLASH + namespace + Constant2.SLASH + action
                 /*+ stub_file_Suffix*/, callback, charset, second, responseCode, index, headerJson);
     }
@@ -140,7 +140,7 @@ public class StubController {
                              @PathVariable String group,
                              @PathVariable String namespace, @PathVariable String action,
                              String callback
-            , String charset, Integer second/*模拟接口执行的时间*/, Integer responseCode, Integer index, String headerJson) {
+            , String charset, Integer second/*模拟接口执行的时间*/, Integer responseCode, String index, String headerJson) {
         return stubAction(request, response, Constant2.STUB_FOLDER + version + Constant2.SLASH + group + Constant2.SLASH + namespace + Constant2.SLASH + action
                 /*+ stub_file_Suffix*/, callback, charset, second, responseCode, index, headerJson);
     }
@@ -153,7 +153,7 @@ public class StubController {
                              @PathVariable String group,
                              @PathVariable String namespace, @PathVariable String action,
                              String callback
-            , String charset, Integer second/*模拟接口执行的时间*/, Integer responseCode, Integer index, String headerJson) {
+            , String charset, Integer second/*模拟接口执行的时间*/, Integer responseCode, String index, String headerJson) {
         return stubAction(request, response, Constant2.STUB_FOLDER + version + Constant2.SLASH + module + Constant2.SLASH + group + Constant2.SLASH + namespace + Constant2.SLASH + action
                 /*+ stub_file_Suffix*/, callback, charset, second, responseCode, index, headerJson);
     }
@@ -167,7 +167,7 @@ public class StubController {
                              @PathVariable String group,
                              @PathVariable String namespace, @PathVariable String action,
                              String callback
-            , String charset, Integer second/*模拟接口执行的时间*/, Integer responseCode, Integer index, String headerJson) {
+            , String charset, Integer second/*模拟接口执行的时间*/, Integer responseCode, String index, String headerJson) {
         return stubAction(request, response, Constant2.STUB_FOLDER + version + Constant2.SLASH + branch + Constant2.SLASH + module + Constant2.SLASH + group + Constant2.SLASH + namespace + Constant2.SLASH + action
                 /*+ stub_file_Suffix*/, callback, charset, second, responseCode, index, headerJson);
     }
@@ -182,7 +182,7 @@ public class StubController {
                              @PathVariable String group,
                              @PathVariable String namespace, @PathVariable String action,
                              String callback
-            , String charset, Integer second/*模拟接口执行的时间*/, Integer responseCode, Integer index, String headerJson) {
+            , String charset, Integer second/*模拟接口执行的时间*/, Integer responseCode, String index, String headerJson) {
         return stubAction(request, response, Constant2.STUB_FOLDER + version + Constant2.SLASH + branch + Constant2.SLASH + branch2 + Constant2.SLASH + module + Constant2.SLASH + group + Constant2.SLASH + namespace + Constant2.SLASH + action
                 /*+ stub_file_Suffix*/, callback, charset, second, responseCode, index, headerJson);
     }

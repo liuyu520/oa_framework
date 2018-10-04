@@ -2,15 +2,19 @@ package oa.web.controller.handler;
 
 import com.common.bean.BaseResponseDto;
 import com.common.bean.exception.LogicBusinessException;
-import com.common.util.ReflectHWUtils;
+import com.common.util.BusinessExceptionUtil;
 import com.common.util.SystemHWUtil;
 import com.common.util.WebServletUtil;
 import com.string.widget.util.ValueWidget;
 import oa.util.SpringMVCUtil;
 import org.apache.log4j.Logger;
+import org.springframework.messaging.handler.annotation.support.MethodArgumentTypeMismatchException;
+import org.springframework.validation.BindException;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -18,7 +22,6 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Method;
 import java.net.URLEncoder;
 
 /**
@@ -92,6 +95,82 @@ public class BusinessExceptionHandlerAdvice {
             }
         }
 
+        return null;
+    }
+
+
+    /***
+     * 响应400错误
+     * @param ex
+     * @param session
+     * @param request
+     * @param response
+     * @return
+     */
+    @ExceptionHandler(org.springframework.beans.TypeMismatchException.class)
+    public String handle400Exception2(org.springframework.beans.TypeMismatchException ex, HttpSession session, HttpServletRequest request, HttpServletResponse response) {
+        return handle400Action(ex, ex.getValue(), request, response);
+    }
+
+    @ExceptionHandler({java.lang.IllegalStateException.class})
+    public String handle400Exception3(java.lang.IllegalStateException ex, HttpSession session, HttpServletRequest request, HttpServletResponse response) {
+        return handle400Action(ex, null, request, response);
+    }
+
+    @ExceptionHandler({HttpMediaTypeNotSupportedException.class})
+    public String handle400Exception5(HttpMediaTypeNotSupportedException ex, HttpSession session, HttpServletRequest request, HttpServletResponse response) {
+        return handle400Action(ex, null, request, response);
+    }
+
+    @ExceptionHandler({MethodArgumentNotValidException.class})
+    public String handle400Exception6(MethodArgumentNotValidException ex, HttpSession session, HttpServletRequest request, HttpServletResponse response) {
+        return handle400Action(ex, null, request, response);
+    }
+
+    /***
+     * 增加参数错误统一处理,比如 refresh 是boolean类型,但是用户传递参数"aa"<br />
+     * added at 2018-08-17   中国标准时间 下午3:17:48
+     * @author huangweii
+     * @param ex
+     * @return
+     */
+    @ExceptionHandler(value = MethodArgumentTypeMismatchException.class)
+    public String handleException(final MethodArgumentTypeMismatchException ex) {
+        BaseResponseDto baseResponseDto = new BaseResponseDto();
+        baseResponseDto.setHint(ex.getMethodParameter().getParameterName())
+                .setErrorCode("1001");
+        return baseResponseDto.toJson();
+    }
+
+
+    @ExceptionHandler({BindException.class})
+    public String handle400Exception4(BindException ex, HttpSession session, HttpServletRequest request, HttpServletResponse response) {
+        String respCode = String.valueOf(HttpServletResponse.SC_BAD_REQUEST);
+        logger.error(respCode, ex);
+        LogicBusinessException logicBusinessException = new LogicBusinessException();
+        logicBusinessException.setErrorCode(respCode);
+        BindingResult bindingResult = ex.getBindingResult();
+
+        String errorMessage;
+        if (null == bindingResult || null == bindingResult.getFieldError()) {
+            errorMessage = "请确认 API接口路径中 \"{status}\"中的占位符不是成员变量名称," + ex.getMessage();
+        } else {
+            errorMessage = bindingResult.getFieldError().getDefaultMessage();
+        }
+        System.out.println("errorMessage :" + errorMessage);
+        logger.error(errorMessage);
+        logicBusinessException.setErrorMessage(errorMessage);
+        BusinessExceptionUtil.dealException(logicBusinessException, response, null);
+        return null;
+    }
+
+    private String handle400Action(Exception ex, Object value, HttpServletRequest request, HttpServletResponse response) {
+        String respCode = String.valueOf(HttpServletResponse.SC_BAD_REQUEST);
+        logger.error(respCode, ex);
+        LogicBusinessException logicBusinessException = new LogicBusinessException();
+        logicBusinessException.setErrorCode(respCode);
+        logicBusinessException.setErrorMessage((value == null ? "" : value + " ") + ex.getMessage());
+        BusinessExceptionUtil.dealException(logicBusinessException, response, null);
         return null;
     }
 
