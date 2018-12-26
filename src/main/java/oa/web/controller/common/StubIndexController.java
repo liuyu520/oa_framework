@@ -35,7 +35,15 @@ public class StubIndexController {
         return ValueWidget.getNginxDispatch(targetUrl, stubUrl);
     }
 
-    @RequestMapping("/")
+    /***
+     * stub list列表
+     * @param request
+     * @param model
+     * @param targetView
+     * @param keyWord
+     * @return
+     */
+    @RequestMapping({"/", "stub_test"})
     public String list(HttpServletRequest request, Model model, String targetView, String keyWord) {
         List<String> stubPathList = getStubPathList(request, keyWord);
         model.addAttribute("stubPathList", stubPathList);
@@ -46,6 +54,13 @@ public class StubIndexController {
         return "list";
     }
 
+    /***
+     * stub list列表
+     * @param request
+     * @param model
+     * @param keyWord
+     * @return : json
+     */
     @ResponseBody
     @RequestMapping(value = "/listJson", produces = SystemHWUtil.RESPONSE_CONTENTTYPE_JSON_UTF)
     public String listJson(HttpServletRequest request, Model model, String keyWord) {
