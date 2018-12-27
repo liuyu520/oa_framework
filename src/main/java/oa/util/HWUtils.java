@@ -244,7 +244,11 @@ public class HWUtils {
         if (ValueWidget.isNullOrEmpty(selectedIndexStr)) {
             System.out.println("使用工具请求时,请确认是否设置了JSESSIONID");
         } else {
-            selectedIndex = Integer.parseInt(selectedIndexStr);
+            if ("null".equals(selectedIndexStr)) {
+                selectedIndex = 0;
+            } else {
+                selectedIndex = Integer.parseInt(selectedIndexStr);
+            }
         }
         return selectedIndex;
     }
