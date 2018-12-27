@@ -115,7 +115,7 @@
         <dependency>
             <groupId>com.kunlunsoft</groupId>
             <artifactId>common_ssh_github</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>0.0.2-SNAPSHOT</version>
             <type>jar</type>
             <exclusions>
                 <exclusion>

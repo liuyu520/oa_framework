@@ -2,11 +2,6 @@ package oa.web.controller.common;
 
 import com.common.dict.Constant2;
 import com.common.util.SystemHWUtil;
-import com.io.hw.json.HWJacksonUtils;
-import com.string.widget.util.ValueWidget;
-import com.string.widget.util.XSSUtil;
-import oa.bean.stub.ReadAndWriteResult;
-import oa.util.HWUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,8 +10,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
-import java.util.Map;
 
 /***
  * 用于stub
@@ -27,7 +20,7 @@ import java.util.Map;
  */
 @Controller
 @RequestMapping("/stub")
-public class StubController {
+public class StubController extends GenericStubController {
     
     protected Logger logger = Logger.getLogger(this.getClass());
 
@@ -38,7 +31,7 @@ public class StubController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/{action}", produces = SystemHWUtil.RESPONSE_CONTENTTYPE_JSON_UTF)
+    @RequestMapping(value = "{action}", produces = SystemHWUtil.RESPONSE_CONTENTTYPE_JSON_UTF)
     public String corsJsonSimple(HttpServletRequest request, HttpServletResponse response,
                                  @PathVariable String action, String callback, String charset, Integer second/*模拟接口执行的时间*/
             , Integer responseCode
@@ -54,7 +47,7 @@ public class StubController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/{namespace}/{action}", produces = SystemHWUtil.RESPONSE_CONTENTTYPE_JSON_UTF)
+    @RequestMapping(value = "{namespace}/{action}", produces = SystemHWUtil.RESPONSE_CONTENTTYPE_JSON_UTF)
     public String corsJsonSimple(HttpServletRequest request, HttpServletResponse response,
                                  @PathVariable String namespace, @PathVariable String action,
                                  String callback
@@ -63,67 +56,10 @@ public class StubController {
                 , callback, charset, second, responseCode, index23, headerJson);
     }
 
-    private String stubAction(HttpServletRequest request
-            , HttpServletResponse response
-            , String actionPath
-            , String callback
-            , String charset
-            , Integer second
-            , Integer responseCode
-            , String index
-            , String headerJson) {
-        if (null == second) {
-            String delay = request.getParameter("delay");
-            if (!ValueWidget.isNullOrEmpty(delay)) {
-                second = Integer.parseInt(delay);
-            }
-        }
-        if (second != null && second != 0) {
-            try {
-                Thread.sleep(second * 1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-        if (null != responseCode) {
-            if (responseCode == 500) {
-                throw new NullPointerException("stub test");
-            }
-                response.setStatus(responseCode);
-                return null;
-            }
-        if (ValueWidget.isNullOrEmpty(charset)) {
-            charset = SystemHWUtil.CHARSET_UTF;
-        }
-        actionPath = XSSUtil.deleteXSS(actionPath);
-        System.out.println("访问:" + actionPath);
-        ReadAndWriteResult readAndWriteResult = HWUtils.stub(request, actionPath, charset, ValueWidget.isNumeric(index) ? Integer.parseInt(index) : null);
-
-        if (!readAndWriteResult.isResult()) {
-            logger.error(readAndWriteResult.getErrorMessage());
-        }
-        String content = readAndWriteResult.getContent();
-        if (!readAndWriteResult.isResult()
-                && ValueWidget.isNullOrEmpty(content)) {
-            content = readAndWriteResult.getErrorMessage();
-        }
-        logger.info(SystemHWUtil.CRLF + content);
-        addResponseHeader(response, headerJson);
-        return HWJacksonUtils.getJsonP(content, callback);
-    }
-
-    private void addResponseHeader(HttpServletResponse response, String headerJson) {
-        if (!ValueWidget.isNullOrEmpty(headerJson)) {
-            Map<String, String> headerMap = (Map) HWJacksonUtils.deSerialize(headerJson, HashMap.class);
-            for (Map.Entry<String, String> entry : headerMap.entrySet()) {
-                response.addHeader(entry.getKey(), entry.getValue());
-            }
-        }
-    }
 
 
     @ResponseBody
-    @RequestMapping(value = "/{group}/{namespace}/{action}", produces = SystemHWUtil.RESPONSE_CONTENTTYPE_JSON_UTF)
+    @RequestMapping(value = "{group}/{namespace}/{action}", produces = SystemHWUtil.RESPONSE_CONTENTTYPE_JSON_UTF)
     public String stubAction(HttpServletRequest request, HttpServletResponse response,
                              @PathVariable String group,
                              @PathVariable String namespace, @PathVariable String action,
@@ -134,7 +70,7 @@ public class StubController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/{version}/{group}/{namespace}/{action}", produces = SystemHWUtil.RESPONSE_CONTENTTYPE_JSON_UTF)
+    @RequestMapping(value = "{version}/{group}/{namespace}/{action}", produces = SystemHWUtil.RESPONSE_CONTENTTYPE_JSON_UTF)
     public String stubAction(HttpServletRequest request, HttpServletResponse response,
                              @PathVariable String version,
                              @PathVariable String group,
@@ -146,7 +82,7 @@ public class StubController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/{version}/{module}/{group}/{namespace}/{action}", produces = SystemHWUtil.RESPONSE_CONTENTTYPE_JSON_UTF)
+    @RequestMapping(value = "{version}/{module}/{group}/{namespace}/{action}", produces = SystemHWUtil.RESPONSE_CONTENTTYPE_JSON_UTF)
     public String stubAction(HttpServletRequest request, HttpServletResponse response,
                              @PathVariable String version,
                              @PathVariable String module,
@@ -159,7 +95,7 @@ public class StubController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/{version}/{branch}/{module}/{group}/{namespace}/{action}", produces = SystemHWUtil.RESPONSE_CONTENTTYPE_JSON_UTF)
+    @RequestMapping(value = "{version}/{branch}/{module}/{group}/{namespace}/{action}", produces = SystemHWUtil.RESPONSE_CONTENTTYPE_JSON_UTF)
     public String stubAction(HttpServletRequest request, HttpServletResponse response,
                              @PathVariable String version,
                              @PathVariable String branch,
@@ -173,7 +109,7 @@ public class StubController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/{version}/{branch}/{branch2}/{module}/{group}/{namespace}/{action}", produces = SystemHWUtil.RESPONSE_CONTENTTYPE_JSON_UTF)
+    @RequestMapping(value = "{version}/{branch}/{branch2}/{module}/{group}/{namespace}/{action}", produces = SystemHWUtil.RESPONSE_CONTENTTYPE_JSON_UTF)
     public String stubAction(HttpServletRequest request, HttpServletResponse response,
                              @PathVariable String version,
                              @PathVariable String branch,
