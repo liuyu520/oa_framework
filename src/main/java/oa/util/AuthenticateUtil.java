@@ -48,7 +48,7 @@ public class AuthenticateUtil {
      * @return
      */
     public static boolean isLogined(HttpServletResponse response, Class clazz) {
-        String conventionk = SpringMVCUtil.getCid(SpringMVCUtil.getRequest(), response);
+        String conventionk = SpringMVCUtil.getCid(SpringMVCUtil.getRequest(), response).getConventionk();
         String loginFlag = RedisHelper.getInstance().getKeyCache(conventionk, Constant2.SESSION_KEY_LOGINED_FLAG);
         GenericUser user2 = null;
         user2 = getGenericUser(conventionk, clazz);
