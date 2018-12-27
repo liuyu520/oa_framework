@@ -538,4 +538,6 @@ public class SpringMVCUtil {
     public static String getRequestQueryStr() throws IOException {
         return WebServletUtil.getRequestQueryStr(SpringMVCUtil.getRequest(), null);
     }
+
+
 }

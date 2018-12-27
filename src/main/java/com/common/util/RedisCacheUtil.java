@@ -1,11 +1,11 @@
 package com.common.util;
 
+import com.common.bean.RequestInfoDto;
 import com.common.bean.email.SendEmailInfo;
 import com.common.bean.redis.RedisParaDto;
 import com.common.dict.Constant2;
 import com.io.hw.json.HWJacksonUtils;
 import com.string.widget.util.ValueWidget;
-import oa.bean.RequestInfoDto;
 
 import java.util.*;
 

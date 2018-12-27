@@ -1,6 +1,6 @@
 package com.common.event;
 
-import oa.bean.RequestInfoDto;
+import com.common.bean.RequestInfoDto;
 
 import java.util.List;
 

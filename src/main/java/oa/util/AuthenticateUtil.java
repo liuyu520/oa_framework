@@ -5,7 +5,6 @@ import com.common.entity.user.interf.GenericUser;
 import com.common.util.RedisHelper;
 import com.io.hw.json.HWJacksonUtils;
 import com.string.widget.util.ValueWidget;
-import oa.web.controller.generic.GenericController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -108,7 +107,7 @@ public class AuthenticateUtil {
             String userJson = RedisHelper.getInstance().getCache(token);
             if (!ValueWidget.isNullOrEmpty(userJson)) {
                 //缓存到redis 中
-                String conventionk = SpringMVCUtil.getCid(request, response);
+                String conventionk = SpringMVCUtil.getCid(request, response).getConventionk();
                 RedisHelper.getInstance().saveKeyCache(conventionk, Constant2.SESSION_KEY_LOGINED_FLAG, Constant2.FLAG_LOGIN_SUCCESS);
                 RedisHelper.getInstance().saveKeyCache(conventionk, Constant2.SESSION_KEY_LOGINED_USER, userJson);
                 return true;
