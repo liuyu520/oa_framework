@@ -5,7 +5,7 @@ import java.io.File;
 public class StubUpdateOption {
     private ReadAndWriteResult readAndWriteResult;
     private File file;
-    private int index;
+    private Integer index;
     private String servletAction;
     /***
      * 是否锁定,如果是锁定,则不允许修改index,但是可以修改内容
@@ -28,11 +28,11 @@ public class StubUpdateOption {
         this.file = file;
     }
 
-    public int getIndex() {
+    public Integer getIndex() {
         return index;
     }
 
-    public void setIndex(int index) {
+    public void setIndex(Integer index) {
         this.index = index;
     }
 
