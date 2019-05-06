@@ -189,16 +189,20 @@ public class HWUtils {
             //反序列化
             StubRange stubRange = XmlYunmaUtil.deAssembleStub(content);
             int selectedIndex = stubRange.getSelectedIndex();
+            System.out.println("selectedIndex 1:" + selectedIndex);
             if (null != index && index > 0) {//index 的优先级最高
                 selectedIndex = index - 1;
             } else {
                 selectedIndex = getSelectedIndex4Cache(path/*stub/a/b/c*/, selectedIndex);
+                System.out.println("selectedIndex 2:" + selectedIndex);
                 selectedIndex = getSelectedIndexByParameter(request, stubRange, selectedIndex);
                 if (selectedIndex < 0) {
                     selectedIndex = 0;
                 }
             }
 
+            System.out.println("selectedIndex 3:" + selectedIndex);
+            System.out.println("stubRange.getStubs().size() :" + stubRange.getStubs().size());
 
             if (selectedIndex >= stubRange.getStubs().size()) {
                 content = "(请按下Command+S/X)";
