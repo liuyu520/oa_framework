@@ -31,6 +31,10 @@ public class StubRespController extends GenericStubController {
                                  @RequestParam String servletPath, String callback, String charset, Integer second/*模拟接口执行的时间*/
             , Integer responseCode
             , String index23, String headerJson) {
+        System.out.println("StubRespController servletPath :" + servletPath);
+        if (Constant2.STUB_FOLDER.endsWith("/") && servletPath.startsWith("/")) {
+            servletPath = servletPath.substring(1);
+        }
         return stubAction(request, response, Constant2.STUB_FOLDER + servletPath /*+ stub_file_Suffix*/, callback, charset, second, responseCode, index23, headerJson);
     }
 }

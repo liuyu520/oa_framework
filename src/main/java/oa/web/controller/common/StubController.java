@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletResponse;
  * stub 与WEB-INF 是同级目录
  */
 @Controller
-@RequestMapping("/stub")
+@RequestMapping("/stubb")
 public class StubController extends GenericStubController {
     
     protected Logger logger = Logger.getLogger(this.getClass());
@@ -36,7 +36,7 @@ public class StubController extends GenericStubController {
                                  @PathVariable String action, String callback, String charset, Integer second/*模拟接口执行的时间*/
             , Integer responseCode
             , String index23, String headerJson) {
-        return stubAction(request, response, Constant2.STUB_FOLDER + action /*+ stub_file_Suffix*/, callback, charset, second, responseCode, index23, headerJson);
+        return stubAction(request, response, Constant2.STUB_FOLDER + action /*+ stub_file_Suffi x*/, callback, charset, second, responseCode, index23, headerJson);
     }
 
     /***
