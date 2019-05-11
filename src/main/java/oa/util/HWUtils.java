@@ -49,6 +49,10 @@ import java.util.*;
 public class HWUtils {
 	public static final String SESSION_KEY_STUB_OLD_CONTENT = "stub_old_content";
     protected static final Logger logger = Logger.getLogger(HWUtils.class);
+    /**
+     * 浏览器访问路径,see oa.web.controller.common.StubController
+     */
+    public static final String STUB_PREFIX = "stubb";
     private static ObjectMapper mapper = null;
 
 	public static ObjectMapper getObjectMapper(){
@@ -650,7 +654,7 @@ public class HWUtils {
         logger.info("deleteProjectName:"+deleteProjectName);
 		String serverUrl = getServletUrl(request,!deleteProjectName);//http://10.1.253.44:81/tv_mobile
 		logger.info("serverUrl:" + serverUrl);
-        readAndWriteResult.setUrl(serverUrl + Constant2.SLASH + path.replaceAll("\\" + Constant2.STUB_FILE_SUFFIX + "$"/*需要转义，否则就是通配符*/, SystemHWUtil.EMPTY));
+        readAndWriteResult.setUrl(serverUrl + Constant2.SLASH + STUB_PREFIX + path.substring(4).replaceAll("\\" + Constant2.STUB_FILE_SUFFIX + "$"/*需要转义，否则就是通配符*/, SystemHWUtil.EMPTY));
     }
 
 	/***

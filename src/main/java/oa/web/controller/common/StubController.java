@@ -2,6 +2,7 @@ package oa.web.controller.common;
 
 import com.common.dict.Constant2;
 import com.common.util.SystemHWUtil;
+import oa.util.HWUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,9 +20,9 @@ import javax.servlet.http.HttpServletResponse;
  * stub 与WEB-INF 是同级目录
  */
 @Controller
-@RequestMapping("/stubb")
+@RequestMapping("/" + HWUtils.STUB_PREFIX)
 public class StubController extends GenericStubController {
-    
+
     protected Logger logger = Logger.getLogger(this.getClass());
 
     /***
