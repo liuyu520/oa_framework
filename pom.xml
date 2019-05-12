@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>yunmasoft.com</groupId>
     <artifactId>oa_framework</artifactId>
-    <version>0.0.3.2-github-SNAPSHOT</version>
+    <version>0.0.3.3-github-SNAPSHOT</version>
     <properties>
         <java.version>1.6</java.version>
         <tomcat.version>7.0.26</tomcat.version>
@@ -195,6 +195,12 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
             <version>2.8.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.kunlunsoft</groupId>
+            <artifactId>request_rewrite_api</artifactId>
+            <version>0.0.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
         </dependency>
 
     </dependencies>

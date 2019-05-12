@@ -4,15 +4,17 @@ import com.common.util.SystemHWUtil;
 import com.string.widget.util.ValueWidget;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 /***
  * 
  * @author Administrator
  *	访问app的日志
  */
+@SuppressWarnings("JpaDataSourceORMInspection")
 @Entity
 @Table(name="t_access_log")
-public class AccessLog {
+public class AccessLog implements Serializable {
 	private int id;
 	/***
 	 * 设备类型android or ios
@@ -76,6 +78,27 @@ public class AccessLog {
 	 */
 	private String deviceType;
 	private String sessionId;
+    /***
+     * 请求的contentType
+     */
+    private String contentType;
+    /**
+     * redis 的cookie id
+     */
+    private String redisCookieId;
+    /***
+     * 七牛的secretKey
+     */
+    private String secretKey;
+    /***
+     * 七牛的 accessKey
+     */
+    private String accessKey;
+    /***
+     * 请求头<br />
+     * 注意:并不是完整的请求头,而是截取有用的部分
+     */
+    private String requestHeaderStr;
 	
 	public AccessLog() {
 		super();
@@ -95,11 +118,12 @@ public class AccessLog {
         this.id = id;
         return this;
     }
-	
-	@Column(name="os_type")
-	public String getOsType() {
-		return osType;
-	}
+
+    @SuppressWarnings("JpaDataSourceORMInspection")
+    @Column(name="os_type")
+    public String getOsType() {
+        return osType;
+    }
 
     /***
      * "Android"<br />
@@ -111,11 +135,12 @@ public class AccessLog {
         this.osType = osType;
         return this;
     }
-	
-	@Column(name="device_id")
-	public String getDeviceId() {
-		return deviceId;
-	}
+
+    @SuppressWarnings("JpaDataSourceORMInspection")
+    @Column(name="device_id")
+    public String getDeviceId() {
+        return deviceId;
+    }
 
     /***
      * 设备标示（device token or clientid）<br />
@@ -134,11 +159,12 @@ public class AccessLog {
         this.time = time;
         return this;
     }
-	
-	@Column(name="access_day")
-	public String getAccessDay() {
-		return accessDay;
-	}
+
+    @SuppressWarnings("JpaDataSourceORMInspection")
+    @Column(name="access_day")
+    public String getAccessDay() {
+        return accessDay;
+    }
 
     public AccessLog setAccessDay(String accessDay) {
         this.accessDay = accessDay;
@@ -278,5 +304,46 @@ public class AccessLog {
         this.sessionId = sessionId;
         return this;
     }
-	
+
+    public String getContentType() {
+        return contentType;
+    }
+
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
+    }
+
+    public String getRedisCookieId() {
+        return redisCookieId;
+    }
+
+    public void setRedisCookieId(String redisCookieId) {
+        this.redisCookieId = redisCookieId;
+    }
+
+    public String getSecretKey() {
+        return secretKey;
+    }
+
+    public void setSecretKey(String secretKey) {
+        this.secretKey = secretKey;
+    }
+
+    public String getAccessKey() {
+        return accessKey;
+    }
+
+    public void setAccessKey(String accessKey) {
+        this.accessKey = accessKey;
+    }
+
+    @SuppressWarnings("JpaDataSourceORMInspection")
+    @Column(name = "request_header")
+    public String getRequestHeaderStr() {
+        return requestHeaderStr;
+    }
+
+    public void setRequestHeaderStr(String requestHeaderStr) {
+        this.requestHeaderStr = requestHeaderStr;
+    }
 }
