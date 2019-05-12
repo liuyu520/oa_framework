@@ -31,6 +31,18 @@ public class GenericStubController {
             , Integer responseCode
             , String index
             , String headerJson) {
+        String servletPath = request.getServletPath();
+        System.out.println("GenericStubController actionPath :" + actionPath + ",servletPath:" + servletPath);
+        // 原因:此时 actionPath值为:"stub/api/test/demo/aaa2",但是实际url链接为"http://localhost:8080/stubb/api/test/demo/aaa2.json"
+        // 缺少了后缀:".json",所以要手动增加.json,因为本地文件路径为"/Users/hanjun/Documents/mygit/person/stub_test/src/main/webapp/stub/api/test/demo/aaa2.json.xml"
+        String[] pathArr = actionPath.split("/");
+        if (pathArr.length > 1) {
+            String suffix = pathArr[pathArr.length - 1];
+            if (!servletPath.endsWith(suffix) && servletPath.contains(suffix)) {
+                actionPath = actionPath + servletPath.replaceAll(".*(\\.[\\w]+)$", "$1");
+            }
+        }
+
         if (null == second) {
             String delay = request.getParameter("delay");
             if (!ValueWidget.isNullOrEmpty(delay)) {
