@@ -39,6 +39,7 @@ public class GenericStubController {
         if (pathArr.length > 1) {
             String suffix = pathArr[pathArr.length - 1];
             if (!servletPath.endsWith(suffix) && servletPath.contains(suffix)) {
+                // "/stubb/api/test/demo/aaa2.json"-->".json"
                 actionPath = actionPath + servletPath.replaceAll(".*(\\.[\\w]+)$", "$1");
             }
         }
