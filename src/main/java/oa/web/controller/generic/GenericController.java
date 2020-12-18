@@ -264,7 +264,7 @@ public abstract class GenericController <T>{
         }
         map.put(entityName, roleLevel);//此时id 已经注入进去
         map.put("id", ReflectHWUtils.getObjectValue(roleLevel, "id"));
-        String content = HWJacksonUtils.getJsonP(map, callback);
+        String content = HWJacksonUtils.getJsonP(map, callback, false);
         return content;
     }
 
@@ -581,7 +581,7 @@ public abstract class GenericController <T>{
             postStr=URLDecoder.decode(postStr,SystemHWUtil.CURR_ENCODING);//{"username":"黄威","password":"123"}
             map=WebServletUtil.parseRequestStr(postStr, true);
         }
-        String content = HWJacksonUtils.getJsonP(map, callback);
+        String content = HWJacksonUtils.getJsonP(map, callback, false);
         return content;
     }
 
@@ -1150,13 +1150,13 @@ public abstract class GenericController <T>{
         }
         String content;
         if(view.getRecordsPerPage()==SystemHWUtil.NEGATIVE_ONE){
-            content = HWJacksonUtils.getJsonP(getDao().find(t, false, orderBy, orderMode, false, false), callback);
+            content = HWJacksonUtils.getJsonP(getDao().find(t, false, orderBy, orderMode, false, false), callback, false);
         }else{
             Map map = new HashMap();
             PageUtil.paging(t, false, view, getDao(), orderMode, orderBy, null,
                     null, null);
             setJsonPaging(map, view, filterColumn);
-            content = HWJacksonUtils.getJsonP(map, callback);
+            content = HWJacksonUtils.getJsonP(map, callback, false);
         }
 
         return content;
