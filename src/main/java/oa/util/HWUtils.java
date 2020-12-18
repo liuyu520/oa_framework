@@ -81,7 +81,7 @@ public class HWUtils {
 			content=(String)map;
 		}else{
 		ObjectMapper mapper = getObjectMapper();
-		
+
 		ObjectWriter writer=null;
 		try {
 			if(filters!=null){
@@ -137,14 +137,13 @@ public class HWUtils {
 		out.close();
 	}
 	/**
-	 *
-	 * @param path
-	 * @return
-     * @author 黄威
+     * @param path
+     * @return
      * @throws IOException
-	 * @throws InvalidFormatException
-	 * @throws org.apache.poi.openxml4j.exceptions.InvalidFormatException 
-	 */
+     * @throws InvalidFormatException
+     * @throws org.apache.poi.openxml4j.exceptions.InvalidFormatException
+     * @author 黄威
+     */
 	public static Workbook getTemplateSource(String path) throws IOException,
 			InvalidFormatException, org.apache.poi.openxml4j.exceptions.InvalidFormatException {
 		DefaultResourceLoader dl = new DefaultResourceLoader();
@@ -247,9 +246,14 @@ public class HWUtils {
      */
     public static int getSelectedIndex4Cache(String path, int selectedIndex) {
 //        int selectedIndex = -1;
-        String sessionKey = deleteSuffix(path) + "selectedIndex";
+        String path2 = deleteSuffix(path);
+        String sessionKey = path2 + "selectedIndex";
         System.out.println("getSelectedIndex4Cache() get key:" + sessionKey);
         String selectedIndexStr = (String) SpringMVCUtil.resumeGlobalObject(sessionKey);
+        if (selectedIndexStr == null) {
+            sessionKey = path2 + Const.STUB_FILE_SUFFIX_JSON + "selectedIndex";
+            selectedIndexStr = (String) SpringMVCUtil.resumeGlobalObject(sessionKey);
+        }
         if (ValueWidget.isNullOrEmpty(selectedIndexStr)) {
             System.out.println("使用工具请求时,请确认是否设置了JSESSIONID");
         } else {
@@ -473,6 +477,10 @@ public class HWUtils {
         stubUpdateOption.setFile(file);
         int index = stubUpdateOption.getIndex();
         StubRange stubRange = getStubRange(stubUpdateOption.getFile());
+        if (stubUpdateOption.getFile() == null) {
+            readAndWriteResult.setErrorMessage("file is null," + stubUpdateOption.getServletAction());
+            return readAndWriteResult;
+        }
         String absolutePath = stubUpdateOption.getFile().getAbsolutePath();
         if (ValueWidget.isNullOrEmpty(readAndWriteResult.getAbsolutePath())) {
             readAndWriteResult.setAbsolutePath(absolutePath);
@@ -855,7 +863,7 @@ public class HWUtils {
             logger.error("getUploadResultMap error,SavedFile:" + uploadResult.getSavedFile(), e);
             uploadResult.setSuccess(false);
             uploadResult.setErrorMessage(errorBuffer.toString());
-            
+
         }
         String finalFileName = uploadResult.getFinalFileName();//"20170308201110_134_3C71E7EBAE9F48CEF1FE4A675E43F32B.jpg"
         String url2 = WebServletUtil.getRelativeUrl(request, uploadResult.getRelativePath(), finalFileName);
@@ -914,7 +922,7 @@ public class HWUtils {
     /*public void test_writeStubFileOne() {
         try {
             ReadAndWriteResult readAndWriteResult = new ReadAndWriteResult();
-            writeStubFileOneOption("ccc", 
+            writeStubFileOneOption("ccc",
                     readAndWriteResult, new File("/Users/whuanghkl/work/project/stub_test/src/main/webapp/stub/ab/test.json")
                     , 0);
 
