@@ -134,6 +134,7 @@ public class HWUtils {
 		ServletOutputStream out = resp.getOutputStream();
 		workbook.write(out);
 		out.flush();
+		out.close();
 	}
 	/**
 	 *
@@ -261,6 +262,15 @@ public class HWUtils {
         return selectedIndex;
     }
 
+    /**
+     * 兼容
+     * /stub/demo/api/test/options.xml <br />
+     * /stub/demo/api/test/options.do.xml<br />
+     * /stub/demo/api/test/options.json.xml<br />
+     *
+     * @param realPath2
+     * @return
+     */
     public static File getStubFile(String realPath2, String servletPath) {
         String pathTmp;
         if (realPath2.endsWith(Constant2.STUB_FILE_SUFFIX)) {
@@ -280,6 +290,9 @@ public class HWUtils {
         if (!file.exists() && (!realPath2.endsWith(servletPath))) {
             String noSuffix = servletPath.replaceAll("\\.[\\w]+$", "");
             file = new File(realPath2.replace(noSuffix, servletPath) + Constant2.STUB_FILE_SUFFIX);
+        }
+        if (!file.exists()) {
+            file = new File(deleteSuffix(realPath2) + ".json" + Constant2.STUB_FILE_SUFFIX);
         }
         return file;
     }
@@ -682,6 +695,9 @@ public class HWUtils {
 	 */
 	public static List<String> listStubServletPath(String rootPath, String keyWord) {
         List<File> files = FileUtils.getListFiles(rootPath, Constant2.STUB_FILE_SUFFIX.substring(1));//去掉.xml 中的.
+        if (files == null) {
+            return null;
+        }
         List<String> pathList = new ArrayList<String>();
 		for (int i = 0; i < files.size(); i++) {
             String interface2 = files.get(i).getAbsolutePath().replace(rootPath, SystemHWUtil.EMPTY);
