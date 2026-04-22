@@ -1,6 +1,6 @@
 # oa_framework
 
-![oa_framework GitHub Social Preview](assets/github-social-preview.png)
+![oa_framework GitHub Social Preview](assets/github-social-preview.jpg)
 
 springMVC公共的控制器方法
  ---
