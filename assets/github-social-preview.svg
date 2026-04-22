@@ -1,0 +1,197 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="640" viewBox="0 0 1280 640" role="img" aria-labelledby="title desc">
+  <title id="title">oa_framework GitHub Social Preview</title>
+  <desc id="desc">A GitHub social preview card for oa_framework, a SpringMVC generic controller framework.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fff8ef" />
+      <stop offset="55%" stop-color="#fff1e2" />
+      <stop offset="100%" stop-color="#ffe7d2" />
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff9b4a" />
+      <stop offset="100%" stop-color="#c85a12" />
+    </linearGradient>
+    <linearGradient id="panel" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.96" />
+      <stop offset="100%" stop-color="#fff8f1" stop-opacity="0.92" />
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#000000" flood-opacity="0.18" />
+    </filter>
+    <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#c85a12" flood-opacity="0.14" />
+    </filter>
+    <style>
+      .title {
+        font-family: Arial, "Helvetica Neue", sans-serif;
+        font-size: 72px;
+        font-weight: 800;
+        fill: #1b1b1b;
+      }
+      .subtitle {
+        font-family: "Helvetica Neue", Arial, sans-serif;
+        font-size: 34px;
+        font-weight: 800;
+        fill: #c85a12;
+      }
+      .body {
+        font-family: "Helvetica Neue", Arial, sans-serif;
+        font-size: 21px;
+        fill: #242424;
+      }
+      .muted {
+        font-family: "Helvetica Neue", Arial, sans-serif;
+        font-size: 17px;
+        fill: #6d4b31;
+      }
+      .feature {
+        font-family: "Helvetica Neue", Arial, sans-serif;
+        font-size: 22px;
+        font-weight: 700;
+        fill: #1f1f1f;
+      }
+      .small {
+        font-family: Menlo, Consolas, monospace;
+        font-size: 17px;
+        fill: #7a4d2c;
+      }
+      .diagram-label {
+        font-family: "Helvetica Neue", Arial, sans-serif;
+        font-size: 15px;
+        font-weight: 700;
+        fill: #ffffff;
+      }
+      .diagram-note {
+        font-family: "Helvetica Neue", Arial, sans-serif;
+        font-size: 13px;
+        font-weight: 700;
+        fill: #7d4c22;
+      }
+    </style>
+  </defs>
+
+  <rect width="1280" height="640" fill="url(#bg)" />
+  <circle cx="184" cy="92" r="138" fill="#ffd2ab" opacity="0.22" />
+  <circle cx="1092" cy="560" r="168" fill="#ffc38d" opacity="0.18" />
+  <circle cx="1018" cy="118" r="76" fill="#ffe0c2" opacity="0.45" />
+
+  <g stroke="#e8b98f" stroke-width="2" fill="none" opacity="0.7">
+    <path d="M0 76h110l32-34h88" />
+    <path d="M18 126h72l26-24h84" />
+    <path d="M1196 84h54l12 12h18" />
+    <path d="M1146 126h64l20 20h50" />
+    <path d="M1064 58h56l18-18h76" />
+    <circle cx="34" cy="126" r="5" fill="#efb785" stroke="none" />
+    <circle cx="199" cy="102" r="4" fill="#efb785" stroke="none" />
+    <circle cx="1138" cy="58" r="4" fill="#efb785" stroke="none" />
+    <circle cx="1210" cy="126" r="4" fill="#efb785" stroke="none" />
+  </g>
+
+  <g opacity="0.45" fill="#efc296">
+    <circle cx="68" cy="212" r="2.6" />
+    <circle cx="80" cy="212" r="2.6" />
+    <circle cx="92" cy="212" r="2.6" />
+    <circle cx="104" cy="212" r="2.6" />
+    <circle cx="68" cy="224" r="2.6" />
+    <circle cx="80" cy="224" r="2.6" />
+    <circle cx="92" cy="224" r="2.6" />
+    <circle cx="104" cy="224" r="2.6" />
+    <circle cx="68" cy="236" r="2.6" />
+    <circle cx="80" cy="236" r="2.6" />
+    <circle cx="92" cy="236" r="2.6" />
+    <circle cx="104" cy="236" r="2.6" />
+    <circle cx="1188" cy="430" r="2.6" />
+    <circle cx="1200" cy="430" r="2.6" />
+    <circle cx="1212" cy="430" r="2.6" />
+    <circle cx="1224" cy="430" r="2.6" />
+    <circle cx="1188" cy="442" r="2.6" />
+    <circle cx="1200" cy="442" r="2.6" />
+    <circle cx="1212" cy="442" r="2.6" />
+    <circle cx="1224" cy="442" r="2.6" />
+    <circle cx="1188" cy="454" r="2.6" />
+    <circle cx="1200" cy="454" r="2.6" />
+    <circle cx="1212" cy="454" r="2.6" />
+    <circle cx="1224" cy="454" r="2.6" />
+  </g>
+
+  <g transform="translate(84 40)">
+    <text class="title" x="210" y="78">oa</text>
+    <text class="title" x="318" y="78">_framework</text>
+    <text class="subtitle" x="330" y="124">SpringMVC 公共控制器框架</text>
+
+    <g transform="translate(-8 12) scale(0.6)">
+      <circle cx="46" cy="44" r="34" fill="#ff9b4a" />
+      <circle cx="106" cy="8" r="24" fill="#ff9b4a" />
+      <circle cx="156" cy="44" r="24" fill="#ff9b4a" />
+      <circle cx="0" cy="44" r="24" fill="#ff9b4a" />
+      <circle cx="46" cy="44" r="15" fill="#fff8ef" />
+    </g>
+
+    <text class="body" x="0" y="194">基于 SpringMVC 的通用控制器框架，提供标准 CRUD 路由、文件上传、</text>
+    <text class="body" x="0" y="226">拦截器数据传递、异常处理与 DAO / Controller 自动生成能力。</text>
+    <text class="muted" x="0" y="266">让企业 OA / 后台管理系统开发更快落地，减少样板代码。</text>
+
+    <text class="feature" x="0" y="330">✓ 通用 CRUD 接口：统一的 add / list / detail / update / delete 路由</text>
+    <text class="feature" x="0" y="372">✓ 文件上传支持：UploadGenericController + UploadCallback</text>
+    <text class="feature" x="0" y="414">✓ 拦截器透传数据：ThreadLocal 方式安全注入控制器上下文</text>
+    <text class="feature" x="0" y="456">✓ 异常自动处理：JSON / 错误页响应自动分流</text>
+    <text class="feature" x="0" y="498">✓ 代码生成工具：自动生成 DAO 与 Controller</text>
+
+    <g transform="translate(0 536)" filter="url(#soft)">
+      <rect x="0" y="0" rx="18" ry="18" width="530" height="86" fill="url(#panel)" stroke="#1c1c1c" stroke-width="1.5" />
+      <text class="body" x="28" y="33" font-weight="800">Technical Snapshot</text>
+      <text class="muted" x="28" y="62">Java  •  SpringMVC  •  ThreadLocal  •  JSON / Page Response</text>
+    </g>
+  </g>
+
+  <g transform="translate(780 146)">
+    <rect x="0" y="0" rx="24" ry="24" width="436" height="192" fill="#fffaf4" opacity="0.86" stroke="#efc296" />
+
+    <g transform="translate(18 74)">
+      <rect x="0" y="0" rx="12" ry="12" width="74" height="34" fill="url(#accent)" />
+      <text class="diagram-label" x="37" y="22" text-anchor="middle">Client</text>
+
+      <rect x="92" y="0" rx="12" ry="12" width="118" height="34" fill="url(#accent)" />
+      <text class="diagram-label" x="151" y="22" text-anchor="middle">Dispatcher</text>
+
+      <rect x="222" y="0" rx="12" ry="12" width="120" height="34" fill="url(#accent)" />
+      <text class="diagram-label" x="282" y="22" text-anchor="middle">Controller</text>
+
+      <rect x="354" y="0" rx="12" ry="12" width="72" height="34" fill="url(#accent)" />
+      <text class="diagram-label" x="390" y="22" text-anchor="middle">DAO</text>
+
+      <line x1="74" y1="17" x2="92" y2="17" stroke="#b65a1d" stroke-width="3" />
+      <line x1="210" y1="17" x2="222" y2="17" stroke="#b65a1d" stroke-width="3" />
+      <line x1="342" y1="17" x2="354" y2="17" stroke="#b65a1d" stroke-width="3" />
+
+      <rect x="232" y="-56" rx="10" ry="10" width="100" height="30" fill="#f0b37d" />
+      <text class="diagram-note" x="282" y="-37" text-anchor="middle">Interceptor</text>
+      <line x1="282" y1="-26" x2="282" y2="0" stroke="#d77c39" stroke-width="2.5" />
+
+      <rect x="222" y="56" rx="10" ry="10" width="120" height="30" fill="#f0b37d" />
+      <text class="diagram-note" x="282" y="75" text-anchor="middle">Exception Handler</text>
+      <line x1="282" y1="34" x2="282" y2="56" stroke="#d77c39" stroke-width="2.5" />
+
+      <rect x="92" y="56" rx="10" ry="10" width="118" height="30" fill="#f0b37d" />
+      <text class="diagram-note" x="151" y="75" text-anchor="middle">View Resolver</text>
+      <line x1="151" y1="34" x2="151" y2="56" stroke="#d77c39" stroke-width="2.5" />
+    </g>
+  </g>
+
+  <g transform="translate(760 358)" filter="url(#soft)">
+    <rect x="0" y="0" rx="18" ry="18" width="440" height="220" fill="#fff9f3" stroke="#202020" stroke-width="1.5" />
+    <rect x="0" y="0" rx="18" ry="18" width="440" height="30" fill="#2b2b2b" />
+    <circle cx="22" cy="15" r="5.5" fill="#ff7f5a" />
+    <circle cx="40" cy="15" r="5.5" fill="#ffbf4d" />
+    <circle cx="58" cy="15" r="5.5" fill="#71d161" />
+
+    <text class="small" x="18" y="62">@Controller</text>
+    <text class="small" x="18" y="88">@RequestMapping("/entity")</text>
+    <text class="small" x="18" y="114">public class GenericController&lt;T&gt; {</text>
+    <text class="small" x="42" y="148">@GetMapping("/{id}")</text>
+    <text class="small" x="42" y="174">public T getById(@PathVariable String id) {</text>
+    <text class="small" x="66" y="200">return service.findById(id);</text>
+    <text class="small" x="42" y="226">}</text>
+    <text class="small" x="18" y="256">}</text>
+  </g>
+</svg>
