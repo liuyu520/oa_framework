@@ -162,7 +162,7 @@
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
-            <version>3.10-FINAL</version>
+            <version>4.1.1</version>
         </dependency>
         <!-- java poi end:by zjh <2014-04-25> -->
         <dependency>
